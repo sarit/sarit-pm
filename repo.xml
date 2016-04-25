@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>SARIT: Search and Retrieval of Indic Texts</description>
+    <website/>
+    <status/>
+    <license>GNU-LGPL</license>
+    <copyright>true</copyright>
+    <type>application</type>
+    <target>sarit-pm</target>
+    <prepare>pre-install.xql</prepare>
+    <finish>post-install.xql</finish>
+    <permissions user="sarit" group="sarit" mode="rw-rw-r--" password="sarit"/>
+    <deployed>2016-03-08T10:59:50.845+01:00</deployed>
+</meta>

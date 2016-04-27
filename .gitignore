@@ -5,3 +5,4 @@ build
 cache
 sarit.iml
 .idea
+npm-debug.log

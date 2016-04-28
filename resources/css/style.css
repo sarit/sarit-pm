@@ -7,8 +7,8 @@
   line-height: 21px;
   font-size: 18px;
 }
-.page-header {
-  border-bottom: none;
+.navbar-right li a i {
+  font-size: 20px;
 }
 /******** Sarit Theme *********/
 body {
@@ -24,33 +24,47 @@ h1,
 h2,
 h3,
 h4,
-.sarit-app-title {
+.sarit-app-title,
+.sarit-page-headline-wrapper span {
   font-family: "Siddhanta", Georgia, "Times New Roman", serif;
+}
+.sarit-primary,
+.sarit-footer {
+  background-color: #68838B;
 }
 .sarit-app-title {
   font-weight: 700;
   letter-spacing: 1px;
 }
 .sarit-header {
-  padding-left: 15px;
   border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 .sarit-page-headline-wrapper {
   background-color: #68838B;
   color: white;
+  text-transform: uppercase;
+}
+.sarit-page-headline-wrapper h1 {
+  display: inline-block;
+  margin: 34px 22px 20px 0;
+  font-size: 40px;
+}
+.sarit-page-headline-wrapper span {
+  font-size: 18px;
 }
 .navbarBackgroundImage {
   background-size: auto 100%;
 }
-.logo,
-.navbar-brand {
-  background: url('../img/indolib-icon.png') 0 9px no-repeat;
-  background-size: 48px;
+.logo > img,
+.navbar-brand > img {
+  display: inline;
+  height: auto;
+  width: 22%;
 }
 .logo span,
 .navbar-brand span {
-  margin-left: 42px;
+  margin-left: 8%;
   line-height: 33px;
 }
 a,
@@ -425,9 +439,23 @@ a:focus {
 }
 footer .poweredby {
   float: right;
-  margin: 33px 10px 0 0;
+  margin: 4px 2px 0 0;
 }
 footer .poweredby img {
   width: 120px;
+}
+.sarit-footer {
+  padding: 18px 0;
+  color: white;
+  font-size: 16px;
+}
+.sarit-footer h6 {
+  font-size: 18px;
+}
+.sarit-footer .poweredby {
+  text-align: right;
+}
+.sarit-footer .poweredby img {
+  padding: 0 0 15px 15px;
 }
 /*# sourceMappingURL=resources/css/style.css.map */

@@ -1,23 +1,92 @@
 // out: style.css, sourcemap: true, compress: true
+
+/******** Default Variables *********/
+
+// Fonts
 @serifFont: "Siddhanta", Georgia, "Times New Roman", serif;
-@linkColor: #303F9F;
-@navbarBackgroundColor: #3F51B5;
+@sarit-base-font-size: 16px;
+@sarit-nav-font-size: 18px;
+
+// Colors
+@linkColor:                 #303F9F;
+@sarit-primary-color:       #F1F1F1;
+@sarit-text-color:          #4c4b4d;
+@sarit-contrast-text-color: white;
+@sarit-secondary-color:     #68838B; //#757575;
+@navbarBackgroundColor:     #3F51B5;
+@navButtonColor:            #607D8B;
+@marginNoteBackgroundColor: #B6B6B6;
+
+// Image Paths
+@img: "../img";         // Usage: @{img}
+@imgages: "../imgages"; // Usage: @{imgages}
+
+/******** Custom Bootstrap Variables and Overides *********/
+.navbar.navbar-inverse {
+  background-color: @sarit-secondary-color;
+}
+.navbar-brand {
+  &:extend(.logo all);
+}
+.panel-heading {
+  &:extend(.sarit-serif-font);
+}
+.navbar-nav a {
+  line-height: 21px;
+  font-size: @sarit-nav-font-size;
+}
+.page-header {
+  border-bottom: none;
+}
+
+/******** Sarit Theme *********/
+
+body {
+  color: @sarit-text-color;
+  background-color: @sarit-primary-color;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: antialiased;
+}
+
+.sarit-serif-font {
+  font-family: @serifFont;
+}
+
+h1, h2, h3, h4 {
+  &:extend(.sarit-serif-font);
+}
+
+.sarit-app-title {
+  &:extend(.sarit-serif-font);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.sarit-header {
+  padding-left: 15px;
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.sarit-page-headline-wrapper {
+  background-color: @sarit-secondary-color;
+  color: @sarit-contrast-text-color;
+}
+
 .navbarBackgroundImage {
-    // background: url('../images/icon.png') top left repeat;
     background-size: auto 100%;
 }
+
 .logo {
-    // background: url('../images/eebo-small.png') top left no-repeat;
-    background: url('../images/icon.png') top left no-repeat;
-    background-size: auto 100%;
-    // width: 200px;
-    // color: transparent;
+    background: url('@{img}/indolib-icon.png') 0 9px no-repeat;
+    background-size: 48px;
     span {
-        margin-left: 60px;
+        margin-left: 42px;
+        line-height: 33px;
     }
 }
-@navButtonColor: #607D8B;
-@marginNoteBackgroundColor: #B6B6B6;
+
+//************************
 a, a:hover, a:focus {
     color: @linkColor;
 }
@@ -128,6 +197,12 @@ a, a:hover, a:focus {
         margin: inherit;
     }
 }
+// main wrapper
+#content {
+  padding-top: 50px;
+  position: relative;
+}
+
 #content-row {
     -webkit-animation-duration: 400ms;
     -moz-animation-duration: 400ms;
@@ -306,14 +381,14 @@ a, a:hover, a:focus {
         text-decoration: underline;
     }
 }
-.navbar-default {
-    margin-bottom: 0;
-    background-color: @navbarBackgroundColor !important;
-    .navbarBackgroundImage();
-    .navbar-brand, .navbar-brand:focus, .navbar-brand:hover {
-        .logo();
-    }
-}
+// .navbar-default {
+//     margin-bottom: 0;
+//     background-color: @navbarBackgroundColor !important;
+//     .navbarBackgroundImage();
+//     .navbar-brand, .navbar-brand:focus, .navbar-brand:hover {
+//         .logo();
+//     }
+// }
 .top {
     margin-top: 61px;
 }

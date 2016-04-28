@@ -452,5 +452,21 @@ a, a:hover, a:focus {
         padding: 8px;
     }
 }
-footer .poweredby { float: right; margin: 33px 10px 0 0;}
+footer .poweredby { float: right; margin: 4px 2px 0 0;}
 footer .poweredby img { width: 120px; }
+
+.sarit-footer {
+  padding: 18px 0;
+  &:extend(.sarit-primary);
+  color: white;
+  font-size: @sarit-base-font-size;
+  h6 {
+    font-size: @sarit-larger-font-size;
+  }
+  .poweredby {
+    text-align: right;
+    img {
+      padding: 0 0 15px 15px;
+    }
+  }
+}

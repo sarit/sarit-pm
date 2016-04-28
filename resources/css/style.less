@@ -5,14 +5,14 @@
 // Fonts
 @serifFont: "Siddhanta", Georgia, "Times New Roman", serif;
 @sarit-base-font-size: 16px;
-@sarit-nav-font-size: 18px;
+@sarit-larger-font-size: 18px;
 
 // Colors
 @linkColor:                 #303F9F;
-@sarit-primary-color:       #F1F1F1;
+@sarit-primary-color:       #68838B;
 @sarit-text-color:          #4c4b4d;
 @sarit-contrast-text-color: white;
-@sarit-secondary-color:     #68838B; //#757575;
+@sarit-secondary-color:     #F1F1F1;
 @navbarBackgroundColor:     #3F51B5;
 @navButtonColor:            #607D8B;
 @marginNoteBackgroundColor: #B6B6B6;
@@ -23,7 +23,7 @@
 
 /******** Custom Bootstrap Variables and Overides *********/
 .navbar.navbar-inverse {
-  background-color: @sarit-secondary-color;
+  background-color: @sarit-primary-color;
 }
 .navbar-brand {
   &:extend(.logo all);
@@ -33,7 +33,7 @@
 }
 .navbar-nav a {
   line-height: 21px;
-  font-size: @sarit-nav-font-size;
+  font-size: @sarit-larger-font-size;
 }
 .page-header {
   border-bottom: none;
@@ -43,7 +43,7 @@
 
 body {
   color: @sarit-text-color;
-  background-color: @sarit-primary-color;
+  background-color: @sarit-secondary-color;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
@@ -57,6 +57,10 @@ h1, h2, h3, h4 {
   &:extend(.sarit-serif-font);
 }
 
+.sarit-primary {
+  background-color: @sarit-primary-color;
+}
+
 .sarit-app-title {
   &:extend(.sarit-serif-font);
   font-weight: 700;
@@ -64,13 +68,22 @@ h1, h2, h3, h4 {
 }
 
 .sarit-header {
-  padding-left: 15px;
   border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 .sarit-page-headline-wrapper {
-  background-color: @sarit-secondary-color;
+  background-color: @sarit-primary-color;
   color: @sarit-contrast-text-color;
+  text-transform: uppercase;
+  h1 {
+    display: inline-block;
+    margin: 34px 22px 20px 0;
+    font-size: 40px;
+  }
+  span {
+    &:extend(.sarit-serif-font);
+    font-size: @sarit-larger-font-size;
+  }
 }
 
 .navbarBackgroundImage {
@@ -78,10 +91,13 @@ h1, h2, h3, h4 {
 }
 
 .logo {
-    background: url('@{img}/indolib-icon.png') 0 9px no-repeat;
-    background-size: 48px;
+  > img {
+    display: inline;
+    height: auto;
+    width: 22%;
+  }
     span {
-        margin-left: 42px;
+        margin-left: 8%;
         line-height: 33px;
     }
 }

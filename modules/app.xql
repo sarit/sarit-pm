@@ -106,7 +106,7 @@ function app:short-header($node as node(), $model as map(*)) {
     let $work := $model("work")/ancestor-or-self::tei:TEI
     let $id := util:document-name($work)
     return
-        $pm-config:web-transform($work/tei:teiHeader, map { 
+        $pm-config:web-transform($work/tei:teiHeader, map {
             "header": "short",
             "doc": $id
         })
@@ -264,8 +264,8 @@ declare function app:fix-links($nodes as node()*) {
 
 declare function app:work-authors($node as node(), $model as map(*)) {
     let $authors := distinct-values(collection($config:data-root)//tei:fileDesc/tei:titleStmt/tei:author)
-    let $authors := for $author in $authors order by translate($author, 'ĀŚ', 'AS') return $author 
-    let $control := 
+    let $authors := for $author in $authors order by translate($author, 'ĀŚ', 'AS') return $author
+    let $control :=
         <select multiple="multiple" name="work-authors" class="form-control">
             <option value="all" selected="selected">In Texts By Any Author</option>
             {for $author in $authors
@@ -282,7 +282,7 @@ declare function app:work-authors($node as node(), $model as map(*)) {
 :
 : @author Wolfgang M. Meier
 : @author Jens Østergaard Petersen
-: @param $node 
+: @param $node
 : @param $model
 : @param $query The query string. This string is transformed into a <query> element containing one or two <bool> elements in a Lucene query and it is transformed into a sequence of one or two query strings in an ngram query. The first <bool> and the first string contain the query as input and the second the query as transliterated into Devanagari or IAST as determined by $query-scripts. One <bool> and one query string may be empty.
 : @param $index The index against which the query is to be performed, as the string "ngram" or "lucene".
@@ -294,7 +294,7 @@ declare function app:work-authors($node as node(), $model as map(*)) {
 : @return The function returns a map containing the $hits, the $query, and the $query-scope. The search results are output through the nested templates, app:hit-count, app:paginate, and app:show-hits.
 :)
 (:template function in search.html:)
-declare 
+declare
     %templates:default("index", "ngram")
     %templates:default("tei-target", "tei-text")
     %templates:default("query-scope", "narrow")
@@ -308,7 +308,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
     (:based on which index the user wants to query against, the query string is dispatchted to separate functions. Both return empty if there is no query string.:)
     let $queries := app:expand-query($query, $query-scripts)
     (:both lucene queries and ngram queries are passed around as sequences of strings, but after expansion lucene queries have to be wrapped in slashes to trigger regex mode:)
-    let $queries := 
+    let $queries :=
         if ($index eq 'ngram')
         then $queries
         else
@@ -318,7 +318,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                 then "/" || $query || "/"
                 else $query
     (:this joins the latest lucene query with OR if it has been expanded - this OR does not have anything to do with boolean searches:)
-    let $queries := 
+    let $queries :=
         if ($index eq 'ngram')
         then $queries
         else string-join($queries, ' OR ')
@@ -337,17 +337,17 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
             (:Otherwise, perform the query.:)
             (:First, which documents to query against has to be found out. Users can either make no selections in the list of documents, passing the value "all", or they can select individual document, passing a sequence of their xml:ids in $target-texts. Users can also select documents based on their authors. If no specific authors are selected, the value "all" is passed in $work-authors, but if selections have been made, a sequence of their xml:ids is passed. :)
             (:$target-texts will either have the value 'all' or contain a sequence of document xml:ids.:)
-            let $target-texts := 
+            let $target-texts :=
                 (:("target-texts", "all")("work-authors", "all"):)
                 (:If no texts have been selected and no authors have been selected, search in all texts:)
                 if ($target-texts = 'all' and $work-authors = 'all')
-                then 'all' 
+                then 'all'
                 else
                     (:("target-texts", "sequence of document xml:ids")("work-authors", "all"):)
                     (:If one or more texts have been selected, but no authors, search in selected texts:)
                     if ($target-texts != 'all' and $work-authors = 'all')
                     then $target-texts
-                    else 
+                    else
                         (:("target-texts", "all")("work-authors", "sequence of document xml:ids"):)
                         (:If no texts, but one or more authors have been selected, search in texts selected by author:)
                         if ($target-texts = 'all' and $work-authors != 'all')
@@ -359,17 +359,17 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             then distinct-values(($target-texts, collection($config:data-root)//tei:TEI[tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author = $work-authors]/@xml:id))
                             else ()
             (:After it has been determined which documents to query, we have to find out which document parts are targeted, the query "context". There are two parts, the text element ("tei-text") and the TEI header ("tei-header"). It is possible to select multiple contexts:)
-            let $context := 
+            let $context :=
                 (:If all documents have been selected for query, set the context as $config:data-root:)
                 if ($target-texts = 'all')
-                then 
+                then
                     (:if there are two tei-targets, set the context below $config:data-root to the common parent of tei-text and tei-header, the document element TEI, otherwise set it to tei-text and tei-header, respectively.:)
                     if (count($tei-target) eq 2)
                     then collection($config:data-root)/tei:TEI
                     else
                         if ($tei-target = 'tei-text')
                         then collection($config:data-root)/tei:TEI/tei:text
-                        else 
+                        else
                             if ($tei-target = 'tei-header')
                             then collection($config:data-root)/tei:TEI/tei:teiHeader
                             else ()
@@ -378,10 +378,10 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                     if (count($tei-target) eq 2)
                     (:if there are two tei-targets, set the context below $config:data-root to the common parent of tei-text and tei-header, the document element TEI, otherwise set it to tei-text and tei-header, respectively.:)
                     then collection($config:data-root)//tei:TEI[@xml:id = $target-texts]
-                    else 
+                    else
                         if ($tei-target = 'tei-text')
                         then collection($config:data-root)//tei:TEI[@xml:id = $target-texts]/tei:text
-                        else 
+                        else
                             if ($tei-target = 'tei-header')
                             then collection($config:data-root)//tei:TEI[@xml:id = $target-texts]/tei:teiHeader
                             else ()
@@ -393,10 +393,10 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                     (:If the $query-scope is narrow, query the elements immediately below the lowest div in tei:text and the four major element below tei:teiHeader.:)
                     if ($query-scope eq 'narrow')
                     then
-                        for $hit in 
+                        for $hit in
                             (:If both tei-text and tei-header is queried.:)
                             if (count($tei-target) eq 2)
-                            then 
+                            then
                                 (
                                 $context//tei:p[ft:query(., $queries)],
                                 $context//tei:head[ft:query(., $queries)],
@@ -434,21 +434,21 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                     $context//tei:cit[ft:query(., $queries)],
                                     $context//tei:label[ft:query(., $queries)]
                                     )
-                                else 
+                                else
                                     if ($tei-target = 'tei-header')
-                                    then 
+                                    then
                                         (
                                         $context//tei:encodingDesc[ft:query(., $queries)],
                                         $context//tei:fileDesc[ft:query(., $queries)],
                                         $context//tei:profileDesc[ft:query(., $queries)],
                                         $context//tei:revisionDesc[ft:query(., $queries)]
                                         )
-                                    else ()    
+                                    else ()
                         order by ft:score($hit) descending
                         return $hit
                     (:If the $query-scope is broad, query the lowest div in tei:text and tei:teiHeader.:)
                     else
-                        for $hit in 
+                        for $hit in
                             if (count($tei-target) eq 2)
                             then
                                 (
@@ -461,9 +461,9 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                     (
                                     $context//tei:div[not(tei:div)][ft:query(., $queries)]
                                     )
-                                else 
+                                else
                                     if ($tei-target = 'tei-header')
-                                    then 
+                                    then
                                         $context/descendant-or-self::tei:teiHeader[ft:query(., $queries)]
                                     else ()
                         order by ft:score($hit) descending
@@ -472,10 +472,10 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                 else
                     if ($query-scope eq 'narrow' and count($tei-target) eq 2)
                     then
-                        for $hit in 
+                        for $hit in
                             (
                             (:Only query if there is a value in the first item.:)
-                            if ($queries[1]) 
+                            if ($queries[1])
                             then (
                                 $context//tei:p[ngram:wildcard-contains(., $queries[1])],
                                 $context//tei:head[ngram:wildcard-contains(., $queries[1])],
@@ -498,7 +498,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             else ()
                             ,
                             (:Only query if there is a value in the second item.:)
-                            if ($queries[2]) 
+                            if ($queries[2])
                             then (
                                 $context//tei:p[ngram:wildcard-contains(., $queries[2])],
                                 $context//tei:head[ngram:wildcard-contains(., $queries[2])],
@@ -517,17 +517,17 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                 $context//tei:fileDesc[ngram:wildcard-contains(., $queries[2])],
                                 $context//tei:profileDesc[ngram:wildcard-contains(., $queries[2])],
                                 $context//tei:revisionDesc[ngram:wildcard-contains(., $queries[2])]
-                                ) 
+                                )
                             else ()
                             )
-                        order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending 
+                        order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending
                         return $hit
                     else
                         if ($query-scope eq 'narrow' and $tei-target eq 'tei-text')
                         then
-                            for $hit in 
+                            for $hit in
                                 (
-                                if ($queries[1]) 
+                                if ($queries[1])
                                 then (
                                     $context//tei:p[ngram:wildcard-contains(., $queries[1])],
                                     $context//tei:head[ngram:wildcard-contains(., $queries[1])],
@@ -549,7 +549,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                     )
                                 else ()
                                 ,
-                                if ($queries[2]) 
+                                if ($queries[2])
                                 then (
                                     $context//tei:p[ngram:wildcard-contains(., $queries[2])],
                                     $context//tei:head[ngram:wildcard-contains(., $queries[2])],
@@ -568,17 +568,17 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                     $context//tei:fileDesc[ngram:wildcard-contains(., $queries[2])],
                                     $context//tei:profileDesc[ngram:wildcard-contains(., $queries[2])],
                                     $context//tei:revisionDesc[ngram:wildcard-contains(., $queries[2])]
-                                ) 
+                                )
                         else ()
                         )
-                            order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending 
+                            order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending
                             return $hit
                         else
                             if ($query-scope eq 'narrow' and $tei-target eq 'tei-header')
                             then
-                            for $hit in 
+                            for $hit in
                                 (
-                                if ($queries[1]) 
+                                if ($queries[1])
                                 then (
                                     $context//tei:encodingDesc[ngram:wildcard-contains(., $queries[1])],
                                     $context//tei:fileDesc[ngram:wildcard-contains(., $queries[1])],
@@ -586,7 +586,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                     $context//tei:revisionDesc[ngram:wildcard-contains(., $queries[1])]
                                 ) else ()
                                 ,
-                                if ($queries[2]) 
+                                if ($queries[2])
                                 then (
                                     $context//tei:encodingDesc[ngram:wildcard-contains(., $queries[2])],
                                     $context//tei:fileDesc[ngram:wildcard-contains(., $queries[2])],
@@ -594,7 +594,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                     $context//tei:revisionDesc[ngram:wildcard-contains(., $queries[2])]
                                 ) else ()
                                 )
-                            order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending 
+                            order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending
                             return $hit
                             else
                                 if ($query-scope eq 'broad' and count($tei-target) eq 2)
@@ -606,14 +606,14 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                             (
                                             $context//tei:div[not(tei:div)][ngram:wildcard-contains(., $queries[1])],
                                             $context//tei:teiHeader[ngram:wildcard-contains(., $queries[1])]
-                                            ) 
+                                            )
                                         else ()
                                         ,
-                                        if ($queries[2]) 
+                                        if ($queries[2])
                                         then (
                                             $context//tei:div[not(tei:div)][ngram:wildcard-contains(., $queries[2])],
                                             $context//tei:teiHeader[ngram:wildcard-contains(., $queries[2])]
-                                            ) 
+                                            )
                                         else ()
                                         )
                                     order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending
@@ -627,16 +627,16 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                                 $context//tei:div[not(tei:div)][ngram:wildcard-contains(., $queries[1])]
                                             else ()
                                             ,
-                                            if ($queries[2]) 
+                                            if ($queries[2])
                                             then
                                                 $context//tei:div[not(tei:div)][ngram:wildcard-contains(., $queries[2])]
                                             else ()
                                         )
                                         order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending
                                         return $hit
-                                    else 
+                                    else
                                         if ($query-scope eq 'broad' and $tei-target eq 'tei-header')
-                                        then 
+                                        then
                                         for $hit in (
                                             if ($queries[1]) then
                                                 $context//tei:teiHeader[ngram:wildcard-contains(., $queries[1])]
@@ -650,10 +650,10 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                                             order by $hit/ancestor-or-self::tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] ascending
                                             return $hit
                                         else ()
-            let $hits := 
+            let $hits :=
                 if ($bool eq 'or')
                 then session:get-attribute("apps.sarit.hits") union $hits
-                else 
+                else
                     if ($bool eq 'and')
                     then session:get-attribute("apps.sarit.hits") intersect $hits
                     else
@@ -706,8 +706,8 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
 };
 
 (:~
-    app:expand-query transliterates the query string from Devanagari to IAST transcription and/or from IAST transcription to Devanagari, 
-    if the user has indicated that this is wanted in $query-scripts. 
+    app:expand-query transliterates the query string from Devanagari to IAST transcription and/or from IAST transcription to Devanagari,
+    if the user has indicated that this is wanted in $query-scripts.
 :)
 declare %private function app:expand-query($query as xs:string*, $query-scripts as xs:string?) as xs:string* {
     if ($query)
@@ -716,30 +716,30 @@ declare %private function app:expand-query($query as xs:string*, $query-scripts 
         sarit:create("roman2devnag", $app:roman2devnag-search/string()),
         sarit:create("expand", $app:expand/string()),
         (:if there is input exclusively in IAST romanization:)
-        if (not(matches($query, $app:iast-char-repertoire-negation))) 
+        if (not(matches($query, $app:iast-char-repertoire-negation)))
         then
             (:if the user wants to search in Devanagri, then transliterate and discard the original query:)
-            if ($query-scripts eq "sa-Deva") 
+            if ($query-scripts eq "sa-Deva")
             then
                 sarit:transliterate("expand",translate(sarit:transliterate("roman2devnag", $query), "&#8204;", ""))
-            else 
+            else
                 (:if the user wants to search in both IAST and Devanagri, then transliterate the original query and keep it:)
                 if ($query-scripts eq "all")
                 then
                     ($query, sarit:transliterate("expand",translate(sarit:transliterate("roman2devnag", $query), "&#8204;", "")))
-                else 
+                else
                     (:if the user wants to search in romanization, then do not transliterate but keep original query:)
-                    if ($query-scripts eq "sa-Latn") 
-                    then 
+                    if ($query-scripts eq "sa-Latn")
+                    then
                         $query
                     (:this exhausts all options for IAST input strings:)
                     else ''
         else
             (:if there is input exclusively in Devanagari:)
-            if (empty(string-to-codepoints($query)[not(. = (9-13, 32, 133, 160, 2304 to 2431, 43232 to 43259, 7376 to 7412))])) 
+            if (empty(string-to-codepoints($query)[not(. = (9-13, 32, 133, 160, 2304 to 2431, 43232 to 43259, 7376 to 7412))]))
             then
                 (:if the user wants to search in IAST, then transliterate the original query but delete it:)
-                if ($query-scripts eq "sa-Latn") 
+                if ($query-scripts eq "sa-Latn")
                 then
                     sarit:transliterate("devnag2roman", $query)
                 else
@@ -747,7 +747,7 @@ declare %private function app:expand-query($query as xs:string*, $query-scripts 
                     if ($query-scripts eq "all")
                     then
                         (sarit:transliterate("expand",$query), sarit:transliterate("devnag2roman", $query))
-                    else 
+                    else
                         (:if the user wants to search in Devanagri, then do not transliterate original query but keep it:)
                         if ($query-scripts eq "sa-Deva")
                         then
@@ -756,7 +756,7 @@ declare %private function app:expand-query($query as xs:string*, $query-scripts 
             (:there should only be two options: IAST and Devanagari input. If the query is not pure IAST and is not pure Devanagari, then do not (try to) transliterate the original query but keep it as it is.:)
             else
                 $query
-    ) 
+    )
     else ()
 };
 

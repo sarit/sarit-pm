@@ -1,87 +1,64 @@
 // out: style.css, sourcemap: true, compress: true
 @serifFont: "Siddhanta", Georgia, "Times New Roman", serif;
-
 @linkColor: #303F9F;
-
 @navbarBackgroundColor: #3F51B5;
-
 .navbarBackgroundImage {
     // background: url('../images/icon.png') top left repeat;
     background-size: auto 100%;
 }
-
 .logo {
     // background: url('../images/eebo-small.png') top left no-repeat;
     background: url('../images/icon.png') top left no-repeat;
     background-size: auto 100%;
-
     // width: 200px;
-
     // color: transparent;
-
     span {
         margin-left: 60px;
     }
 }
-
 @navButtonColor: #607D8B;
-
 @marginNoteBackgroundColor: #B6B6B6;
-
 a, a:hover, a:focus {
     color: @linkColor;
 }
-
 #main-container {
     max-width: 1600px;
 }
-
 .main {
     margin-top: 50px;
     margin-bottom: 20px;
 }
-
 #content-inner {
     font-family: @serifFont;
     font-size: 16px;
 }
-
 .content {
-
     padding-bottom: 30px;
-
     h1 { font-size: 2.441em; }
     h2 { font-size: 1.953em; }
     h3 { font-size: 1.563em; }
     h4 { font-size: 1.25em; }
-
     h1, h2, h3, h4, h5, h6 {
         font-family: @serifFont;
         line-height: 1.2;
     }
-
     >*>section {
         border-top: 1px solid #777;
         margin: 2.5em 0;
         padding-top: 2em;
     }
-
     mark {
         background-color: #FFEB3B;
     }
-
     .code1 {
         font-family: "Ubuntu Mono", Menlo, Consolas, Courier, monospace;
     }
-
     .alternate {
         color: #7777FF;
     }
-
     .alternate .altcontent {
         display: none;
     }
-
     .note, .popover {
         font-size: 13px;
     }
@@ -90,14 +67,12 @@ a, a:hover, a:focus {
         cursor: pointer;
         margin-left: .25em;
     }
-
     .margin-note-ref {
         font-size: small;
         vertical-align: super;
         color: #777;
         margin-right: 4px;
     }
-
     .margin-note {
         background: @marginNoteBackgroundColor;
         // color: white;
@@ -117,17 +92,14 @@ a, a:hover, a:focus {
     .margin-note .n {
         color: #777;
     }
-
     @media (max-width: 768px) {
         .margin-note {
             display: none;
         }
-
         .margin-right {
             margin-right: 0;
         }
     }
-
     .pb, .pb2 {
         /*background: #eeeeee;*/
         /*display: block;*/
@@ -148,7 +120,6 @@ a, a:hover, a:focus {
     .pb:before {
         content: '[p. ' !important;
     }
-
     .label:not(.note) {
         font-weight: bold;
         font-size: inherit;
@@ -157,13 +128,11 @@ a, a:hover, a:focus {
         margin: inherit;
     }
 }
-
 #content-row {
     -webkit-animation-duration: 400ms;
     -moz-animation-duration: 400ms;
     animation-duration: 400ms;
 }
-
 #image-container {
     overflow: auto;
     position: relative;
@@ -178,13 +147,11 @@ a, a:hover, a:focus {
         display: none;
     }
 }
-
 #content-container {
   -webkit-animation-duration: 400ms;
   -moz-animation-duration: 400ms;
   animation-duration: 400ms;
   overflow:auto;
-
   @media (min-width: 769px) {
     /*margin-left: 60px;
     margin-right: 60px;*/
@@ -193,64 +160,53 @@ a, a:hover, a:focus {
       margin-bottom: 5em;
   }
 }
-
 @media (min-width: 769px) {
     .margin-right {
         margin-right: 200px;
         position: relative;
     }
 }
-
 /* Page by page navigation */
 #content-inner {
     min-height: 450px;
 }
-
 .navigation-top {
     @media (min-width: 769px) {
         margin-bottom: 1em;
         border-bottom: 2px solid #CCC;
     }
-
     h5 {
         text-align: center;
         font-family: @serifFont;
         font-size: 16px;
         padding: 10px 10px 10px 0;
     }
-
     @media (max-width: 768px) {
         .nav-next {
             right: 10px;
         }
     }
 }
-
 .page-nav, .page-nav:link, .page-nav:active {
     background-color: @navButtonColor !important;
-
     @media (min-width: 769px) {
         position: fixed;
         top:50%;
     }
-
     @media (max-width: 768px) {
         position: fixed;
         bottom: 20px;
         // top: 20px;
     }
 }
-
 @media (min-width: 769px) {
     .nav-prev {
         left: 30px;
     }
-
     .nav-next {
         right: 30px;
     }
 }
-
 .list-works {
     .pagination {
         margin: 0;
@@ -259,19 +215,16 @@ a, a:hover, a:focus {
         margin: 0;
     }
 }
-
 .actions {
     margin-bottom: 10px;
     margin-top: 61px;
 }
-
 .btn-group .hidden-xs {
     margin-left: .5em;
 }
 .btn-group .hidden-xs + span {
     margin-left: .5em;
 }
-
 .documents {
     h5 {
         font-family: @serifFont;
@@ -289,16 +242,13 @@ a, a:hover, a:focus {
     .clear {
         clear: both;
     }
-
     .header-short h1 {
         font-family: @serifFont;
         font-size: 20px;
     }
 }
-
 .browse {
     font-size: 1em !important;
-
     td:nth-child(2), td:nth-child(3), td:nth-child(4) {
         font-family: @serifFont;
     }
@@ -307,7 +257,6 @@ a, a:hover, a:focus {
         text-align: right;
     }
 }
-
 @media (min-width: 768px) {
     .toc {
         position: fixed;
@@ -323,11 +272,9 @@ a, a:hover, a:focus {
         border-right: 1px solid #eee;
         border-top: 1px solid #eee;
     }
-
     .toc ul {
         padding-left: 20px;
     }
-
     .toc-toggle {
         position: fixed !important;
         left: 30px;
@@ -336,71 +283,57 @@ a, a:hover, a:focus {
         color: white;
     }
 }
-
 // table of contents
 .contents {
     .hide {
         display: none;
     }
-
     ul {
         list-style: none;
     }
-
     li {
         line-height: 2em;
     }
-
     li > .toc-link {
         margin-left: 28px;
     }
-
     .toc-expand {
         float: left;
         margin-left: -30px;
         width: 20px;
     }
-
     .current {
         text-decoration: underline;
     }
 }
-
 .navbar-default {
     margin-bottom: 0;
     background-color: @navbarBackgroundColor !important;
     .navbarBackgroundImage();
-
     .navbar-brand, .navbar-brand:focus, .navbar-brand:hover {
         .logo();
     }
 }
-
 .top {
     margin-top: 61px;
 }
-
 .panel.panel-primary>.panel-heading {
     background-color: #C5CAE9;
 }
 .panel.panel-info>.panel-heading {
     background-color: #607D8B;
 }
-
 .search {
     margin-top: 81px;
 }
-
 #results {
     font-family: @serifFont;
     font-size: 1.2em;
-
     td {
         border: 0;
     }
     .reference {
         border-top: 1px solid #ddd;
-
         .number, .headings {
             display: table-cell;
         }
@@ -412,13 +345,11 @@ a, a:hover, a:focus {
         text-align: right;
     }
 }
-
 #msg-progress {
     display: none;
     font-weight: bold;
     margin-left: 2em;
     animation: blinker 1.2s cubic-bezier(.5, 0, 1, 1) infinite alternate;
-
     @keyframes blinker {
       from { opacity: 1; }
       to { opacity: 0; }
@@ -432,6 +363,5 @@ a, a:hover, a:focus {
         padding: 8px;
     }
 }
-
 footer .poweredby { float: right; margin: 33px 10px 0 0;}
 footer .poweredby img { width: 120px; }

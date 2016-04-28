@@ -298,12 +298,19 @@ module.exports = function (grunt) {
          watches gruntfile itself and checks for problems
          */
         watch: {
-            files: ['gruntfile.js'],
-            tasks: ['jshint']
+          configFiles: {
+            files: [ 'gruntfile.js' ],
+            tasks: ['jshint'],
+            options: {
+              reload: true
+            }
+          },
+          styles: {
+            files: [ 'resources/css/*.less' ],
+            tasks: [ 'less:development' ],
+            options: {}
+          }
         }
-
-
-
     });
 
     /*

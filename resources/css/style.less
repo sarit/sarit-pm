@@ -4,15 +4,22 @@
 
 // Fonts
 @serifFont: "Siddhanta", Georgia, "Times New Roman", serif;
-@sarit-base-font-size: 16px;
-@sarit-larger-font-size: 18px;
+@sarit-base-font-size:    1.6rem;
+@sarit-larger-font-size:  1.8rem;
 
 // Colors
-@linkColor:                 #303F9F;
-@sarit-primary-color:       #68838B;
+@sarit-primary-color:       #3C4C50; // dark-green
+@sarit-secondary-color:     #68838B; // medium green
+@sarit-white-color:         #FFF;    // white
+@sarit-light-color:         #F7F7F7; // light-gray
+@sarit-dark-color:          #202527; // dark greenish gray
+
 @sarit-text-color:          #4c4b4d;
 @sarit-contrast-text-color: white;
-@sarit-secondary-color:     #F1F1F1;
+@sarit-highlight-color:     #f47660; // orange
+@sarit-default-link-color:  @sarit-dark-color;
+@sarit-default-hover-color: @sarit-secondary-color;
+
 @navbarBackgroundColor:     #3F51B5;
 @navButtonColor:            #607D8B;
 @marginNoteBackgroundColor: #B6B6B6;
@@ -38,11 +45,38 @@
 .navbar-right li a i {
   font-size: 20px;
 }
+.btn:not(.btn-raised).btn-primary {
+  color: @sarit-default-hover-color !important;
+  &:hover {
+    color: @sarit-default-link-color !important;
+  }
+  &:focus {
+    outline: 0 !important;
+  }
+}
+a:focus {
+  outline: 0 !important;
+}
+.text-info {
+  color: @sarit-highlight-color;
+}
+.panel-heading {
+  background-color: lighten(@sarit-secondary-color, 40%) !important;
+}
+
+.form-group.is-focused .form-control {
+  background-image: -webkit-gradient(linear,left top,left bottom,from(@sarit-highlight-color),to(@sarit-highlight-color)),-webkit-gradient(linear,left top,left bottom,from(#D2D2D2),to(#D2D2D2));
+  background-image: -webkit-linear-gradient(@sarit-highlight-color,@sarit-highlight-color),-webkit-linear-gradient(#D2D2D2,#D2D2D2);
+  background-image: -o-linear-gradient(@sarit-highlight-color,@sarit-highlight-color),-o-linear-gradient(#D2D2D2,#D2D2D2);
+  background-image: linear-gradient(@sarit-highlight-color,@sarit-highlight-color),linear-gradient(#D2D2D2,#D2D2D2);
+}
+
 /******** Sarit Theme *********/
 
 body {
   color: @sarit-text-color;
-  background-color: @sarit-secondary-color;
+  font-size: @sarit-base-font-size;
+  background-color: @sarit-light-color;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
@@ -56,8 +90,8 @@ h1, h2, h3, h4 {
   &:extend(.sarit-serif-font);
 }
 
-.sarit-primary {
-  background-color: @sarit-primary-color;
+.sarit-secondary {
+  background-color: @sarit-secondary-color;
 }
 
 .sarit-app-title {
@@ -66,10 +100,33 @@ h1, h2, h3, h4 {
   letter-spacing: 1px;
 }
 
+// Top Navigation
 .sarit-header {
   border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07);
 }
+
+.logo {
+  > img {
+    display: inline;
+    height: auto;
+    width: 22%;
+  }
+    span {
+        margin-left: 8%;
+        line-height: 33px;
+    }
+}
+
+.navbar-nav>li:hover {
+  background-color: lighten(@sarit-primary-color, 8%) !important;
+}
+
+.navbar-nav >.open > a {
+  background-color: @sarit-secondary-color !important;
+}
+
+// Banner with headline
 .sarit-page-headline-wrapper {
   background-color: @sarit-primary-color;
   color: @sarit-contrast-text-color;
@@ -85,25 +142,41 @@ h1, h2, h3, h4 {
   }
 }
 
+section[role="banner"] {
+  margin-bottom: 2.5rem;
+}
+
 .navbarBackgroundImage {
     background-size: auto 100%;
 }
 
-.logo {
-  > img {
-    display: inline;
-    height: auto;
-    width: 22%;
+a {
+  color: @sarit-default-link-color;
+  &:hover,
+  &:focus {
+    color: @sarit-default-hover-color;
   }
-    span {
-        margin-left: 8%;
-        line-height: 33px;
-    }
 }
 
-a, a:hover, a:focus {
-    color: @linkColor;
+.pagination>li>a,
+.pagination>li>span {
+  color: @sarit-default-hover-color;
+  &:hover,
+  &:focus {
+    color: @sarit-default-link-color;
+  }
 }
+
+.pagination>.active>a {
+  background-color: @sarit-primary-color;
+  color: @sarit-contrast-text-color;
+  &:hover,
+  &:focus {
+    background-color: @sarit-secondary-color;
+    color: @sarit-contrast-text-color;
+  }
+}
+
 #main-container {
     max-width: 1600px;
 }
@@ -457,7 +530,7 @@ footer .poweredby img { width: 120px; }
 
 .sarit-footer {
   padding: 18px 0;
-  &:extend(.sarit-primary);
+  &:extend(.sarit-secondary);
   color: white;
   font-size: @sarit-base-font-size;
   h6 {

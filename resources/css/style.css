@@ -53,6 +53,9 @@ h4,
 .sarit-page-headline-wrapper span {
   font-family: "Siddhanta", Georgia, "Times New Roman", serif;
 }
+.sarit-primary {
+  background-color: #3C4C50;
+}
 .sarit-secondary,
 .sarit-footer {
   background-color: #68838B;
@@ -83,7 +86,6 @@ h4,
   background-color: #68838B !important;
 }
 .sarit-page-headline-wrapper {
-  background-color: #3C4C50;
   color: white;
   text-transform: uppercase;
 }
@@ -360,6 +362,9 @@ a:focus {
 .btn-group .hidden-xs + span {
   margin-left: .5em;
 }
+.documents {
+  padding-left: 0;
+}
 .documents h5 {
   font-family: "Siddhanta", Georgia, "Times New Roman", serif;
   font-size: 16px;
@@ -378,7 +383,7 @@ a:focus {
 }
 .documents .header-short h1 {
   font-family: "Siddhanta", Georgia, "Times New Roman", serif;
-  font-size: 20px;
+  font-size: 1.8rem;
 }
 .browse {
   font-size: 1em !important;

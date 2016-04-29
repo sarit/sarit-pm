@@ -1,7 +1,7 @@
 /******** Default Variables *********/
 /******** Custom Bootstrap Variables and Overides *********/
 .navbar.navbar-inverse {
-  background-color: #68838B;
+  background-color: #3C4C50;
 }
 .navbar-nav a {
   line-height: 21px;
@@ -10,10 +10,35 @@
 .navbar-right li a i {
   font-size: 20px;
 }
+.btn:not(.btn-raised).btn-primary {
+  color: #68838B !important;
+}
+.btn:not(.btn-raised).btn-primary:hover {
+  color: #202527 !important;
+}
+.btn:not(.btn-raised).btn-primary:focus {
+  outline: 0 !important;
+}
+a:focus {
+  outline: 0 !important;
+}
+.text-info {
+  color: #f47660;
+}
+.panel-heading {
+  background-color: #dbe2e4 !important;
+}
+.form-group.is-focused .form-control {
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f47660), to(#f47660)), -webkit-gradient(linear, left top, left bottom, from(#D2D2D2), to(#D2D2D2));
+  background-image: -webkit-linear-gradient(#f47660, #f47660), -webkit-linear-gradient(#D2D2D2, #D2D2D2);
+  background-image: -o-linear-gradient(#f47660, #f47660), -o-linear-gradient(#D2D2D2, #D2D2D2);
+  background-image: linear-gradient(#f47660, #f47660), linear-gradient(#D2D2D2, #D2D2D2);
+}
 /******** Sarit Theme *********/
 body {
   color: #4c4b4d;
-  background-color: #F1F1F1;
+  font-size: 1.6rem;
+  background-color: #F7F7F7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
@@ -28,7 +53,7 @@ h4,
 .sarit-page-headline-wrapper span {
   font-family: "Siddhanta", Georgia, "Times New Roman", serif;
 }
-.sarit-primary,
+.sarit-secondary,
 .sarit-footer {
   background-color: #68838B;
 }
@@ -39,22 +64,6 @@ h4,
 .sarit-header {
   border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07);
-}
-.sarit-page-headline-wrapper {
-  background-color: #68838B;
-  color: white;
-  text-transform: uppercase;
-}
-.sarit-page-headline-wrapper h1 {
-  display: inline-block;
-  margin: 34px 22px 20px 0;
-  font-size: 40px;
-}
-.sarit-page-headline-wrapper span {
-  font-size: 18px;
-}
-.navbarBackgroundImage {
-  background-size: auto 100%;
 }
 .logo > img,
 .navbar-brand > img {
@@ -67,10 +76,56 @@ h4,
   margin-left: 8%;
   line-height: 33px;
 }
-a,
+.navbar-nav > li:hover {
+  background-color: #4d6267 !important;
+}
+.navbar-nav > .open > a {
+  background-color: #68838B !important;
+}
+.sarit-page-headline-wrapper {
+  background-color: #3C4C50;
+  color: white;
+  text-transform: uppercase;
+}
+.sarit-page-headline-wrapper h1 {
+  display: inline-block;
+  margin: 34px 22px 20px 0;
+  font-size: 40px;
+}
+.sarit-page-headline-wrapper span {
+  font-size: 1.8rem;
+}
+section[role="banner"] {
+  margin-bottom: 2.5rem;
+}
+.navbarBackgroundImage {
+  background-size: auto 100%;
+}
+a {
+  color: #202527;
+}
 a:hover,
 a:focus {
-  color: #303F9F;
+  color: #68838B;
+}
+.pagination > li > a,
+.pagination > li > span {
+  color: #68838B;
+}
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+  color: #202527;
+}
+.pagination > .active > a {
+  background-color: #3C4C50;
+  color: white;
+}
+.pagination > .active > a:hover,
+.pagination > .active > a:focus {
+  background-color: #68838B;
+  color: white;
 }
 #main-container {
   max-width: 1600px;

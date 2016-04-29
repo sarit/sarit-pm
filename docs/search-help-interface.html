@@ -1,25 +1,40 @@
 <div class="wiki wiki-page" data-template="templates:surround"
-    data-template-with="templates/page.html" data-template-at="content">
+     data-template-with="templates/page.html" data-template-at="content">
     <div data-template="templates:include" data-template-path="templates/menu.html"/>
-    <div class="container search">
-        <div class="row help">
-            <div class="col-md-12">
-                <h3>The SARIT Interface</h3>
-                <p>The interface of the SARIT application consists of four main pages:</p>
-                <ul>
-                    <li>a start page for listing the works contained in SARIT and performing
-                        searches in them</li>
-                    <li>a page for displaying the SARIT project's description of the editorial
-                        processes behind a SARIT text edition and for listing the text's table of
-                        contents, reached after clicking the title of the text in the list of
-                        works</li>
-                    <li>a page for displaying the list of hits resulting from a search</li>
-                    <li>a page for viewing part of a text selected by clicking on a reference in the
-                        table of contents or on a hit in the hitlist.</li>
-                </ul>
-                <p>Each of these pages will be described in the following.</p>
-                <div>
-                    <h4>List of Works and Search Interface</h4>
+
+    <section class="sarit-banner" role="banner">
+        <div class="container">
+            <div class="row">
+                <div class="sarit-page-headline-wrapper col-md-12">
+                    <h1>The SARIT Interface</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row ">
+            <section class="col-md-12">
+                <section>
+                    <p>The interface of the SARIT application consists of four main pages:</p>
+                    <ul>
+                        <li>a start page for listing the works contained in SARIT and performing
+                            searches in them
+                        </li>
+                        <li>a page for displaying the SARIT project's description of the editorial
+                            processes behind a SARIT text edition and for listing the text's table of
+                            contents, reached after clicking the title of the text in the list of
+                            works
+                        </li>
+                        <li>a page for displaying the list of hits resulting from a search</li>
+                        <li>a page for viewing part of a text selected by clicking on a reference in the
+                            table of contents or on a hit in the hitlist.
+                        </li>
+                    </ul>
+                    <p>Each of these pages will be described in the following.</p>
+                </section>
+                <section>
+                    <h2>List of Works and Search Interface</h2>
                     <div>
                         <p>The start page of the SARIT web platform displays a list of the texts in
                             the SARIT corpus and the search interface. </p>
@@ -31,7 +46,8 @@
                         <p>There are also links for downloading the texts in various formats: epub,
                             pdf and xml (zipped).</p>
                         <p> The last link gives the possibility of opening the XML containing the
-                            text in an application called eXide. eXide is an application in the <a href="http:exist-db.org/">eXist-db database</a> that has been used
+                            text in an application called eXide. eXide is an application in the <a
+                                    href="http:exist-db.org/">eXist-db database</a> that has been used
                             to develop the SARIT application. eXide also allows you to perform
                             searches, using XPath and XQuery, the main programming languages used in
                             the SARIT application, but that is another (rather long) story ….</p>
@@ -42,20 +58,20 @@
                             dropdown menus are displayed when hovering over them.</p>
                     </div>
                     <div>
-                        <h5>Search For What?</h5>
+                        <h3>Search For What?</h3>
                         <p>The search term is of course where you will be actively searching for
                             occurrences of the words and phrases you are interested in. All the
                             other choices you make in the search interface restrict or modify the
                             search term(s) you input here. </p>
                     </div>
                     <div>
-                        <h5>Search With Which Scripts?</h5>
+                        <h3>Search With Which Scripts?</h3>
                         <p>Your search term is automatically converted to make your search proceed
                             in both IAST romanisation and in Devanagari. If you wish to limit this,
                             select which script to search with.</p>
                     </div>
                     <div>
-                        <h5>Use Which Index?</h5>
+                        <h3>Use Which Index?</h3>
                         <p>This is where it gets a little technical ….</p>
                         <p>All searches in SARIT go via a database index. A database index is
                             basically like the index of a book, only it contains references for each
@@ -81,7 +97,8 @@
                         <p>Word division is a matter of degree. Among the SARIT texts, only the
                             Arthaśāstra can be said to be divided into words in a way which makes
                             use of the Lucene Full-Text index immediately suitable. For information
-                            about the remaining texts, see <a href="search-help-word-division.html">Word Division</a>. With these texts, you should as a rule use the
+                            about the remaining texts, see <a href="search-help-word-division.html">Word Division</a>.
+                            With these texts, you should as a rule use the
                             NGram Index.</p>
                         <p>Note that this does not mean that the NGram Index cannot be used with
                             texts that are divided into words – the two indexes make possible
@@ -89,19 +106,21 @@
                             for strings of characters (the NGram Index). You will almost always get
                             more hits with the NGram Index, but the Lucene Full-Text Index gives you
                             more search options (and is slower).</p>
-                        <p>There are further explanations in the <a href="search-help-index.html">Indexes and Searching Help</a>.</p>
+                        <p>There are further explanations in the <a href="search-help-index.html">Indexes and Searching
+                            Help</a>.</p>
                     </div>
                     <div>
-                        <h5>Search Which Document Part?</h5>
+                        <h3>Search Which Document Part?</h3>
                         <p>Each SARIT text consists of </p>
                         <ul>
-                            <li>a header which provides information about the text edition and </li>
+                            <li>a header which provides information about the text edition and</li>
                             <li>the text proper</li>
-                        </ul>. <p>In this dropdown menu you can select to search in one or both of
-                            these document parts.</p>
+                        </ul>
+                        . <p>In this dropdown menu you can select to search in one or both of
+                        these document parts.</p>
                     </div>
                     <div>
-                        <h5>Search Narrowly Or Broadly?</h5>
+                        <h3>Search Narrowly Or Broadly?</h3>
                         <p>SARIT marks up texts according to the TEI Guidelines. According to the
                             TEI Guidelines, a text forms a hierarchy. A book thus may consist of a
                             number of chapters, which contain a number of sections, which contain a
@@ -120,7 +139,7 @@
                         </p>
                     </div>
                     <div>
-                        <h5>Search In Texts By Which Authors?</h5>
+                        <h3>Search In Texts By Which Authors?</h3>
                         <p>You can choose <em>which texts</em> to target in your search in two
                             different ways.</p>
                         <p>If you wish to make selections among the texts based on their author, you
@@ -133,10 +152,11 @@
                             search throughout all texts.</p>
                     </div>
                     <div>
-                        <h5>Perform New Search or Continue Last Search? </h5>
+                        <h3>Perform New Search or Continue Last Search? </h3>
                         <p>This gives you the option to refine your previous search, by restricting
                             or broadening the search result. </p>
-                        <p>The default value is to perform a new search. If you perform a new search, your search will not relate to your
+                        <p>The default value is to perform a new search. If you perform a new search, your search will
+                            not relate to your
                             previous search.</p>
                         <p>If you choose "AND Last Search", your search will restrict your last
                             search by requiring that the search criteria for both the last and the
@@ -150,9 +170,9 @@
                             search by excluding the results from the present search. You use this to
                             remove specific hits from the search results. </p>
                     </div>
-                </div>
-                <div>
-                    <h4>The TEI Header and Table of Contents</h4>
+                </section>
+                <section>
+                    <h2>The TEI Header and Table of Contents</h2>
                     <div>
                         <p>Clicking a title in the list of works will display the TEI header of the
                             text and its table of contents.</p>
@@ -173,9 +193,9 @@
                         <p>Clicking on one of the links in the table of contents will take you to
                             the page view for the part of the text in question.</p>
                     </div>
-                </div>
-                <div>
-                    <h4>The Hitlist</h4>
+                </section>
+                <section>
+                    <h2>The Hitlist</h2>
                     <div>
                         <p>After performing a search for e.g. "lakṣaṇa", you will be presented with
                             a hitlist.</p>
@@ -204,15 +224,16 @@
                             the total number of hits and a means of navigating from hit group to hit
                             group.</p>
                     </div>
-                </div>
-                <div>
-                    <h4>The Page View</h4>
+                </section>
+                <section>
+                    <h2>The Page View</h2>
                     <div>
                         <p>After clicking on one of the links that leads to a direct display of a
                             page, you are shown the page view.</p>
                         <img src="resources/img/page-view.png"/>
                         <p>If you have clicked on a search term link in the hitlist, the search term(s)
-                            will all be highlighted if you are searching through the Luucene Full-Text index, but only one will be highlighted if you search through the NGram Index.</p>
+                            will all be highlighted if you are searching through the Luucene Full-Text index, but only
+                            one will be highlighted if you search through the NGram Index.</p>
                         <p>It is not possible to view a whole text, due to the heavy load on the
                             browser this would entail in case of very long texts, but as a substitute for this you can
                             download the whole text in a number of formats from the list of
@@ -228,8 +249,8 @@
                         <p>Clicking the title of the text will take you to the page displaying the
                             text's header and table of contents.</p>
                     </div>
-                </div>
-            </div>
+                </section>
+            </section>
         </div>
     </div>
 </div>

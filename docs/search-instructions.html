@@ -1,12 +1,22 @@
 <div class="wiki wiki-page" data-template="templates:surround"
     data-template-with="templates/page.html" data-template-at="content">
     <div data-template="templates:include" data-template-path="templates/menu.html"/>
+
+    <section class="sarit-banner" role="banner">
+        <div class="container">
+            <div class="row">
+                <div class="sarit-page-headline-wrapper col-md-12">
+                    <h1>Simple expressions using the full-text index</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="container">
-        <div class="row search">
+        <div class="row">
             <div class="col-md-12">
-                <h1>Simple expressions using the full-text index</h1>
                 <section>
-                    <h3>General</h3>
+                    <h2>General</h2>
                     <p>When searching SARIT, "Regular Expressions" (also known as "regex" or
                         "regexp") can be used. A Regular Expression is a sequence of characters that
                         forms a search pattern, typically employing wildcards. The regex options
@@ -30,7 +40,7 @@
                         expression.</p>
                 </section>
                 <section>
-                    <h3>Allowed characters</h3>
+                    <h2>Allowed characters</h2>
                     <p>SARIT employs Unicode throughout and any Unicode character may be used in a
                         search pattern, in Roman as well as Devanagari script, but certain
                         characters are reserved, since they are used by the search mechanism for
@@ -46,20 +56,20 @@
                     <!--<p>Additionally, any characters (except double quotes) are interpreted literally when surrounded by double quotes:</p> <pre class="literallayout">"john.smith.com"</pre>. NB: only works if shifting to phrase search. Partial phrase searches (john"@smith.com") are not possible-->
                 </section>
                 <section>
-                    <h3>Match any character</h3>
+                    <h2>Match any character</h2>
                     <p>The period <code class="literal">"."</code> can be used to represent any
                         character. For string <code class="literal">"padma"</code>:</p>
                     <pre class="literallayout">pa... # match p.d.a # match</pre>
                 </section>
                 <section>
-                    <h3>One-or-more</h3>
+                    <h2>One-or-more</h2>
                     <p>The plus sign <code class="literal">"+"</code> can be used to repeat the
                         preceding shortest pattern once or more times. For string <code
                             class="literal">"aaabbb"</code>:</p>
                     <pre class="literallayout">a+b+ # match aa+bb+ # match a+.+ # match aa+bbb+ # no match</pre>
                 </section>
                 <section>
-                    <h3>Zero-or-more</h3>
+                    <h2>Zero-or-more</h2>
                     <p>The asterisk <code class="literal">"*"</code> can be used to match the
                         preceding shortest pattern zero-or-more times. For string <code
                             class="literal">"aaabbb</code>":</p>
@@ -70,14 +80,14 @@
                         "+".</p>
                 </section>
                 <section>
-                    <h3>Zero-or-one</h3>
+                    <h2>Zero-or-one</h2>
                     <p>The question mark <code class="literal">"?"</code> makes the preceding
                         shortest pattern optional. It matches zero or one times. For string <code
                             class="literal">"aaabbb"</code>:</p>
                     <pre class="literallayout">aaa?bbb? # match aaaa?bbbb? # match .....?.? # match aa?bb? # no match</pre>
                 </section>
                 <section>
-                    <h3>Min-to-max</h3>
+                    <h2>Min-to-max</h2>
                     <p>Curly brackets <code class="literal">"{}"</code> can be used to specify a
                         minimum and (optionally) a maximum number of times the preceding shortest
                         pattern can repeat. The allowed forms are:</p>
@@ -86,7 +96,7 @@
                     <pre class="literallayout">a{3}b{3} # match a{2,4}b{2,4} # match a{2,}b{2,} # match .{3}.{3} # match a{4}b{4} # no match a{4,6}b{4,6} # no match a{4,}b{4,} # no match</pre>
                 </section>
                 <section>
-                    <h3>Grouping</h3>
+                    <h2>Grouping</h2>
                     <p>Parentheses <code class="literal">"()"</code> can be used to form
                         sub-patterns. The quantity operators listed above operate on the shortest
                         previous pattern, which can be a group. For string <code class="literal"
@@ -94,7 +104,7 @@
                     <pre class="literallayout">(ab)+ # match ab(ab)+ # match (..)+ # match (...)+ # no match (ab)* # match abab(ab)? # match ab(ab)? # no match (ab){3} # match (ab){1,2} # no match</pre>
                 </section>
                 <section>
-                    <h3>Alternation</h3>
+                    <h2>Alternation</h2>
                     <p>The pipe symbol <code class="literal">"|"</code> acts as an OR operator. The
                         match will succeed if the pattern on either the left-hand side OR the
                         right-hand side matches. The alternation applies to the <span
@@ -105,7 +115,7 @@
                     <pre class="literallayout">aabb|bbaa # match aacc|bb # no match aa(cc|bb) # match a+|b+ # no match a+b+|b+a+ # match a+(b|c)+ # match</pre>
                 </section>
                 <section>
-                    <h3>Character classes</h3>
+                    <h2>Character classes</h2>
                     <p>Character classes are very important for Sanskrit, since they allow you to
                         mask variation with more control that that offered by wildcards. You can
                         thus use them to find words even though they are written differently, e.g.
@@ -123,7 +133,7 @@
                     <pre class="literallayout">ab[cd]+ # match [a-d]+ # match [^a-d]+ # no match</pre>
                 </section>
                 <section>
-                    <h3>Character sets</h3>
+                    <h2>Character sets</h2>
                     <p>Character classes are very important for Sanskrit, since they allow you to
                         mask variation with more control that that offered by wildcards. You can
                         thus use them to find words even though they are written differently, e.g.

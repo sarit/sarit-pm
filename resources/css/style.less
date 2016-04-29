@@ -142,6 +142,9 @@ h1, h2, h3, h4 {
   span {
     &:extend(.sarit-serif-font);
     font-size: @sarit-larger-font-size;
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
   }
 }
 

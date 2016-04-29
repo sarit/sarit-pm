@@ -97,6 +97,11 @@ h4,
 .sarit-page-headline-wrapper span {
   font-size: 1.8rem;
 }
+@media screen and (max-width: 768px) {
+  .sarit-page-headline-wrapper span {
+    display: none;
+  }
+}
 section[role="banner"] {
   margin-bottom: 2.5rem;
 }

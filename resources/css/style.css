@@ -11,10 +11,10 @@
   font-size: 20px;
 }
 .btn:not(.btn-raised).btn-primary {
-  color: #68838B !important;
+  color: #202527 !important;
 }
 .btn:not(.btn-raised).btn-primary:hover {
-  color: #202527 !important;
+  color: #68838B !important;
 }
 .btn:not(.btn-raised).btn-primary:focus {
   outline: 0 !important;
@@ -57,6 +57,7 @@ h4,
   background-color: #3C4C50;
 }
 .sarit-secondary,
+.sarit-banner,
 .sarit-footer {
   background-color: #68838B;
 }
@@ -109,21 +110,21 @@ section[role="banner"] {
   background-size: auto 100%;
 }
 a {
-  color: #202527;
+  color: #68838B;
 }
 a:hover,
 a:focus {
-  color: #68838B;
+  color: #202527;
 }
 .pagination > li > a,
 .pagination > li > span {
-  color: #68838B;
+  color: #202527;
 }
 .pagination > li > a:hover,
 .pagination > li > span:hover,
 .pagination > li > a:focus,
 .pagination > li > span:focus {
-  color: #202527;
+  color: #68838B;
 }
 .pagination > .active > a {
   background-color: #3C4C50;
@@ -258,6 +259,7 @@ a:focus {
 #content {
   padding-top: 50px;
   position: relative;
+  margin-bottom: 2.5rem;
 }
 #content-row {
   -webkit-animation-duration: 400ms;

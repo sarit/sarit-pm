@@ -2,14 +2,16 @@
 <div data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
     <div data-template="templates:include" data-template-path="templates/menu.html"/>
     <section class="sarit-primary container-fluid" role="banner">
+      <div class="sarit-primary container">
         <div class="row">
             <div class="sarit-page-headline-wrapper col-md-12">
                 <h1>SARIT</h1><span>Search and Retrieval of Indic Texts</span>
             </div>
         </div>
+      </div>
     </section>
 
-    <main class="container-fluid">
+    <main class="container">
         <div class="row">
             <section class="col-md-3 col-md-push-9">
                 <form action="search.html" class="form form-horizontal">
@@ -152,10 +154,10 @@
                                     data-template-key="all"/>
                             </div>
                             <div class="col-md-6">
-                                <h5 class="pull-right">Browsing <span class="result-count text-info">
+                                <p class="pull-right">Browsing <span class="result-count text-info">
                                                 <span id="hit-count" data-template="app:hit-count"
                                                       data-template-key="all"/> documents.</span>
-                                </h5>
+                                </p>
                             </div>
                         </div>
                         <div class="row">

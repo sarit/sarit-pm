@@ -17,8 +17,8 @@
 @sarit-text-color:          #4c4b4d;
 @sarit-contrast-text-color: white;
 @sarit-highlight-color:     #f47660; // orange
-@sarit-default-link-color:  @sarit-dark-color;
-@sarit-default-hover-color: @sarit-secondary-color;
+@sarit-default-link-color:  @sarit-secondary-color;
+@sarit-default-hover-color: @sarit-dark-color;
 
 @navbarBackgroundColor:     #3F51B5;
 @navButtonColor:            #607D8B;
@@ -146,6 +146,10 @@ h1, h2, h3, h4 {
       display: none;
     }
   }
+}
+
+.sarit-banner {
+  &:extend(.sarit-secondary);
 }
 
 section[role="banner"] {

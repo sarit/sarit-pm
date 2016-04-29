@@ -80,8 +80,6 @@ declare function pages:load-xml($view as xs:string?, $root as xs:string?, $doc a
                     return
                         util:node-by-id(doc($config:data-root || "/" || $docName), $analyzed//fn:group[@nr = 2]/string())
                 else if ($root) then
-                    let $log := console:log("nodeId=" || $root)
-                    return
                     util:node-by-id(doc($config:data-root || "/" || $doc), $root)
                 else
                     doc($config:data-root || "/" || $doc)/tei:TEI/tei:text
@@ -164,7 +162,7 @@ function pages:view($node as node(), $model as map(*), $view as xs:string?, $act
     let $view := if ($view) then $view else $config:default-view
     let $data :=
         if ($action = "search") then
-            let $query := session:get-attribute("apps.simple.query")
+            let $query := session:get-attribute("apps.sarit.ngram-query")
             let $div := 
                 if ($model?data instance of element(tei:pb)) then
                     let $nextPage := $model?data/following::tei:pb[1]

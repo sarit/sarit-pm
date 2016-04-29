@@ -9,6 +9,7 @@ import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/
 import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "pages.xql";
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
 import module namespace sarit="http://exist-db.org/xquery/sarit";
+import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
 
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
 
@@ -188,6 +189,55 @@ function app:hit-count($node as node()*, $model as map(*), $key as xs:string) {
             $value
         else
             count($value)
+};
+
+declare 
+    %templates:wrap
+function app:checkbox($node as node(), $model as map(*), $target-texts as xs:string*) {
+    let $id := $model("work")/@xml:id/string()
+    return (
+        attribute { "value" } {
+            $id
+        },
+        if ($id = $target-texts) then
+            attribute checked { "checked" }
+        else
+            ()
+    )
+};
+
+declare function app:statistics($node as node(), $model as map(*)) {
+        "SARIT currently contains "|| $metadata:metadata/metadata:number-of-xml-works ||" text files (TEI-XML) of " || $metadata:metadata/metadata:size-of-xml-works || " XML (" || $metadata:metadata/metadata:number-of-pdf-pages || " pages in PDF format)."
+};
+
+declare %public function app:work-author($work as element(tei:TEI)?) {
+    let $work-commentators := $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author[@role eq 'commentator']/text()
+    let $work-authors := $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author[@role eq 'base-author']/text()
+    let $work-authors := if ($work-authors) then $work-authors else $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author/text()
+    let $work-authors := if ($work-commentators) then $work-commentators else $work-authors
+    let $work-authors := if ($work-authors) then tei-to-html:serialize-list($work-authors) else ()
+    return 
+        $work-authors    
+};
+
+declare function app:work-author($node as node(), $model as map(*)) {
+    let $work := $model("work")/ancestor-or-self::tei:TEI
+    let $work-commentators := $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author[@role eq 'commentator']/text()
+    let $work-authors := $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author[@role eq 'base-author']/text()
+    let $work-authors := if ($work-authors) then $work-authors else $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author/text()
+    let $work-authors := if ($work-commentators) then $work-commentators else $work-authors
+    let $work-authors := if ($work-authors) then tei-to-html:serialize-list($work-authors) else ()
+    return 
+        $work-authors    
+};
+
+declare function app:work-lang($node as node(), $model as map(*)) {
+    let $work := $model("work")/ancestor-or-self::tei:TEI
+    let $script := $work//tei:text/@xml:lang
+    let $script := if ($script eq 'sa-Latn') then 'IAST' else 'Devanagari'
+    let $auto-conversion := $work//tei:revisionDesc/tei:change[@type eq 'conversion'][@subtype eq 'automatic'] 
+    return 
+        concat($script, if ($auto-conversion) then ' (automatically converted)' else '')  
 };
 
 (:~
@@ -849,8 +899,8 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     let $parent := $hit/ancestor-or-self::tei:div[1]
     let $parent := if ($parent) then $parent else $hit/ancestor-or-self::tei:teiHeader
     let $div := app:get-current($parent)
-    let $parent-id := util:document-name($parent) || "_" || util:node-id($parent)
-    let $div-id := util:document-name($div) || "_" || util:node-id($div)
+    let $parent-id := util:document-name($parent) || "?root=" || util:node-id($parent)
+    let $div-id := util:document-name($div) || "?root=" || util:node-id($div)
     (:if the nearest div does not have an xml:id, find the nearest element with an xml:id and use it:)
     (:is this necessary - can't we just use the nearest ancestor?:)
 (:    let $div-id := :)
@@ -864,14 +914,14 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     let $work-title := app:work-title($work)
     (:the work always has xml:id.:)
     let $work-id := $work/@xml:id/string()
-    let $work-id := if ($work-id) then $work-id else util:document-name($work) || "_1"
+    let $work-id := util:document-name($work)
 
     let $loc :=
         <tr class="reference">
             <td colspan="3">
                 <span class="number">{$start + $p - 1}</span>
                 <span class="headings">
-                    <a href="{$work-id}">{$work-title}</a>{if ($div-head) then ' / ' else ''}<a href="{$parent-id}.html?action=search">{$div-head}</a>
+                    <a href="{$work-id}">{$work-title}</a>{if ($div-head) then ' / ' else ''}<a href="{$parent-id}&amp;action=search">{$div-head}</a>
                 </span>
             </td>
         </tr>
@@ -885,10 +935,10 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
                 let $contextNode := util:node-by-id($div, $matchId)
                 let $page := $contextNode/preceding::tei:pb[1]
                 return
-                    util:document-name($work) || "_" || util:node-id($page)
+                    util:document-name($work) || "?root=" || util:node-id($page)
             else
                 $div-id
-        let $config := <config width="60" table="yes" link="{$docLink}.xml?action=search&amp;view={$view}#{$matchId}"/>
+        let $config := <config width="60" table="yes" link="{$docLink}&amp;action=search&amp;view={$view}#{$matchId}"/>
         let $kwic := kwic:get-summary($expanded, $match, $config)
         return $kwic
     )

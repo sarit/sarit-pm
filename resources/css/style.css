@@ -5,7 +5,7 @@
 }
 .navbar-nav a {
   line-height: 21px;
-  font-size: 18px;
+  font-size: 1.8rem;
 }
 .navbar-right li a i {
   font-size: 20px;
@@ -447,10 +447,10 @@ footer .poweredby img {
 .sarit-footer {
   padding: 18px 0;
   color: white;
-  font-size: 16px;
+  font-size: 1.6rem;
 }
 .sarit-footer h6 {
-  font-size: 18px;
+  font-size: 1.8rem;
 }
 .sarit-footer .poweredby {
   text-align: right;

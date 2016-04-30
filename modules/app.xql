@@ -883,9 +883,26 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
                     util:document-name($work) || "?root=" || util:node-id($page)
             else
                 $div-id
-        let $config := <config width="60" table="yes" link="{$docLink}&amp;action=search&amp;view={$view}&amp;index={$index}#{$matchId}"/>
+        let $link := $docLink || "&amp;action=search&amp;view=" || $view || "&amp;index=" || $index || "#" || $matchId
+        let $config := <config width="60" table="yes" link="{$link}"/>
         let $kwic := kwic:get-summary($expanded, $match, $config)
-        return $kwic
+        let $output :=
+            if ($index = "ngram" and contains($model?ngram-query, "*")) then
+                <tr>
+                    <td colspan="3">
+                        <p>
+                        {
+                            <span class="previous">{$kwic//td[@class = "previous"]/node()}</span>,
+                            <a href="{$link}"><i class="material-icons">play_arrow</i></a>,
+                            <span class="hi">{$kwic//td[@class = "hi"]//text()}</span>,
+                            <span class="following">{$kwic//td[@class = "following"]/node()}</span>
+                        }
+                        </p>
+                    </td>
+                </tr>
+            else
+                $kwic
+        return $output
     )
 };
 

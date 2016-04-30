@@ -207,7 +207,7 @@ function app:checkbox($node as node(), $model as map(*), $target-texts as xs:str
 };
 
 declare function app:statistics($node as node(), $model as map(*)) {
-        "SARIT currently contains "|| $metadata:metadata/metadata:number-of-xml-works ||" text files (TEI-XML) of " || $metadata:metadata/metadata:size-of-xml-works || " XML (" || $metadata:metadata/metadata:number-of-pdf-pages || " pages in PDF format)."
+        "SARIT1 currently contains "|| $metadata:metadata/metadata:number-of-xml-works ||" text files (TEI-XML) of " || $metadata:metadata/metadata:size-of-xml-works || " XML (" || $metadata:metadata/metadata:number-of-pdf-pages || " pages in PDF format)."
 };
 
 declare %public function app:work-author($work as element(tei:TEI)?) {
@@ -810,80 +810,23 @@ declare %private function app:expand-query($query as xs:string*, $query-scripts 
     else ()
 };
 
-(:~
-: Execute the query. The search results are not output immediately. Instead they
-: are passed to nested templates through the $model parameter.
-:
-: @author Wolfgang M. Meier
-: @author Jens Østergaard Petersen
-: @param $node
-: @param $model
-: @param $query The query string. This string is transformed into a <query> element containing one or two <bool> elements in a Lucene query and it is transformed into a sequence of one or two query strings in an ngram query. The first <bool> and the first string contain the query as input and the second the query as transliterated into Devanagari or IAST as determined by $query-scripts. One <bool> and one query string may be empty.
-: @param $index The index against which the query is to be performed, as the string "ngram" or "lucene".
-: @param $lucene-query-mode If a Lucene query is performed, which of the options "any", "all", "phrase", "near-ordered", "near-unordered", "fuzzy", or "regex" have been selected (note that wildcard is not implemented, due to its syntactic overlap with regex).
-: @param $tei-target A sequence of one or more targets within a TEI document, the tei:teiHeader or tei:text.
-: @param $work-authors A sequence of the string "all" or of the xml:ids of the documents associated with the selected authors.
-: @param $query-scripts A sequence of the string "all" or of the values "sa-Latn" or "sa-Deva", indicating whether or not the user wishes to transliterate the query string.
-: @param $target-texts A sequence of the string "all" or of the xml:ids of the documents selected.
-
-: @return The function returns a map containing the $hits, the $query, and the $query-scope. The search results are output through the nested templates, app:hit-count, app:paginate, and app:show-hits.
-:)
-declare
-    %templates:default("lucene-query-mode", "any")
-    %templates:default("tei-target", "tei-text")
-    %templates:default("query-scope", "narrow")
-    %templates:default("work-authors", "all")
-    %templates:default("query-scripts", "all")
-    %templates:default("target-texts", "all")
-function app:query1($node as node()*, $model as map(*), $query as xs:string?, $lucene-query-mode as xs:string, $tei-target as xs:string+, $query-scope as xs:string, $work-authors as xs:string+, $query-scripts as xs:string, $target-texts as xs:string+) as map(*) {
-        (:If there is no query string, fill up the map with existing values:)
-        if (empty($query))
-        then
-            map {
-                "hits" := session:get-attribute("apps.simple"),
-                "hitCount" := session:get-attribute("apps.simple.hitCount"),
-                "query" := session:get-attribute("apps.simple.query"),
-                "scope" := $query-scope (:NB: what about the other arguments?:)
-            }
-        else
-            (:Otherwise, perform the query.:)
-            (: Here the actual query commences. This is split into two parts, the first for a Lucene query and the second for an ngram query. :)
-            (:The query passed to a Luecene query in ft:query is an XML element <query> containing one or two <bool>. The <bool> contain the original query and the transliterated query, as indicated by the user in $query-scripts.:)
-            let $hits :=
-                    (:If the $query-scope is narrow, query the elements immediately below the lowest div in tei:text and the four major element below tei:teiHeader.:)
-                    for $hit in
-                        (:If both tei-text and tei-header is queried.:)
-                        if (count($tei-target) eq 2)
-                        then
-                            collection($config:data-root)//tei:div[ft:query(., $query)][not(tei:div)] |
-                            collection($config:data-root)//tei:head[ft:query(., $query)]
-                        else
-                            if ($tei-target = 'tei-text')
-                            then
-                                collection($config:data-root)//tei:div[ft:query(., $query)][not(tei:div)]
-                            else
-                                if ($tei-target = 'tei-head')
-                                then
-                                    collection($config:data-root)//tei:head[ft:query(., $query)]
-                                else ()
-                    order by ft:score($hit) descending
-                    return $hit
-            let $hitCount := count($hits)
-            let $hits := if ($hitCount > 1000) then subsequence($hits, 1, 1000) else $hits
-            (:Store the result in the session.:)
-            let $store := (
-                session:set-attribute("apps.simple", $hits),
-                session:set-attribute("apps.simple.hitCount", $hitCount),
-                session:set-attribute("apps.simple.query", $query),
-                session:set-attribute("apps.simple.scope", $query-scope)
-                )
-            return
-                (: The hits are not returned directly, but processed by the nested templates :)
-                map {
-                    "hits" := $hits,
-                    "hitCount" := $hitCount,
-                    "query" := $query
-                }
+declare function app:expand-hits($divs as element()*, $index as xs:string) {
+    let $queries :=
+        switch($index)
+            case "ngram" return
+                session:get-attribute("apps.sarit.ngram-query")
+            default return
+                session:get-attribute("apps.sarit.lucene-query")
+    for $div in $divs
+    for $query in distinct-values($queries)
+    let $result := 
+        switch ($index)
+            case "ngram" return
+                $div[ngram:wildcard-contains(., $query)]
+            default return
+                $div[ft:query(., $query)]
+    return
+        util:expand($result, "add-exist-id=all")
 };
 
 (:~
@@ -893,7 +836,9 @@ declare
     %templates:wrap
     %templates:default("start", 1)
     %templates:default("per-page", 10)
-function app:show-hits($node as node()*, $model as map(*), $start as xs:integer, $per-page as xs:integer, $view as xs:string?) {
+    %templates:default("index", "ngram")
+function app:show-hits($node as node()*, $model as map(*), $start as xs:integer, $per-page as xs:integer, $view as xs:string?,
+    $index as xs:string) {
     let $view := if ($view) then $view else $config:default-view
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
     let $parent := $hit/ancestor-or-self::tei:div[1]
@@ -938,7 +883,7 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
                     util:document-name($work) || "?root=" || util:node-id($page)
             else
                 $div-id
-        let $config := <config width="60" table="yes" link="{$docLink}&amp;action=search&amp;view={$view}#{$matchId}"/>
+        let $config := <config width="60" table="yes" link="{$docLink}&amp;action=search&amp;view={$view}&amp;index={$index}#{$matchId}"/>
         let $kwic := kwic:get-summary($expanded, $match, $config)
         return $kwic
     )

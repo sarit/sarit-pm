@@ -41,6 +41,7 @@ declare namespace expath="http://expath.org/ns/pkg";
 import module namespace templates="http://exist-db.org/xquery/templates";
 import module namespace config="http://www.tei-c.org/tei-simple/config" at "config.xqm";
 import module namespace pm-config="http://www.tei-c.org/tei-simple/pm-config" at "pm-config.xql";
+import module namespace app="http://www.tei-c.org/tei-simple/templates" at "app.xql";
 import module namespace odd="http://www.tei-c.org/tei-simple/odd2odd" at "../../tei-simple/content/odd2odd.xql";
 import module namespace pmu="http://www.tei-c.org/tei-simple/xquery/util" at "../../tei-simple/content/util.xql";
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
@@ -158,11 +159,11 @@ declare function pages:xml-link($node as node(), $model as map(*), $source as xs
 
 declare
     %templates:default("action", "browse")
-function pages:view($node as node(), $model as map(*), $view as xs:string?, $action as xs:string) {
+    %templates:default("index", "ngram")
+function pages:view($node as node(), $model as map(*), $view as xs:string?, $action as xs:string, $index as xs:string) {
     let $view := if ($view) then $view else $config:default-view
     let $data :=
         if ($action = "search") then
-            let $query := session:get-attribute("apps.sarit.ngram-query")
             let $div := 
                 if ($model?data instance of element(tei:pb)) then
                     let $nextPage := $model?data/following::tei:pb[1]
@@ -173,13 +174,7 @@ function pages:view($node as node(), $model as map(*), $view as xs:string?, $act
                             ($model?data/ancestor::tei:div, $model?data/ancestor::tei:body)[1]
                 else
                     $model?data
-            let $expanded :=
-                util:expand(
-                    (
-                        $div[./descendant-or-self::tei:div[ft:query(., $query)]],
-                        $div[.//tei:head[ft:query(., $query)]]
-                    ), "add-exist-id=all"
-                )
+            let $expanded := app:expand-hits($div, $index)
             return
                 if ($model?data instance of element(tei:pb)) then
                     $expanded//tei:pb[@exist:id = util:node-id($model?data)]

@@ -75,7 +75,18 @@ $(document).ready(function() {
         });
         $(".content .note").popover({
             html: true,
-            trigger: "hover"
+            trigger: "hover",
+            placement: "auto bottom",
+            viewport: "#content-container",
+            content: function() {
+                var fn = document.getElementById(this.hash.substring(1));
+                return $(fn).find(".fn-content").html();
+            }
+        });
+        $("#content-container .note, .content .fn-back").click(function(ev) {
+            ev.preventDefault();
+            var fn = document.getElementById(this.hash.substring(1));
+            fn.scrollIntoView();
         });
         $(".content .alternate").each(function() {
             $(this).popover({
@@ -292,7 +303,7 @@ $(document).ready(function() {
         });
     });
     
-    $(".eXide-open").click(eXide);
-    
     initContent();
+    
+    $(".eXide-open").click(eXide);
 });

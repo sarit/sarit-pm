@@ -376,13 +376,16 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
         (:If there is no query string, fill up the map with existing values:)
         if (empty($queries))
         then
-            map {
-                "hits" := session:get-attribute("apps.sarit.hits"),
-                "index" := session:get-attribute("apps.sarit.index"),
-                "ngram-query" := session:get-attribute("apps.sarit.ngram-query"),
-                "lucene-query" := session:get-attribute("apps.sarit.lucene-query"),
-                "scope" := $query-scope (:NB: what about the other arguments?:)
-            }
+            let $hits := session:get-attribute("apps.sarit.hits")
+            return
+                map {
+                    "hits" : $hits,
+                    "hitCount": count($hits),
+                    "index" : session:get-attribute("apps.sarit.index"),
+                    "ngram-query" : session:get-attribute("apps.sarit.ngram-query"),
+                    "lucene-query" : session:get-attribute("apps.sarit.lucene-query"),
+                    "scope" : $query-scope (:NB: what about the other arguments?:)
+                }
         else
             (:Otherwise, perform the query.:)
             (:First, which documents to query against has to be found out. Users can either make no selections in the list of documents, passing the value "all", or they can select individual document, passing a sequence of their xml:ids in $target-texts. Users can also select documents based on their authors. If no specific authors are selected, the value "all" is passed in $work-authors, but if selections have been made, a sequence of their xml:ids is passed. :)
@@ -749,9 +752,10 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
             return
                 (: The hits are not returned directly, but processed by the nested templates :)
                 map {
-                    "hits" := $hits,
-                    "ngram-query" := $ngram-query,
-                    "lucene-query" := $lucene-query
+                    "hits" : $hits,
+                    "hitCount": count($hits),
+                    "ngram-query" : $ngram-query,
+                    "lucene-query" : $lucene-query
                 }
 };
 
@@ -843,6 +847,7 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
     let $parent := $hit/ancestor-or-self::tei:div[1]
     let $parent := if ($parent) then $parent else $hit/ancestor-or-self::tei:teiHeader
+    let $parent := if ($parent) then $parent else root($hit)
     let $div := app:get-current($parent)
     let $parent-id := util:document-name($parent) || "?root=" || util:node-id($parent)
     let $div-id := util:document-name($div) || "?root=" || util:node-id($div)

@@ -3,12 +3,12 @@ $(document).ready(function() {
     var appRoot = $("html").data("app");
 
     function resize() {
-        $("#content-container").each(function() {
-            var wh = $(window).height();
-            var ot = $(this).offset().top;
-            $(this).height(wh - ot);
-            $("#image-container").height(wh - ot);
-        });
+        // $("#content-container").each(function() {
+        //     var wh = $(window).height();
+        //     var ot = $(this).offset().top;
+        //     $(this).height(wh - ot);
+        //     $("#image-container").height(wh - ot);
+        // });
     }
     
     function getFontSize() {

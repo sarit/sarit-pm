@@ -303,6 +303,16 @@ $(document).ready(function() {
         });
     });
     
+    $("#search-form").submit(function(ev) {
+        ev.preventDefault();
+        var params = $(this).serialize();
+        $("input[name='target-texts']").each(function() {
+            params += "&target-texts=" + encodeURIComponent($(this).val());
+        });
+        window.location = "search.html?" + params;
+        return false;
+    });
+    
     initContent();
     
     $(".eXide-open").click(eXide);

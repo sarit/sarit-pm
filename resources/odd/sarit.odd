@@ -55,6 +55,11 @@
     <text>
         <body>
             <schemaSpec start="TEI teiCorpus" source="teisimple.odd" ident="sarit">
+                <elementSpec mode="change" ident="p">
+                    <model behaviour="paragraph" useSourceRendition="true">
+                        <outputRendition>text-align: left;</outputRendition>
+                    </model>
+                </elementSpec>
                 <elementSpec mode="change" ident="cit">
                     <model behaviour="cit" cssClass="citation"/>
                 </elementSpec>

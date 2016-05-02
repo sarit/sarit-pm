@@ -6,6 +6,8 @@
 @serifFont: "Siddhanta", Georgia, "Times New Roman", serif;
 @sarit-base-font-size:    1.6rem;
 @sarit-larger-font-size:  1.8rem;
+@sarit-h4-font-size:      1.25em; //20px
+@sarit-h5-font-size:      16px;
 
 // Colors
 @sarit-primary-color:       #3C4C50; // dark-green
@@ -21,7 +23,7 @@
 @sarit-default-hover-color: @sarit-dark-color;
 
 @navbarBackgroundColor:     #3F51B5;
-@navButtonColor:            #607D8B;
+@navButtonColor:            @sarit-secondary-color;
 @marginNoteBackgroundColor: #B6B6B6;
 
 // Image Paths
@@ -46,9 +48,11 @@
   font-size: 20px;
 }
 .btn:not(.btn-raised).btn-primary {
-  color: @sarit-default-hover-color !important;
+  color: @sarit-contrast-text-color !important;
+  background-color: darken(@sarit-secondary-color, 10%) !important;
   &:hover {
-    color: @sarit-default-link-color !important;
+    color: @sarit-contrast-text-color !important;
+    background-color: @sarit-secondary-color !important;
   }
   &:focus {
     outline: 0 !important;
@@ -178,12 +182,32 @@ a {
 }
 
 .pagination>.active>a {
-  background-color: @sarit-primary-color;
+  background-color: darken(@sarit-secondary-color, 10%);
   color: @sarit-contrast-text-color;
   &:hover,
   &:focus {
     background-color: @sarit-secondary-color;
     color: @sarit-contrast-text-color;
+  }
+}
+
+// Buttons
+.sarit-btn {
+  color: @sarit-contrast-text-color !important;
+  background-color: darken(@sarit-secondary-color, 10%) !important;
+  &:hover {
+    color: @sarit-contrast-text-color !important;
+    background-color: @sarit-secondary-color !important;
+  }
+}
+
+.sarit-search-btn {
+  border-radius: 2px !important;
+  color: @sarit-contrast-text-color !important;
+  background-color: darken(@sarit-secondary-color, 10%) !important;
+  &:hover {
+    color: @sarit-contrast-text-color !important;
+    background-color: @sarit-secondary-color !important;
   }
 }
 
@@ -270,7 +294,7 @@ a {
       margin-top: 1em;
       padding-top: 1em;
       border-top: 1px solid #CCC;
-      
+
       ol {
           margin-left: 1em;
       }
@@ -374,7 +398,6 @@ a {
     }
 }
 .page-nav, .page-nav:link, .page-nav:active {
-    background-color: @navButtonColor !important;
     @media (min-width: 769px) {
         position: fixed;
         top:50%;
@@ -465,7 +488,7 @@ a {
         position: fixed !important;
         left: 30px;
         top: inherit;
-        background-color: #607D8B !important;
+        background-color: @sarit-secondary-color !important;
         color: white;
     }
 }
@@ -507,7 +530,7 @@ a {
     background-color: #C5CAE9;
 }
 .panel.panel-info>.panel-heading {
-    background-color: #607D8B;
+    background-color: @sarit-secondary-color;
 }
 .search {
     margin-top: 81px;

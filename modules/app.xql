@@ -106,10 +106,15 @@ declare
 function app:short-header($node as node(), $model as map(*)) {
     let $work := $model("work")/ancestor-or-self::tei:TEI
     let $id := util:document-name($work)
+    let $view :=
+        if (pages:has-pages($work)) then
+            "page"
+        else
+            $config:default-view
     return
         $pm-config:web-transform($work/tei:teiHeader, map {
             "header": "short",
-            "doc": $id
+            "doc": $id || "?view=" || $view
         })
 };
 
@@ -247,8 +252,13 @@ declare function app:work-title($node as node(), $model as map(*), $type as xs:s
     let $suffix := if ($type) then "." || $type else ()
     let $work := $model("work")/ancestor-or-self::tei:TEI
     let $id := util:document-name($work)
+    let $view :=
+        if (pages:has-pages($work)) then
+            "page"
+        else
+            $config:default-view
     return
-        <a href="{$node/@href}{$id}{$suffix}">{ app:work-title($work) }</a>
+        <a href="{$node/@href}{$id}{$suffix}?view={$view}">{ app:work-title($work) }</a>
 };
 
 declare %private function app:work-title($work as element(tei:TEI)?) {

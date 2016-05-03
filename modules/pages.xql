@@ -98,7 +98,16 @@ declare function pages:load-xml($view as xs:string?, $root as xs:string?, $doc a
                     return
                         $targetNode
                 else if ($root) then
-                    util:node-by-id(doc($config:data-root || "/" || $doc), $root)
+                    let $node := util:node-by-id(doc($config:data-root || "/" || $doc), $root)
+                    return
+                        if ($node instance of element(tei:pb)) then
+                            $node
+                        else if ($node/*[1][self::tei:pb]) then
+                            $node/tei:pb[1]
+                        else
+                            let $before := $node/preceding::tei:pb[1]
+                            return
+                                if ($before) then $before else $node//tei:pb[1]
                 else
                     let $div := (doc($config:data-root || "/" || $doc)//tei:pb)[1]
                     return
@@ -398,8 +407,9 @@ declare %private function pages:milestone-chunk($ms1 as element(), $ms2 as eleme
 
 declare
     %templates:wrap
-function pages:navigation-title($node as node(), $model as map(*)) {
-    <a href="{util:document-name($model?data)}">
+    %templates:default("view", "div")
+function pages:navigation-title($node as node(), $model as map(*), $view as xs:string) {
+    <a href="{util:document-name($model?data)}?view={$view}">
     {pages:title($model('data')/ancestor-or-self::tei:TEI)}
     </a>
 };
@@ -444,7 +454,13 @@ function pages:app-root($node as node(), $model as map(*)) {
 };
 
 declare function pages:switch-view($node as node(), $model as map(*), $root as xs:string?, $doc as xs:string, $view as xs:string?) {
-    let $view := if ($view) then $view else $config:default-view
+    let $view := 
+        if ($view) then 
+            $view 
+        else if (pages:has-pages($model?data) and $root) then
+            "page"
+        else
+            $config:default-view
     let $targetView := if ($view = "page") then "div" else "page"
     let $root := pages:switch-view-id($model?data, $view)
     return

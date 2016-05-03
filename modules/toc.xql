@@ -12,7 +12,8 @@ One could leave out or elide the siblings. :)
 (:template function in view-work.html:)
 declare 
     %templates:default("full", "false")
-function toc:outline($node as node(), $model as map(*), $full as xs:boolean) {
+    %templates:default("view", "div")
+function toc:outline($node as node(), $model as map(*), $full as xs:boolean, $view as xs:string) {
     let $position := $model("data")
     let $root := if ($full) then $position/ancestor-or-self::tei:TEI else $position
     let $long := $node/@data-template-details/string()
@@ -29,10 +30,10 @@ function toc:outline($node as node(), $model as map(*), $full as xs:boolean) {
                 typeswitch($root)
                     case element(tei:div) return
                         (:if it is not the whole work:)
-                        toc:generate-toc-from-div($root, $long, $position) 
+                        toc:generate-toc-from-div($root, $long, $position, $view) 
                     case element(tei:titlePage) return
                         (:if it is not the whole work:)
-                        toc:generate-toc-from-div($root, $long, $position)
+                        toc:generate-toc-from-div($root, $long, $position, $view)
                     default return
                         (:if it is the whole work:)
                         (
@@ -46,7 +47,7 @@ function toc:outline($node as node(), $model as map(*), $full as xs:boolean) {
                                     $work/tei:text/tei:front/tei:titlePage, 
                                     $work/tei:text/tei:front/tei:div 
                                     )
-                                return toc:toc-div($div, $long, $position, 'list-item')
+                                return toc:toc-div($div, $long, $position, 'list-item', $view)
                                 }
                                 </ul>
                             </div>
@@ -59,7 +60,7 @@ function toc:outline($node as node(), $model as map(*), $full as xs:boolean) {
                                 (
                                 $work/tei:text/tei:body/tei:div 
                                 )
-                            return toc:toc-div($div, $long, $position, 'list-item')
+                            return toc:toc-div($div, $long, $position, 'list-item', $view)
                             }
                         </ul>
                         </div>
@@ -73,7 +74,7 @@ function toc:outline($node as node(), $model as map(*), $full as xs:boolean) {
                                 (
                                 $work/tei:text/tei:back/tei:div 
                                 )
-                            return toc:toc-div($div, $long, $position, 'list-item')
+                            return toc:toc-div($div, $long, $position, 'list-item', $view)
                             }
                             </ul>
                             </div>
@@ -84,62 +85,63 @@ function toc:outline($node as node(), $model as map(*), $full as xs:boolean) {
 };
 
 (:based on Joe Wicentowski, http://digital.humanities.ox.ac.uk/dhoxss/2011/presentations/Wicentowski-XMLDatabases-materials.zip:)
-declare %private function toc:generate-toc-from-divs($node, $current as element()?, $long as xs:string?) {
+declare %private function toc:generate-toc-from-divs($node, $current as element()?, $long as xs:string?,
+    $view as xs:string) {
     if ($node/tei:div) 
     then
         <ul style="display: none">{
             for $div in $node/tei:div
-            return toc:toc-div($div, $long, $current, 'list-item')
+            return toc:toc-div($div, $long, $current, 'list-item', $view)
         }</ul>
     else ()
 };
 
-declare %private function toc:generate-toc-from-div($root, $long, $position) {
+declare %private function toc:generate-toc-from-div($root, $long, $position, $view) {
     (:if it has divs below itself:)
     <li>{
     if ($root/tei:div) then
         (
         if ($root/parent::tei:div) 
         (:show the parent:)
-        then toc:toc-div($root/parent::tei:div, $long, $position, 'no-list-item') 
+        then toc:toc-div($root/parent::tei:div, $long, $position, 'no-list-item', $view) 
         (:NB: this creates an empty <li> if there is no div parent:)
         (:show nothing:)
         else ()
         ,
         for $div in $root/preceding-sibling::tei:div
-        return toc:toc-div($div, $long, $position, 'list-item')
+        return toc:toc-div($div, $long, $position, 'list-item', $view)
         ,
-        toc:toc-div($root, $long, $position, 'list-item')
+        toc:toc-div($root, $long, $position, 'list-item', $view)
         ,
         <ul>
             {
             for $div in $root/tei:div
-            return toc:toc-div($div, $long, $position, 'list-item')
+            return toc:toc-div($div, $long, $position, 'list-item', $view)
             }
         </ul>
         ,
         for $div in $root/following-sibling::tei:div
-        return toc:toc-div($div, $long, $position, 'list-item')
+        return toc:toc-div($div, $long, $position, 'list-item', $view)
         )
     else
     (
         (:if it is a leaf:)
         (:show its parent:)
-        toc:toc-div($root/parent::tei:div, $long, $position, 'no-list-item')
+        toc:toc-div($root/parent::tei:div, $long, $position, 'no-list-item', $view)
         ,
         (:show its preceding siblings:)
         <ul>
             {
             for $div in $root/preceding-sibling::tei:div
-            return toc:toc-div($div, $long, $position, 'list-item')
+            return toc:toc-div($div, $long, $position, 'list-item', $view)
             ,
             (:show itself:)
             (:NB: should not have link:)
-            toc:toc-div($root, $long, $position, 'list-item')
+            toc:toc-div($root, $long, $position, 'list-item', $view)
             ,
             (:show its following siblings:)
             for $div in $root/following-sibling::tei:div
-            return toc:toc-div($div, $long, $position, 'list-item')
+            return toc:toc-div($div, $long, $position, 'list-item', $view)
             }
         </ul>
         )
@@ -147,9 +149,10 @@ declare %private function toc:generate-toc-from-div($root, $long, $position) {
 };
 
 (:based on Joe Wicentowski, http://digital.humanities.ox.ac.uk/dhoxss/2011/presentations/Wicentowski-XMLDatabases-materials.zip:)
-declare %private function toc:toc-div($div, $long as xs:string?, $current as element()?, $list-item as xs:string?) {
+declare %private function toc:toc-div($div, $long as xs:string?, $current as element()?, $list-item as xs:string?,
+    $view as xs:string) {
     let $div-id := 
-        util:document-name($div) || "?root=" || util:node-id($div)
+        util:document-name($div) || "?root=" || util:node-id($div) || "&amp;view=" || $view
     return
         if ($list-item eq 'list-item')
         then
@@ -163,7 +166,7 @@ declare %private function toc:toc-div($div, $long as xs:string?, $current as ele
                             ()
                     }
                     <a href="{$div-id}">{toc:derive-title($div)}</a> 
-                    {if ($long eq 'yes') then toc:generate-toc-from-divs($div, $current, $long) else ()}
+                    {if ($long eq 'yes') then toc:generate-toc-from-divs($div, $current, $long, $view) else ()}
                 </li>
             else ()
         else

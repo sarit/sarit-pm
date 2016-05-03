@@ -56,7 +56,9 @@ function app:show-if-logged-in($node as node(), $model as map(*)) {
  :)
 declare
     %templates:wrap
-function app:list-works($node as node(), $model as map(*), $filter as xs:string?, $browse as xs:string?) {
+    %templates:default("order", "title")
+function app:list-works($node as node(), $model as map(*), $filter as xs:string?, $browse as xs:string?,
+    $order as xs:string) {
     let $cached := session:get-attribute("simple.works")
     let $filtered :=
         if ($filter) then
@@ -71,9 +73,9 @@ function app:list-works($node as node(), $model as map(*), $filter as xs:string?
             return
                 doc($doc/@uri)/tei:TEI
         else if ($cached and $filter != "") then
-            $cached
+            app:order-documents($cached, $order)
         else
-            collection($config:data-root)/tei:TEI
+            app:order-documents(collection($config:data-root)/tei:TEI, $order)
     return (
         session:set-attribute("simple.works", $filtered),
         session:set-attribute("browse", $browse),
@@ -83,6 +85,23 @@ function app:list-works($node as node(), $model as map(*), $filter as xs:string?
         }
     )
 };
+
+declare function app:order-documents($docs as element()*, $order as xs:string) {
+    let $orderFunc :=
+        switch ($order)
+            case "author" return
+                app:work-author#1
+            case "lang" return
+                app:work-lang#1
+            default return
+                app:work-title#1
+    for $doc in $docs
+    order by $orderFunc($doc)
+    return
+        $doc
+};
+
+
 
 declare
     %templates:wrap
@@ -238,12 +257,18 @@ declare function app:work-author($node as node(), $model as map(*)) {
 
 declare function app:work-lang($node as node(), $model as map(*)) {
     let $work := $model("work")/ancestor-or-self::tei:TEI
+    return
+        app:work-lang($work)
+};
+
+declare function app:work-lang($work as element(tei:TEI)) {
     let $script := $work//tei:text/@xml:lang
     let $script := if ($script eq 'sa-Latn') then 'IAST' else 'Devanagari'
     let $auto-conversion := $work//tei:revisionDesc/tei:change[@type eq 'conversion'][@subtype eq 'automatic'] 
     return 
         concat($script, if ($auto-conversion) then ' (automatically converted)' else '')  
 };
+
 
 (:~
  :
@@ -262,10 +287,10 @@ declare function app:work-title($node as node(), $model as map(*), $type as xs:s
 };
 
 declare %private function app:work-title($work as element(tei:TEI)?) {
-    let $main-title := $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = 'main']/text()
-    let $main-title := if ($main-title) then $main-title else $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1]/text()
-    return
-        $main-title
+    (
+        $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = "main"]/text(),
+        $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1]/text()
+    )[1]
 };
 
 declare function app:download-link($node as node(), $model as map(*), $type as xs:string, $doc as xs:string?,

@@ -13,9 +13,11 @@ declare namespace xhtml='http://www.w3.org/1999/xhtml';
 
 declare namespace skos='http://www.w3.org/2004/02/skos/core#';
 
-import module namespace css="http://www.tei-c.org/tei-simple/xquery/css" at "xmldb:exist://embedded-eXist-server/db/apps/tei-simple/content/css.xql";
+import module namespace css="http://www.tei-c.org/tei-simple/xquery/css" at "xmldb:exist:///db/apps/tei-simple/content/css.xql";
 
-import module namespace html="http://www.tei-c.org/tei-simple/xquery/functions" at "xmldb:exist://embedded-eXist-server/db/apps/tei-simple/content/html-functions.xql";
+import module namespace html="http://www.tei-c.org/tei-simple/xquery/functions" at "xmldb:exist:///db/apps/tei-simple/content/html-functions.xql";
+
+import module namespace ext-html="http://sarit.indology.info/app/pmf-html" at "xmldb:exist:///db/apps/sarit-pm/modules/ext-html.xql";
 
 (:~
 
@@ -284,9 +286,9 @@ declare function model:apply($config as map(*), $input as node()*) {
                     html:inline($config, ., ("tei-name"), .)
                 case element(note) return
                     if (@place) then
-                        html:note($config, ., ("tei-note1"), ., @place, @n)
+                        ext-html:note($config, ., ("tei-note1"), ., @place, @n)
                     else
-                        html:note($config, ., ("tei-note2"), ., (), ())
+                        ext-html:note($config, ., ("tei-note2"), ., (), ())
                 case element(num) return
                     html:inline($config, ., ("tei-num"), .)
                 case element(opener) return

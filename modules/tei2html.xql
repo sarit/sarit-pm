@@ -679,7 +679,7 @@ declare function tei-to-html:notesStmt($node as element(tei:notesStmt), $options
         {for $note in $node/tei:note
         return
             <div class="note" title="tei:note">
-                <span class="note" title="tei:note">{tei-to-html:recurse($node/*, $options)}</span>
+                <span class="note" title="tei:note">{$node/* ! tei-to-html:recurse(., $options)}</span>
             </div>
         }
     </div>

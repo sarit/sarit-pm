@@ -103,11 +103,11 @@ declare function pages:load-xml($view as xs:string?, $root as xs:string?, $doc a
                         if ($node instance of element(tei:pb)) then
                             $node
                         else if ($node/*[1][self::tei:pb]) then
-                            $node/tei:pb[1]
+                            ($node/tei:pb)[1]
                         else
                             let $before := $node/preceding::tei:pb[1]
                             return
-                                if ($before) then $before else $node//tei:pb[1]
+                                if ($before) then $before[1] else ($node//tei:pb)[1]
                 else
                     let $div := (doc($config:data-root || "/" || $doc)//tei:pb)[1]
                     return

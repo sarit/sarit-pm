@@ -20,12 +20,19 @@ declare function pmf:note($config as map(*), $node as element(), $class as xs:st
                 { $config?apply-children($config, $node, $content) }
                 </span>
         default return
-            let $id := translate(util:node-id($node), "-", "_")
+            let $nodeId :=
+                if ($node/@exist:id) then
+                    $node/@exist:id
+                else
+                    util:node-id($node)
+            let $id := translate($nodeId, "-", "_")
             let $nr :=
                 if ($label) then
                     $label
                 else
-                    count($node/preceding::tei:note[@place != "margin"][ancestor::tei:text]) + 1
+                    let $origNode := util:node-by-id(root($config?parameters?root), $nodeId)
+                    return
+                        count($origNode/preceding::tei:note[not(@place = "margin")][ancestor::tei:text]) + 1
             let $content := $config?apply-children($config, $node, $content/node())
             return (
                 <span id="fnref:{$id}">

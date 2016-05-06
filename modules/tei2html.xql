@@ -562,9 +562,9 @@ declare function tei-to-html:persName($node as element(tei:persName), $options) 
     return
         if ($rend eq 'sc') 
         then 
-            <span class="name" title="tei:persName" style="font-variant: small-caps;">{tei-to-html:recurse($node, $options)}</span>
+            <span class="name" title="tei:persName" style="font-variant: small-caps;" >{tei-to-html:recurse($node, $options)}</span>
         else 
-            <span class="name"title="tei:persName" >{tei-to-html:recurse($node, $options)}</span>
+            <span class="name" title="tei:persName">{tei-to-html:recurse($node, $options)}</span>
 };
 
 declare function tei-to-html:milestone($node as element(tei:milestone), $options) as element()+ {
@@ -778,7 +778,7 @@ declare function tei-to-html:change($node as element(tei:change), $options) {
     let $who := $node/@who
     let $who := 
         if (starts-with($who, '#'))
-        then tei-to-html:resolve-xml-id($who, $options)
+        then tei-to-html:resolve-xml-id($who, $options)[1]
         else 
             if ($who)
             then $who 
@@ -786,7 +786,7 @@ declare function tei-to-html:change($node as element(tei:change), $options) {
     return 
         if (contains($node, ':') and $node/*) (:taken as indicator that the text has been marked fully up:)
         then <li class="change">{if ($when) then $when else ()} {tei-to-html:recurse($node, $options)}</li>
-        else <li class="change">{concat($when, if (contains($node, ':')) then '' else if ($when) then ': ' else '', $node/string(), if ($who) then ' By ' else '', $who)}</li>
+        else <li class="change">{concat($when, if (contains($node, ':')) then '' else if ($when) then ': ' else '', string($node), if ($who) then ' By ' else '', $who)}</li>
 };
 
 declare function tei-to-html:listChange($node as element(tei:listChange), $options) {
@@ -909,7 +909,7 @@ declare function tei-to-html:publicationStmt($node as element(tei:publicationStm
             else ()
         
         let $availability := $node/tei:availability
-        let $availability-status : = $availability/@status/string()
+        let $availability-status := $availability/@status/string()
         let $availability := 
             if ($availability-status) 
             then 

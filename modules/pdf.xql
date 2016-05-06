@@ -51,24 +51,24 @@ declare function local:fop($id as xs:string, $fo as element()) {
             <renderer mime="application/pdf">
                 <fonts>
                     <font kerning="yes"
-                        embed-url="Junicode.ttf"
+                        embed-url="siddhanta.ttf"
                         encoding-mode="single-byte">
-                        <font-triplet name="Junicode" style="normal" weight="normal"/>
+                        <font-triplet name="Siddhanta" style="normal" weight="normal"/>
                     </font>
                     <font kerning="yes"
-                        embed-url="Junicode-Bold.ttf"
+                        embed-url="siddhanta.ttf"
                         encoding-mode="single-byte">
-                        <font-triplet name="Junicode" style="normal" weight="700"/>
+                        <font-triplet name="Siddhanta" style="normal" weight="700"/>
                     </font>
                     <font kerning="yes"
-                        embed-url="Junicode-Italic.ttf"
+                        embed-url="siddhanta.ttf"
                         encoding-mode="single-byte">
-                        <font-triplet name="Junicode" style="italic" weight="normal"/>
+                        <font-triplet name="Siddhanta" style="italic" weight="normal"/>
                     </font>
                     <font kerning="yes"
-                        embed-url="Junicode-BoldItalic.ttf"
+                        embed-url="siddhanta.ttf"
                         encoding-mode="single-byte">
-                        <font-triplet name="Junicode" style="italic" weight="700"/>
+                        <font-triplet name="Siddhanta" style="italic" weight="700"/>
                     </font>
                 </fonts>
             </renderer>

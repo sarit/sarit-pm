@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="xar" name="sarit-pm">
+    <property file="build.properties"/>
     <xmlproperty file="expath-pkg.xml"/>
     <property name="project.version" value="${package(version)}"/>
     <property name="project.app" value="sarit-pm"/>
     <property name="build.dir" value="build"/>
     <target name="xar">
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/*, node_modules/**"/>
+        <echo message="Calling npm start..."/>
+        <exec executable="${npm}" outputproperty="npm.output">
+            <arg line="start"/>
+        </exec>
+        <echo message="${npm.output}"/>
+        <echo message="Creating xar package..."/>
+        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/* node_modules/** package.json gruntfile.js .*"/>
     </target>
 </project>

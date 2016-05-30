@@ -231,7 +231,7 @@ function app:checkbox($node as node(), $model as map(*), $target-texts as xs:str
 };
 
 declare function app:statistics($node as node(), $model as map(*)) {
-        "SARIT1 currently contains "|| $metadata:metadata/metadata:number-of-xml-works ||" text files (TEI-XML) of " || $metadata:metadata/metadata:size-of-xml-works || " XML (" || $metadata:metadata/metadata:number-of-pdf-pages || " pages in PDF format)."
+        "SARIT currently contains "|| $metadata:metadata/metadata:number-of-xml-works ||" text files (TEI-XML) of " || $metadata:metadata/metadata:size-of-xml-works || " XML (" || $metadata:metadata/metadata:number-of-pdf-pages || " pages in PDF format)."
 };
 
 declare %public function app:work-author($work as element(tei:TEI)?) {

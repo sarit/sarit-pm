@@ -286,7 +286,7 @@ declare function app:work-title($node as node(), $model as map(*), $type as xs:s
         <a href="{$node/@href}{$id}{$suffix}?view={$view}">{ app:work-title($work) }</a>
 };
 
-declare %private function app:work-title($work as element(tei:TEI)?) {
+declare %public function app:work-title($work as element(tei:TEI)?) {
     (
         $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = "main"]/text(),
         $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1]/text()

@@ -606,7 +606,7 @@ declare function tei-to-html:teiHeader($node as element(tei:teiHeader), $options
             {tei-to-html:dispatch($node/tei:fileDesc/tei:titleStmt, $options)}
             
             <div class="extHeader">
-                <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#extHeader">
+                <button type="button" class="sarit-label btn btn-default" data-toggle="collapse" data-target="#extHeader">
                     <span class="glyphicon glyphicon-th-list"/> Toggle Full Header
                 </button>
                 <div id="extHeader" class="collapse">

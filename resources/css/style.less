@@ -43,6 +43,7 @@
 .navbar-nav a {
   line-height: 21px;
   font-size: @sarit-larger-font-size;
+  &:extend(.sarit-sans-font);
 }
 .navbar-right {
   display: none;
@@ -77,6 +78,9 @@ a:focus {
   background-image: -o-linear-gradient(@sarit-highlight-color,@sarit-highlight-color),-o-linear-gradient(#D2D2D2,#D2D2D2);
   background-image: linear-gradient(@sarit-highlight-color,@sarit-highlight-color),linear-gradient(#D2D2D2,#D2D2D2);
 }
+button {
+  &:extend(.sarit-sans-font);
+}
 
 /******** Sarit Theme *********/
 
@@ -87,10 +91,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
+  font-family: @serifFont;
 }
 
 .sarit-serif-font {
   font-family: @serifFont;
+}
+.sarit-sans-font {
+  font-family: @sansFont;
 }
 
 h1, h2, h3, h4 {
@@ -159,6 +167,10 @@ h1, h2, h3, h4 {
   &:extend(.sarit-secondary);
 }
 
+.sarit-label {
+  &:extend(.sarit-sans-font);
+}
+
 section[role="banner"] {
   margin-bottom: 2.5rem;
 }
@@ -178,6 +190,7 @@ a {
 .pagination>li>a,
 .pagination>li>span {
   color: @sarit-default-hover-color;
+  &:extend(.sarit-sans-font);
   &:hover,
   &:focus {
     color: @sarit-default-link-color;

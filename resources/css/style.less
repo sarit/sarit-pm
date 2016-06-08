@@ -7,8 +7,12 @@
 @sansFont: "Roboto", Helvetica, Arial, sans-serif;
 @sarit-base-font-size:    1.6rem;
 @sarit-larger-font-size:  1.8rem;
-@sarit-h4-font-size:      1.25em; //20px
-@sarit-h5-font-size:      16px;
+@sarit-h1-font-size:      4.0rem;
+@sarit-h2-font-size:      3.5rem;
+@sarit-h3-font-size:      2.8rem;
+@sarit-h4-font-size:      2.6rem;
+@sarit-h5-font-size:      1.9rem;
+@sarit-h6-font-size:      1.8rem;
 
 // Colors
 @sarit-primary-color:       #3C4C50; // dark-green
@@ -105,9 +109,18 @@ body {
   font-family: @sansFont;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
   &:extend(.sarit-serif-font);
+  line-height: 1.2;
+  font-weight: 400;
 }
+
+h1 {font-size:@sarit-h1-font-size;}
+h2 {font-size:@sarit-h2-font-size;}
+h3 {font-size:@sarit-h3-font-size;}
+h4 {font-size:@sarit-h4-font-size;}
+h5 {font-size:@sarit-h5-font-size;}
+h6 {font-size:@sarit-h6-font-size;}
 
 .sarit-primary {
   background-color: @sarit-primary-color;
@@ -156,7 +169,7 @@ h1, h2, h3, h4 {
   h1 {
     display: inline-block;
     margin: 34px 22px 20px 0;
-    font-size: 40px;
+    font-size: 4rem;
   }
   span {
     &:extend(.sarit-serif-font);
@@ -244,14 +257,6 @@ a {
 }
 .content {
     padding-bottom: 30px;
-    h1 { font-size: 2.441em; }
-    h2 { font-size: 1.953em; }
-    h3 { font-size: 1.563em; }
-    h4 { font-size: 1.25em; }
-    h1, h2, h3, h4, h5, h6 {
-        font-family: @serifFont;
-        line-height: 1.2;
-    }
     >*>section {
         border-top: 1px solid #777;
         margin: 2.5em 0;
@@ -599,10 +604,6 @@ footer .poweredby img { width: 120px; }
   padding: 18px 0;
   &:extend(.sarit-secondary);
   color: white;
-  font-size: @sarit-base-font-size;
-  h6 {
-    font-size: @sarit-larger-font-size;
-  }
   .poweredby {
     text-align: right;
     img {

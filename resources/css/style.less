@@ -5,7 +5,7 @@
 // Fonts
 @serifFont: "Siddhanta", Georgia, "Times New Roman", serif;
 @sansFont: "Roboto", Helvetica, Arial, sans-serif;
-@sarit-base-font-size:    1.6rem;
+@sarit-base-font-size:    1.5rem;
 @sarit-larger-font-size:  1.8rem;
 @sarit-h1-font-size:      4.0rem;
 @sarit-h2-font-size:      3.5rem;
@@ -88,6 +88,9 @@ a:focus {
 }
 button {
   &:extend(.sarit-sans-font);
+}
+button,input,select,textarea,.form-control {
+  font-size: @sarit-base-font-size;
 }
 
 /******** Sarit Theme *********/

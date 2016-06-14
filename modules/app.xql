@@ -929,15 +929,13 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
         let $output :=
             if ($index = "ngram" and contains($model?ngram-query, "*")) then
                 <tr>
-                    <td colspan="3">
-                        <p>
+                    <td colspan="3" class="text">
                         {
-                            <span class="previous">{$kwic//td[@class = "previous"]/node()}</span>,
+                            <span class="previous">{normalize-space($kwic//td[@class = "previous"]/node())}</span>,
                             <a href="{$link}"><i class="material-icons">play_arrow</i></a>,
-                            <span class="hi">{$kwic//td[@class = "hi"]//text()}</span>,
-                            <span class="following">{$kwic//td[@class = "following"]/node()}</span>
+                            <span class="hi">{normalize-space($kwic//td[@class = "hi"]//text())}</span>,
+                            <span class="following">{normalize-space($kwic//td[@class = "following"]/node())}</span>
                         }
-                        </p>
                     </td>
                 </tr>
             else

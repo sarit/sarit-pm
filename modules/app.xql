@@ -287,10 +287,17 @@ declare function app:work-title($node as node(), $model as map(*), $type as xs:s
 };
 
 declare %public function app:work-title($work as element(tei:TEI)?) {
-    (
-        $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = "main"]/text(),
-        $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1]/text()
-    )[1]
+    let $mainTitle :=
+        (
+            $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = "main"]/text(),
+            $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1]/text()
+        )[1]
+    let $subTitles := $work/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = "sub"][@subtype = "commentary"]
+    return
+        if ($subTitles) then
+            string-join(( $mainTitle, ": ", string-join($subTitles, " and ") ))
+        else
+            $mainTitle
 };
 
 declare function app:download-link($node as node(), $model as map(*), $type as xs:string, $doc as xs:string?,

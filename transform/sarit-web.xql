@@ -249,10 +249,19 @@ declare function model:apply($config as map(*), $input as node()*) {
                     if (@rendition) then
                         html:inline($config, ., css:get-rendition(., ("tei-hi1")), .)
                     else
-                        if (not(@rendition)) then
+                        if (@rend='bold') then
                             html:inline($config, ., ("tei-hi2"), .)
                         else
-                            $config?apply($config, ./node())
+                            if (@rend='underline') then
+                                html:inline($config, ., ("tei-hi3"), .)
+                            else
+                                if (@rend='subscript') then
+                                    html:inline($config, ., ("tei-hi4"), .)
+                                else
+                                    if (not(@rendition)) then
+                                        html:inline($config, ., ("tei-hi5"), .)
+                                    else
+                                        $config?apply($config, ./node())
                 case element(imprimatur) return
                     html:block($config, ., ("tei-imprimatur"), .)
                 case element(item) return

@@ -108,6 +108,23 @@
                     </model>
                     <model behaviour="note"/>
                 </elementSpec>
+                <elementSpec mode="change" ident="hi">
+                    <model predicate="@rendition" behaviour="inline" useSourceRendition="true">
+                        <outputRendition>font-style: italic;</outputRendition>
+                    </model>
+                    <model predicate="@rend='bold'" behaviour="inline">
+                        <outputRendition>font-weight: bold;</outputRendition>
+                    </model>
+                    <model predicate="@rend='underline'" behaviour="inline">
+                        <outputRendition>font-decoration: underline;</outputRendition>
+                    </model>
+                    <model predicate="@rend='subscript'" behaviour="inline">
+                        <outputRendition>vertical-align: sub;</outputRendition>
+                    </model>
+                    <model predicate="not(@rendition)" behaviour="inline">
+                        <outputRendition>font-style: italic;</outputRendition>
+                    </model>
+                </elementSpec>
                 <moduleRef key="tei"/>
                 <moduleRef key="header"/>
                 <moduleRef key="tagdocs"/>

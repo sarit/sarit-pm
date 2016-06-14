@@ -71,10 +71,13 @@
 .tei-head3 { font-style: italic; }
 .tei-head4 { font-weight: bold; }
 .tei-hi1 { font-style: italic; }
-.tei-hi2 { font-style: italic; }
+.tei-hi2 { font-weight: bold; }
+.tei-hi3 { font-decoration: underline; }
+.tei-hi4 { vertical-align: sub; }
+.tei-hi5 { font-style: italic; }
 .tei-l1 { text-indent: 1em; }
 .tei-l2 { margin-left: 1em; }
-.tei-p { text-align: justify; }
+.tei-p { text-align: left; }
 .tei-pb { display: block; margin-left: 4pt; color: grey; float: right; }
 .tei-pb:before { content: '[Page '; }
 .tei-pb:after { content: ']'; }

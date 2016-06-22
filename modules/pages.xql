@@ -64,10 +64,15 @@ declare
 function pages:load($node as node(), $model as map(*), $doc as xs:string, $root as xs:string?, $view as xs:string?) {
     let $doc := xmldb:encode-uri($doc)
     let $view := if ($view) then $view else $config:default-view
+    let $data := pages:load-xml($view, $root, $doc)
     return
-        map {
-            "data": pages:load-xml($view, $root, $doc)
-        }
+        if (empty($data)) then (
+            response:set-status-code(404),
+            <p>Document not found. Id: {$doc}, root: {$root}.</p>
+        ) else
+            map {
+                "data": $data
+            }
 };
 
 declare function pages:load-xml($view as xs:string?, $root as xs:string?, $doc as xs:string) {
@@ -99,17 +104,31 @@ declare function pages:load-xml($view as xs:string?, $root as xs:string?, $doc a
                         $targetNode
                 else if ($root) then
                     let $node := util:node-by-id(doc($config:data-root || "/" || $doc), $root)
+                    let $edition := pages:edition($node)
                     return
                         if ($node instance of element(tei:pb)) then
                             $node
-                        else if ($node/*[1][self::tei:pb]) then
+                        else if ($edition and $node/*[1][self::tei:pb][@ed = $edition]) then
+                            ($node/tei:pb[@ed = $edition])[1]
+                        else if (empty($edition) and $node/*[1][self::tei:pb]) then
                             ($node/tei:pb)[1]
                         else
-                            let $before := $node/preceding::tei:pb[1]
+                            let $before :=
+                                if ($edition) then
+                                    $node/preceding::tei:pb[@ed = $edition][1]
+                                else
+                                    $node/preceding::tei:pb[1]
                             return
-                                if ($before) then $before[1] else ($node//tei:pb)[1]
+                                if ($before) then
+                                    $before[1]
+                                else if ($edition) then
+                                    ($node//tei:pb[@ed = $edition])[1]
+                                else
+                                    ($node//tei:pb)[1]
                 else
-                    let $div := (doc($config:data-root || "/" || $doc)//tei:pb)[1]
+                    let $doc := doc($config:data-root || "/" || $doc)
+                    let $edition := pages:edition($doc)
+                    let $div := if ($edition) then ($doc//tei:pb[@ed = $edition])[1] else ($doc//tei:pb)[1]
                     return
                         if ($div) then
                             $div
@@ -173,9 +192,14 @@ function pages:view($node as node(), $model as map(*), $view as xs:string?, $act
     let $view := if ($view) then $view else $config:default-view
     let $data :=
         if ($action = "search") then
-            let $div := 
+            let $div :=
                 if ($model?data instance of element(tei:pb)) then
-                    let $nextPage := $model?data/following::tei:pb[1]
+                    let $edition := pages:edition($model?data)
+                    let $nextPage :=
+                        if ($edition) then
+                            $model?data/following::tei:pb[@ed = $edition][1]
+                        else
+                            $model?data/following::tei:pb[1]
                     return
                         if ($nextPage) then
                             ($model?data/ancestor::* intersect $nextPage/ancestor::*)[last()]
@@ -261,7 +285,12 @@ declare %private function pages:toc-div($node, $view as xs:string?) {
             })
             let $root := (
                 if ($view = "page") then
-                    ($div/*[1][self::tei:pb], $div/preceding::tei:pb[1])[1]
+                    let $edition := pages:edition($div)
+                    return
+                        if ($edition) then
+                            ($div/*[1][self::tei:pb][@ed = $edition], $div/preceding::tei:pb[@ed = $edition][1])[1]
+                        else
+                            ($div/*[1][self::tei:pb], $div/preceding::tei:pb[1])[1]
                 else
                     (),
                 $div
@@ -299,12 +328,22 @@ function pages:navigation($node as node(), $model as map(*), $view as xs:string?
                     "work" : $work
                 }
             case "page" return
-                map {
-                    "previous": $div/preceding::tei:pb[1],
-                    "next": $div/following::tei:pb[1],
-                    "work": $work,
-                    "div": $div
-                }
+                let $edition := pages:edition($div)
+                return
+                    map {
+                        "previous":
+                            if ($edition) then
+                                $div/preceding::tei:pb[@ed = $edition][1]
+                            else
+                                $div/preceding::tei:pb[1],
+                        "next":
+                            if ($edition) then
+                                $div/following::tei:pb[@ed = $edition][1]
+                            else
+                                $div/following::tei:pb[1],
+                        "work": $work,
+                        "div": $div
+                    }
             default return
                 let $parent := $div/ancestor::tei:div[not(*[1] instance of element(tei:div))][1]
                 let $prevDiv := $div/preceding::tei:div[1]
@@ -349,7 +388,13 @@ declare function pages:get-content($div as element()) {
         case element(tei:teiHeader) return
             $div
         case element(tei:pb) return (
-            let $nextPage := $div/following::tei:pb[1]
+            let $edition := pages:edition($div)
+            let $nextPage :=
+                if ($edition) then
+                    $div/following::tei:pb[@ed = $edition][1]
+                else
+                    $div/following::tei:pb[1]
+            let $log := console:log(("next page", $nextPage))
             let $chunk :=
                 pages:milestone-chunk($div, $nextPage,
                     if ($nextPage) then
@@ -432,7 +477,7 @@ declare function pages:navigation-link($node as node(), $model as map(*), $direc
                 data-odd="{$config:odd}">
             {
                 $node/@* except $node/@href,
-                let $id := util:document-name($model($direction)) || "?root=" || util:node-id($model($direction)) 
+                let $id := util:document-name($model($direction)) || "?root=" || util:node-id($model($direction))
                     || "&amp;odd=" || $config:odd || "&amp;view=" || $view
                 return
                     attribute href { $id },
@@ -454,9 +499,9 @@ function pages:app-root($node as node(), $model as map(*)) {
 };
 
 declare function pages:switch-view($node as node(), $model as map(*), $root as xs:string?, $doc as xs:string, $view as xs:string?) {
-    let $view := 
-        if ($view) then 
-            $view 
+    let $view :=
+        if ($view) then
+            $view
         else if (pages:has-pages($model?data) and $root) then
             "page"
         else
@@ -484,13 +529,24 @@ declare function pages:switch-view($node as node(), $model as map(*), $root as x
 };
 
 declare function pages:has-pages($data as element()+) {
-    exists((root($data)//tei:div)[1]//tei:pb)
+    exists(root($data)//tei:body//tei:pb)
+};
+
+declare function pages:edition($node as node()) {
+    let $edition := (root($node)//tei:pb)[1]/@ed/string()
+    return
+        $edition
 };
 
 declare function pages:switch-view-id($data as element()+, $view as xs:string) {
     let $root :=
         if ($view = "div") then
-            ($data/*[1][self::tei:pb], $data/preceding::tei:pb[1])[1]
+            let $edition := pages:edition($data)
+            return
+                if ($edition) then
+                    ($data/*[1][self::tei:pb][@ed = $edition], $data/preceding::tei:pb[@ed = $edition][1])[1]
+                else
+                    ($data/*[1][self::tei:pb], $data/preceding::tei:pb[1])[1]
         else
             $data/ancestor::tei:div[1]
     return

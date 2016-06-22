@@ -74,7 +74,11 @@
 .tei-hi2 { font-weight: bold; }
 .tei-hi3 { font-decoration: underline; }
 .tei-hi4 { vertical-align: sub; }
-.tei-hi5 { font-style: italic; }
+.tei-hi5:before { content: '['; }
+.tei-hi5:after { content: ']'; }
+.tei-hi6:before { content: '('; }
+.tei-hi6:after { content: ')'; }
+.tei-hi7 { font-style: italic; }
 .tei-l1 { text-indent: 1em; }
 .tei-l2 { margin-left: 1em; }
 .tei-p { text-align: left; }

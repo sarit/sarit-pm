@@ -349,6 +349,14 @@
                 <model predicate="@rend='subscript'" behaviour="inline">
                     <outputRendition>vertical-align: sub;</outputRendition>
                 </model>
+                <model predicate="@rend='squarebrackets'" behaviour="inline">
+                    <outputRendition scope="before">content: '[';</outputRendition>
+                    <outputRendition scope="after">content: ']';</outputRendition>
+                </model>
+                <model predicate="@rend='brackets'" behaviour="inline">
+                    <outputRendition scope="before">content: '(';</outputRendition>
+                    <outputRendition scope="after">content: ')';</outputRendition>
+                </model>
                 <model predicate="not(@rendition)" behaviour="inline">
                     <outputRendition>font-style: italic;</outputRendition>
                 </model>

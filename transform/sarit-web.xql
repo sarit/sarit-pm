@@ -11,8 +11,6 @@ declare default element namespace "http://www.tei-c.org/ns/1.0";
 
 declare namespace xhtml='http://www.w3.org/1999/xhtml';
 
-declare namespace skos='http://www.w3.org/2004/02/skos/core#';
-
 import module namespace css="http://www.tei-c.org/tei-simple/xquery/css" at "xmldb:exist:///db/apps/tei-simple/content/css.xql";
 
 import module namespace html="http://www.tei-c.org/tei-simple/xquery/functions" at "xmldb:exist:///db/apps/tei-simple/content/html-functions.xql";
@@ -258,10 +256,16 @@ declare function model:apply($config as map(*), $input as node()*) {
                                 if (@rend='subscript') then
                                     html:inline($config, ., ("tei-hi4"), .)
                                 else
-                                    if (not(@rendition)) then
+                                    if (@rend='squarebrackets') then
                                         html:inline($config, ., ("tei-hi5"), .)
                                     else
-                                        $config?apply($config, ./node())
+                                        if (@rend='brackets') then
+                                            html:inline($config, ., ("tei-hi6"), .)
+                                        else
+                                            if (not(@rendition)) then
+                                                html:inline($config, ., ("tei-hi7"), .)
+                                            else
+                                                $config?apply($config, ./node())
                 case element(imprimatur) return
                     html:block($config, ., ("tei-imprimatur"), .)
                 case element(item) return

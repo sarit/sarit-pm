@@ -13,9 +13,9 @@ declare namespace xhtml='http://www.w3.org/1999/xhtml';
 
 declare namespace skos='http://www.w3.org/2004/02/skos/core#';
 
-import module namespace css="http://www.tei-c.org/tei-simple/xquery/css" at "xmldb:exist:///db/apps/tei-simple/content/css.xql";
+import module namespace css="http://www.tei-c.org/tei-simple/xquery/css" at "xmldb:exist://embedded-eXist-server/db/apps/tei-simple/content/css.xql";
 
-import module namespace latex="http://www.tei-c.org/tei-simple/xquery/functions/latex" at "xmldb:exist:///db/apps/tei-simple/content/latex-functions.xql";
+import module namespace latex="http://www.tei-c.org/tei-simple/xquery/functions/latex" at "xmldb:exist://embedded-eXist-server/db/apps/tei-simple/content/latex-functions.xql";
 
 import module namespace ext-latex="http://sarit.indology.info/teipm/latex" at "xmldb:exist:///db/apps/sarit-pm/modules/ext-latex.xql";
 
@@ -56,7 +56,7 @@ declare function model:apply($config as map(*), $input as node()*) {
                 case element(actor) return
                     latex:inline($config, ., ("tei-actor"), .)
                 case element(add) return
-                    latex:inline($config, ., ("tei-add"), .)
+                    ext-latex:note($config, ., ("tei-add"), ., 'margin', ())
                 case element(address) return
                     latex:block($config, ., ("tei-address"), .)
                 case element(addrLine) return
@@ -101,7 +101,7 @@ declare function model:apply($config as map(*), $input as node()*) {
                     else
                         $config?apply($config, ./node())
                 case element(cb) return
-                    latex:break($config, ., ("tei-cb"), ., 'column', @n)
+                    ext-latex:break($config, ., ("tei-cb"), ., 'column', @n)
                 case element(cell) return
                     (: Insert table cell. :)
                     latex:cell($config, ., ("tei-cell"), ., ())
@@ -267,10 +267,16 @@ declare function model:apply($config as map(*), $input as node()*) {
                                 if (@rend='subscript') then
                                     latex:inline($config, ., ("tei-hi4"), .)
                                 else
-                                    if (not(@rendition)) then
+                                    if (@rend='squarebrackets') then
                                         latex:inline($config, ., ("tei-hi5"), .)
                                     else
-                                        $config?apply($config, ./node())
+                                        if (@rend='brackets') then
+                                            latex:inline($config, ., ("tei-hi6"), .)
+                                        else
+                                            if (not(@rendition)) then
+                                                latex:inline($config, ., ("tei-hi7"), .)
+                                            else
+                                                $config?apply($config, ./node())
                 case element(imprimatur) return
                     latex:block($config, ., ("tei-imprimatur"), .)
                 case element(item) return
@@ -279,9 +285,12 @@ declare function model:apply($config as map(*), $input as node()*) {
                     (: More than one model without predicate found for ident l. Choosing first one. :)
                     latex:block($config, ., css:get-rendition(., ("tei-l1")), .)
                 case element(label) return
-                    latex:inline($config, ., ("tei-label"), .)
+                    if (@type='head') then
+                        latex:heading($config, ., ("tei-label1"), .)
+                    else
+                        latex:inline($config, ., ("tei-label2"), .)
                 case element(lb) return
-                    latex:break($config, ., css:get-rendition(., ("tei-lb")), ., 'line', @n)
+                    ext-latex:break($config, ., css:get-rendition(., ("tei-lb")), ., 'line', @n)
                 case element(lg) return
                     latex:block($config, ., ("tei-lg"), .)
                 case element(list) return
@@ -305,9 +314,9 @@ declare function model:apply($config as map(*), $input as node()*) {
                     latex:inline($config, ., ("tei-name"), .)
                 case element(note) return
                     if (@place) then
-                        latex:note($config, ., ("tei-note1"), ., @place, @n)
+                        ext-latex:note($config, ., ("tei-note1"), ., @place, @n)
                     else
-                        latex:note($config, ., ("tei-note2"), ., (), ())
+                        ext-latex:note($config, ., ("tei-note2"), ., (), ())
                 case element(num) return
                     latex:inline($config, ., ("tei-num"), .)
                 case element(opener) return
@@ -317,19 +326,22 @@ declare function model:apply($config as map(*), $input as node()*) {
                 case element(p) return
                     latex:paragraph($config, ., css:get-rendition(., ("tei-p")), .)
                 case element(pb) return
-                    latex:break($config, ., css:get-rendition(., ("tei-pb")), ., 'page', (concat(if(@n) then     concat(@n,' ') else '',if(@facs) then     concat('@',@facs) else '')))
+                    ext-latex:break($config, ., css:get-rendition(., ("tei-pb")), ., 'page', (concat(if(@n) then     concat(@n,' ') else '',if(@facs) then     concat('@',@facs) else '')))
                 case element(pc) return
                     latex:inline($config, ., ("tei-pc"), .)
                 case element(postscript) return
                     latex:block($config, ., ("tei-postscript"), .)
                 case element(q) return
-                    if (l) then
-                        latex:block($config, ., css:get-rendition(., ("tei-q1")), .)
+                    if (@type='lemma') then
+                        latex:inline($config, ., ("tei-q1"), .)
                     else
-                        if (ancestor::p or ancestor::cell) then
-                            latex:inline($config, ., css:get-rendition(., ("tei-q2")), .)
+                        if (l) then
+                            latex:block($config, ., css:get-rendition(., ("tei-q2")), .)
                         else
-                            latex:block($config, ., css:get-rendition(., ("tei-q3")), .)
+                            if (ancestor::p or ancestor::cell) then
+                                latex:inline($config, ., css:get-rendition(., ("tei-q3")), .)
+                            else
+                                latex:block($config, ., css:get-rendition(., ("tei-q4")), .)
                 case element(quote) return
                     if (ancestor::p) then
                         latex:inline($config, ., ("tei-quote1"), .)

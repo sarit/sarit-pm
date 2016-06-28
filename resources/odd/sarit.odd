@@ -54,10 +54,14 @@
     </teiHeader>
     <text>
         <body>
-            <schemaSpec start="TEI teiCorpus" source="teisimple.odd" ident="sarit">
-                <elementSpec mode="change" ident="p">
+            <schemaSpec start="TEI teiCorpus" source="teisimple.odd" ident="sarit"><!--elementSpec mode="change" ident="p">
                     <model behaviour="paragraph" useSourceRendition="true">
                         <outputRendition>text-align: left;</outputRendition>
+                    </model>
+                </elementSpec-->
+                <elementSpec mode="change" ident="add">
+                    <model behaviour="note">
+                        <param name="place">'margin'</param>
                     </model>
                 </elementSpec>
                 <elementSpec mode="change" ident="cit">
@@ -69,7 +73,24 @@
                     </model>
                     <model behaviour="block" useSourceRendition="true">
                         <desc>If it is inside a paragraph then it is inline, otherwise it is block level</desc>
-                        <outputRendition>margin-left: 10px; margin-right: 10px;
+                        <outputRendition>margin-left: 10em; margin-right: 1em;
+                        </outputRendition>
+                    </model>
+                </elementSpec>
+                <elementSpec mode="change" ident="q">
+                    <model predicate="@type='lemma'" behaviour="inline">
+                        <outputRendition>font-weight: bold;</outputRendition>
+                    </model>
+                    <model predicate="l" behaviour="block" useSourceRendition="true">
+                        <outputRendition>margin-left: 1em; margin-right: 1em;
+                        </outputRendition>
+                    </model>
+                    <model predicate="ancestor::p or ancestor::cell" behaviour="inline" useSourceRendition="true">
+                        <outputRendition scope="before">content: '‘';</outputRendition>
+                        <outputRendition scope="after">content: '’';</outputRendition>
+                    </model>
+                    <model behaviour="block" useSourceRendition="true">
+                        <outputRendition>margin-left: 1em; margin-right: 1em;
                         </outputRendition>
                     </model>
                 </elementSpec>
@@ -92,6 +113,10 @@
                     </model>
                     <model predicate="parent::div" behaviour="heading"/>
                     <model behaviour="block"/>
+                </elementSpec>
+                <elementSpec mode="change" ident="label">
+                    <model predicate="@type='head'" behaviour="heading"/>
+                    <model behaviour="inline"/>
                 </elementSpec>
                 <elementSpec mode="change" ident="l">
                     <model output="print" behaviour="block" useSourceRendition="true">

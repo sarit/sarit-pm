@@ -10,8 +10,9 @@ import module namespace latex="http://www.tei-c.org/tei-simple/xquery/functions/
 declare function pmf:document($config as map(*), $node as element(), $class as xs:string+, $content) {
     let $odd := doc($config?odd)
     let $config := latex:load-styles($config, $odd)
+    let $fontSize := ($config?font-size, "11pt")[1]
     return (
-        "\documentclass[11pt]{book}&#10;",
+        "\documentclass[" || $fontSize || "]{" || latex:get-property($config, "class", "book") || "}&#10;",
         "\usepackage{etex}&#10;",
         "\usepackage{eledmac}&#10;",
         "\usepackage{polyglossia}&#10;",
@@ -68,7 +69,7 @@ declare function pmf:document($config as map(*), $node as element(), $class as x
         "%\setstretch{1.3}&#10;",
         "%\tolerance=1000",
         "%\hyphenpenalty=100&#10;",
-        "\mainmatter&#10;",
+        if (latex:get-property($config, "class", "book") = "book") then "\mainmatter&#10;" else (),
         "\fancyhead[EL,OR]{\fontsize{8}{11}\selectfont\thepage}&#10;",
         "\fancyhead[ER]{\fontsize{8}{11}\selectfont\leftmark}&#10;",
         "\fancyhead[OL]{\fontsize{8}{11}\selectfont\leftmark}&#10;",

@@ -5,6 +5,9 @@ declare variable $xml external;
 declare variable $parameters external;
 
 let $options := map {
+    "class": "article",
+    "section-numbers": false(),
+    "font-size": "11pt",
     "styles": ["../transform/sarit.css"],
     "collection": "/db/apps/sarit-pm/transform",
     "parameters": if (exists($parameters)) then $parameters else map {}

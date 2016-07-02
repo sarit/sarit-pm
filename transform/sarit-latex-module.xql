@@ -8,6 +8,9 @@ import module namespace m='http://www.tei-c.org/tei-simple/models/sarit.odd/late
 declare function pml:transform($xml as node()*, $parameters as map(*)?) {
 
    let $options := map {
+    "class": "article",
+    "section-numbers": false(),
+    "font-size": "11pt",
        "styles": ["../transform/sarit.css"],
        "collection": "/db/apps/sarit-pm/transform",
        "parameters": if (exists($parameters)) then $parameters else map {}

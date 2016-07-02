@@ -65,10 +65,14 @@ let $xml :=
         pages:load-xml($view, $root, $doc)
 return
     if ($xml) then
-        let $prev := 
+        let $edition := pages:edition($xml)
+        let $prev :=
             switch ($view)
                 case "page" return
-                    $xml/preceding::tei:pb[1]
+                    if ($edition) then
+                        $xml/preceding::tei:pb[@ed = $edition][1]
+                    else
+                        $xml/preceding::tei:pb[1]
                 default return
                     let $parent := $xml/ancestor::tei:div[not(*[1] instance of element(tei:div))][1]
                     let $prevDiv := $xml/preceding::tei:div[1]
@@ -77,7 +81,10 @@ return
         let $next :=
             switch ($view)
                 case "page" return
-                    $xml/following::tei:pb[1]
+                    if ($edition) then
+                        $xml/following::tei:pb[@ed = $edition][1]
+                    else
+                        $xml/following::tei:pb[1]
                 default return
                     pages:get-next($xml)
         let $html := pages:process-content(pages:get-content($xml), $xml)
@@ -98,7 +105,7 @@ return
                     let $root := pages:switch-view-id($xml, $view)
                     return
                         if ($root) then
-                            $doc || "?root=" || util:node-id($root) || 
+                            $doc || "?root=" || util:node-id($root) ||
                                 "&amp;view=" || (if ($view = "div") then "page" else "div")
                         else
                             (),

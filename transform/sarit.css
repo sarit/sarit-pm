@@ -43,7 +43,6 @@
 
 /* Model rendition styles */
 
-.tei-add { color: green; text-decoration: underline; }
 .tei-address { margin-top: 2em; margin-left: 2em; margin-right: 2em; margin-bottom: 2em; }
 .tei-addrLine { white-space: nowrap; }
 .tei-argument { margin-bottom: 0.5em; }
@@ -74,19 +73,24 @@
 .tei-hi2 { font-weight: bold; }
 .tei-hi3 { font-decoration: underline; }
 .tei-hi4 { vertical-align: sub; }
-.tei-hi5 { font-style: italic; }
+.tei-hi5:before { content: '['; }
+.tei-hi5:after { content: ']'; }
+.tei-hi6:before { content: '('; }
+.tei-hi6:after { content: ')'; }
+.tei-hi7 { font-style: italic; }
 .tei-l1 { text-indent: 1em; }
 .tei-l2 { margin-left: 1em; }
-.tei-p { text-align: left; }
+.tei-p { text-align: justify; }
 .tei-pb { display: block; margin-left: 4pt; color: grey; float: right; }
 .tei-pb:before { content: '[Page '; }
 .tei-pb:after { content: ']'; }
-.tei-q1 { margin-left: 10px; margin-right: 10px; }
-.tei-q2:before { content: '‘'; }
-.tei-q2:after { content: '’'; }
-.tei-q3 { margin-left: 10px; margin-right: 10px; }
+.tei-q1 { font-weight: bold; }
+.tei-q2 { margin-left: 1em; margin-right: 1em; }
+.tei-q3:before { content: '‘'; }
+.tei-q3:after { content: '’'; }
+.tei-q4 { margin-left: 1em; margin-right: 1em; }
 .tei-quote1 { color: #428bca; }
-.tei-quote2 { margin-left: 10px; margin-right: 10px; }
+.tei-quote2 { margin-left: 10em; margin-right: 1em; }
 .tei-row1 { font-weight: bold; }
 .tei-sic2:before { content: '{'; }
 .tei-sic2:after { content: '}'; }

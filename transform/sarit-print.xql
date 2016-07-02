@@ -13,11 +13,11 @@ declare namespace xhtml='http://www.w3.org/1999/xhtml';
 
 declare namespace skos='http://www.w3.org/2004/02/skos/core#';
 
-import module namespace css="http://www.tei-c.org/tei-simple/xquery/css" at "xmldb:exist:///db/apps/tei-simple/content/css.xql";
+import module namespace css="http://www.tei-c.org/tei-simple/xquery/css" at "xmldb:exist://embedded-eXist-server/db/apps/tei-simple/content/css.xql";
 
-import module namespace fo="http://www.tei-c.org/tei-simple/xquery/functions/fo" at "xmldb:exist:///db/apps/tei-simple/content/fo-functions.xql";
+import module namespace fo="http://www.tei-c.org/tei-simple/xquery/functions/fo" at "xmldb:exist://embedded-eXist-server/db/apps/tei-simple/content/fo-functions.xql";
 
-import module namespace ext-fo="http://www.tei-c.org/tei-simple/xquery/ext-fo" at "xmldb:exist:///db/apps/tei-simple/content/../modules/ext-fo.xql";
+import module namespace ext-fo="http://www.tei-c.org/tei-simple/xquery/ext-fo" at "xmldb:exist://embedded-eXist-server/db/apps/tei-simple/content/../modules/ext-fo.xql";
 
 (:~
 
@@ -56,7 +56,7 @@ declare function model:apply($config as map(*), $input as node()*) {
                 case element(actor) return
                     fo:inline($config, ., ("tei-actor"), .)
                 case element(add) return
-                    fo:inline($config, ., ("tei-add"), .)
+                    fo:note($config, ., ("tei-add"), ., 'margin', ())
                 case element(address) return
                     fo:block($config, ., ("tei-address"), .)
                 case element(addrLine) return
@@ -267,10 +267,16 @@ declare function model:apply($config as map(*), $input as node()*) {
                                 if (@rend='subscript') then
                                     fo:inline($config, ., ("tei-hi4"), .)
                                 else
-                                    if (not(@rendition)) then
+                                    if (@rend='squarebrackets') then
                                         fo:inline($config, ., ("tei-hi5"), .)
                                     else
-                                        $config?apply($config, ./node())
+                                        if (@rend='brackets') then
+                                            fo:inline($config, ., ("tei-hi6"), .)
+                                        else
+                                            if (not(@rendition)) then
+                                                fo:inline($config, ., ("tei-hi7"), .)
+                                            else
+                                                $config?apply($config, ./node())
                 case element(imprimatur) return
                     fo:block($config, ., ("tei-imprimatur"), .)
                 case element(item) return
@@ -279,7 +285,10 @@ declare function model:apply($config as map(*), $input as node()*) {
                     (: More than one model without predicate found for ident l. Choosing first one. :)
                     fo:block($config, ., css:get-rendition(., ("tei-l1")), .)
                 case element(label) return
-                    fo:inline($config, ., ("tei-label"), .)
+                    if (@type='head') then
+                        fo:heading($config, ., ("tei-label1"), .)
+                    else
+                        fo:inline($config, ., ("tei-label2"), .)
                 case element(lb) return
                     fo:break($config, ., css:get-rendition(., ("tei-lb")), ., 'line', @n)
                 case element(lg) return
@@ -323,13 +332,16 @@ declare function model:apply($config as map(*), $input as node()*) {
                 case element(postscript) return
                     fo:block($config, ., ("tei-postscript"), .)
                 case element(q) return
-                    if (l) then
-                        fo:block($config, ., css:get-rendition(., ("tei-q1")), .)
+                    if (@type='lemma') then
+                        fo:inline($config, ., ("tei-q1"), .)
                     else
-                        if (ancestor::p or ancestor::cell) then
-                            fo:inline($config, ., css:get-rendition(., ("tei-q2")), .)
+                        if (l) then
+                            fo:block($config, ., css:get-rendition(., ("tei-q2")), .)
                         else
-                            fo:block($config, ., css:get-rendition(., ("tei-q3")), .)
+                            if (ancestor::p or ancestor::cell) then
+                                fo:inline($config, ., css:get-rendition(., ("tei-q3")), .)
+                            else
+                                fo:block($config, ., css:get-rendition(., ("tei-q4")), .)
                 case element(quote) return
                     if (ancestor::p) then
                         fo:inline($config, ., ("tei-quote1"), .)

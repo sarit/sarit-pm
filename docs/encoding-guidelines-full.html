@@ -1,6 +1,21 @@
-<div class="help" data-template="templates:surround" data-template-with="template.html" data-template-at="content">
-  <div class="wiki wiki-page">
-    <h1>Encoding Guidelines, full version</h1>
+<div class="wiki wiki-page" data-template="templates:surround"
+     data-template-with="templates/page.html" data-template-at="content">
+    <div data-template="templates:include" data-template-path="templates/menu.html"/>
+
+    <section class="sarit-banner" role="banner">
+        <div class="container">
+            <div class="row">
+                <div class="sarit-page-headline-wrapper col-md-12">
+                    <h1>Encoding Guidelines, full version</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <section>
     <h3 id="introduction">Introduction</h3>
     <p>This is a <em>preliminary</em> set of guidelines for using TEI to encode textual variation for Indic texts. The TEI recommendations on textual criticism are <a href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/TC.html">here</a>. In addition, there is a <a href="http://marjorie.burghart.online.fr/?q=en/content/tei-critical-apparatus-cheatsheet">cheatsheet</a> for TEI critical apparatuses written by Marjorie Burghart. If you are new to TEI encoding, we recommend that you take a few minutes to read <a href="http://tei.oucs.ox.ac.uk/GettingStarted/html/in.html">Getting Started with TEI</a>, and then Marjorie Burghart's cheatsheet for a quick familiarization with encoding textual variation in particular. The motivation for this document is that the general TEI guidelines are not specific enough to guarantee consistent encoding within a project, and other sets of guidelines are too specialized.</p>
     <p>The immediate goal of this document is to inventory the basic types of text-critical markup that will be included in <a href="http://sarit.indology.info">SARIT</a> texts. SARIT is a project that collects TEI versions of Sanskrit and Prakrit texts, promotes standards for their encoding, and develops applications for their use. At present, most texts included in SARIT have very minimal text-critical markup, or none at all. But we would like to include text-critical markup in future phases of the project and add related functionality to the website.</p>
@@ -400,4 +415,9 @@
 	  <p><a href="http://marjorie.burghart.online.fr/?q=en/content/tei-critical-apparatus-cheatsheet">http://marjorie.burghart.online.fr/?q=en/content/tei-critical-apparatus-cheatsheet</a></p>
 	  <p><strong>SARIT Encoding Guidelines:</strong></p>
 	  <p><a href="http://sarit.indology.info/exist/apps/sarit/docs/encoding-guidelines.html">http://sarit.indology.info/exist/apps/sarit/docs/encoding-guidelines.html</a></p>
-	  </div> </div>
+ </section>
+            </div>
+        </div>
+    </main>
+</div>
+

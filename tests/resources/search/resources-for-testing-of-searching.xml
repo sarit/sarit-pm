@@ -1,0 +1,24 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<title>Resources for testing of searching</title>
+		</fileDesc>
+	</teiHeader>
+
+	<text>
+		<body>
+			<div>
+				<head>Resources for testing of searching for paramā</head>
+				<p>vajrapāṇir āha || kathaṁ bhagavan sarva.dharmāṇām ālayaṁ
+					paramārtha.satyam ||
+				</p>
+				<p>tavaivājñānato viśvaṃ tvamekaḥ paramārthataḥ|</p>
+				<p>'ñjana.śalākākāra.paramāṇu.sañcaya.rūpaṁ</p>
+				<p>paramārthasatya.melāvana.saṁśaya.paricchedaḥ saptamaḥ</p>
+				<p>paramādya.ma</p>
+				<p>paramā</p>
+				<p>iva paramānanda.mūrti.svarūpaṁ</p>
+			</div>
+		</body>
+	</text>
+</TEI>

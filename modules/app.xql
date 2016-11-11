@@ -12,7 +12,7 @@ import module namespace sarit="http://exist-db.org/xquery/sarit";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
 
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
-
+import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-transliteration";
 
 declare namespace expath="http://expath.org/ns/pkg";
 declare namespace tei="http://www.tei-c.org/ns/1.0";

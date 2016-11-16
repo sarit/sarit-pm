@@ -408,9 +408,11 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                               <default-operator>and</default-operator>
                               <phrase-slop>0</phrase-slop>
                               <leading-wildcard>yes</leading-wildcard>
+			      <lowercase-expanded>no</lowercase-expanded>
                               <filter-rewrite>yes</filter-rewrite>
                         </options>
-
+	(: TODO: fix slp1 transcoder so that we don't have to replace [ and ] here. :)
+	let $query := fn:replace(sarit-slp1:transcode($query), "\[|\]", "")
 	let $hits :=
 	for $hit in (
 		$context//tei:p[ft:query(., $query, $options)],

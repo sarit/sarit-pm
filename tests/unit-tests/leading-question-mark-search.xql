@@ -4,7 +4,7 @@ import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-tran
 
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
-let $search-string := translate(sarit-slp1:transcode("kāryak?raṇ"), "[?]", "?")
+let $search-string := translate(sarit-slp1:transcode("?atra"), "[?]", "?")
 let $expected-hits-number := 2
 
 let $search-xml := <query><wildcard>{$search-string}</wildcard></query>

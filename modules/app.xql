@@ -10,9 +10,9 @@ import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "pages.
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
 import module namespace sarit="http://exist-db.org/xquery/sarit";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
+import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-transliteration";
 
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
-
 
 declare namespace expath="http://expath.org/ns/pkg";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -368,6 +368,22 @@ declare function app:work-authors($node as node(), $model as map(*)) {
         templates:form-control($control, $model)
 };
 
+declare function app:preprocess-query-string($query-string as xs:string?) {
+    (:remove any ZERO WIDTH NON-JOINER from the query string:)
+    let $queries := lower-case(translate(normalize-space($query-string), "&#8204;", ""))
+    
+    let $queries :=
+        if (contains($queries, '[') and not(starts-with($queries, "/") and ends-with($queries, "/")))
+        then "/" || $queries || "/"
+        else $queries
+    let $queries :=
+        if (contains($query-string, "*"))
+        then <query><wildcard>{translate(sarit-slp1:transcode($query-string), "[*]", "*")}</wildcard></query>
+        else $query-string
+        
+    return $queries
+};
+
 (:~
 : Execute the query. The search results are not output immediately. Instead they
 : are passed to nested templates through the $model parameter.
@@ -387,7 +403,7 @@ declare function app:work-authors($node as node(), $model as map(*)) {
 :)
 (:template function in search.html:)
 declare
-    %templates:default("index", "ngram")
+    %templates:default("index", "lucene")
     %templates:default("tei-target", "tei-text")
     %templates:default("query-scope", "narrow")
     %templates:default("work-authors", "all")
@@ -395,32 +411,11 @@ declare
     %templates:default("target-texts", "all")
     %templates:default("bool", "new")
 function app:query($node as node()*, $model as map(*), $query as xs:string?, $index as xs:string, $tei-target as xs:string+, $query-scope as xs:string, $work-authors as xs:string+, $query-scripts as xs:string, $target-texts as xs:string+, $bool as xs:string) as map(*) {
-    (:remove any ZERO WIDTH NON-JOINER from the query string:)
-    let $query := lower-case(translate(normalize-space($query), "&#8204;", ""))
-    (:based on which index the user wants to query against, the query string is dispatchted to separate functions. Both return empty if there is no query string.:)
-    let $query :=
-        if (contains($query, "*"))
-        then <query><wildcard>{translate(sarit-slp1:transcode($query), "[*]", "*")}</wildcard></query>
-        else $query    
-    let $queries := app:expand-query($query, $query-scripts)
-    (:both lucene queries and ngram queries are passed around as sequences of strings, but after expansion lucene queries have to be wrapped in slashes to trigger regex mode:)
-    let $queries :=
-        if ($index eq 'ngram')
-        then $queries
-        else
-            for $query in $queries
-            return
-                if (contains($query, '[') and not(starts-with(normalize-space($query), "/") and ends-with(normalize-space($query), "/")))
-                then "/" || $query || "/"
-                else $query
-    (:this joins the latest lucene query with OR if it has been expanded - this OR does not have anything to do with boolean searches:)
-    let $queries :=
-        if ($index eq 'ngram')
-        then $queries
-        else string-join($queries, ' OR ')
+    let $queries := app:preprocess-query-string($query)
+        
     return
         (:If there is no query string, fill up the map with existing values:)
-        if (empty($queries))
+        if ($queries = '')
         then
             let $hits := session:get-attribute("apps.sarit.hits")
             return
@@ -486,6 +481,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             else ()
             (: Here the actual query commences. This is split into two parts, the first for a Lucene query and the second for an ngram query. :)
             (:The query passed to a Lucene query in ft:query is a string containing one or two queries joined by an OR. The queries contain the original query and the transliterated query, as indicated by the user in $query-scripts.:)
+            
             let $hits :=
                 if ($index eq 'lucene')
                 then
@@ -787,6 +783,9 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             then session:get-attribute("apps.sarit.lucene-query")
                             else ''
                 else ''
+    let $log := util:log("INFO", "$lucene-query")
+    let $log := util:log("INFO", $lucene-query)
+    
             let $store := (
                 session:set-attribute("apps.sarit.hits", $hits),
                 session:set-attribute("apps.sarit.index", $index),
@@ -867,14 +866,10 @@ declare function app:expand-hits($divs as element()*, $index as xs:string) {
                 session:get-attribute("apps.sarit.ngram-query")
             default return
                 session:get-attribute("apps.sarit.lucene-query")
+                
     for $div in $divs
-    for $query in distinct-values($queries)
     let $result := 
-        switch ($index)
-            case "ngram" return
-                $div[ngram:wildcard-contains(., $query)]
-            default return
-                $div[ft:query(., $query)]
+                $div[ft:query(., session:get-attribute("apps.sarit.lucene-query"))]
     return
         util:expand($result, "add-exist-id=all")
 };

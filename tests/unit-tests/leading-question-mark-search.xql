@@ -1,10 +1,10 @@
 xquery version "3.0";
 
-import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-transliteration";
+import module namespace app = "http://www.tei-c.org/tei-simple/templates" at "../../modules/app.xql";
 
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
-let $search-string := translate(sarit-slp1:transcode("?atra"), "[?]", "?")
+let $search-string := app:preprocess-query-string("?atra")
 let $expected-hits-number := 2
 
 let $search-xml := <query><wildcard>{$search-string}</wildcard></query>

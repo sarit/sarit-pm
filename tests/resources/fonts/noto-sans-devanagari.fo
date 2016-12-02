@@ -14,12 +14,12 @@
 				<fo:block font-size="14pt" font-family="serif">actual result
 				</fo:block>
 				<fo:block font-size="14pt" font-family="Noto Sans Devanagari"
-					script="deva">कारणत्त्वङ्गवाश्वादीनमपीति चेत् युक्तम्</fo:block>
+					script="dev2">कारणत्त्वङ्गवाश्वादीनमपीति चेत् युक्तम्</fo:block>
 				<fo:block font-size="14pt" font-family="serif">intended result
 				</fo:block>					
 				<fo:block>
 					<fo:inline>
-						<fo:external-graphic src="/home/claudius/workspaces/repositories/git/sarit-pm/tests/resources/noto-devanagari-font.png" />
+						<fo:external-graphic src="/home/claudius/workspaces/repositories/git/sarit-pm/tests/resources/fonts/noto-devanagari-font.png" />
 					</fo:inline>
 				</fo:block>
 			</fo:block-container>

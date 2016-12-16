@@ -378,9 +378,15 @@ declare function app:preprocess-query-string($query-string as xs:string?) {
         else $queries
     let $queries :=
         if (contains($query-string, "*"))
-        then <query><wildcard>{translate(sarit-slp1:transcode($query-string), "[*]", "*")}</wildcard></query>
+        then
+            let $transcoded-query-string := sarit-slp1:transcode($query-string)
+            let $processed-query-string := translate($transcoded-query-string, "[*]", "*")
+            let $processed-query-string := translate($transcoded-query-string, "[?]", "?")
+            
+            return <query><wildcard>{$processed-query-string}</wildcard></query>
         else $query-string
         
+(:        translate(sarit-slp1:transcode("?atra"), "[?]", "?"):)
     return $queries
 };
 
@@ -411,11 +417,8 @@ declare
     %templates:default("target-texts", "all")
     %templates:default("bool", "new")
 function app:query($node as node()*, $model as map(*), $query as xs:string?, $index as xs:string, $tei-target as xs:string+, $query-scope as xs:string, $work-authors as xs:string+, $query-scripts as xs:string, $target-texts as xs:string+, $bool as xs:string) as map(*) {
-    let $queries := app:preprocess-query-string($query)
-        
-    return
         (:If there is no query string, fill up the map with existing values:)
-        if ($queries = '')
+        if (empty($query))
         then
             let $hits := session:get-attribute("apps.sarit.hits")
             return
@@ -429,6 +432,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                 }
         else
             (:Otherwise, perform the query.:)
+            let $queries := app:preprocess-query-string($query)            
             (:First, which documents to query against has to be found out. Users can either make no selections in the list of documents, passing the value "all", or they can select individual document, passing a sequence of their xml:ids in $target-texts. Users can also select documents based on their authors. If no specific authors are selected, the value "all" is passed in $work-authors, but if selections have been made, a sequence of their xml:ids is passed. :)
             (:$target-texts will either have the value 'all' or contain a sequence of document xml:ids.:)
             let $target-texts :=
@@ -481,7 +485,6 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             else ()
             (: Here the actual query commences. This is split into two parts, the first for a Lucene query and the second for an ngram query. :)
             (:The query passed to a Lucene query in ft:query is a string containing one or two queries joined by an OR. The queries contain the original query and the transliterated query, as indicated by the user in $query-scripts.:)
-            
             let $hits :=
                 if ($index eq 'lucene')
                 then
@@ -783,8 +786,6 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             then session:get-attribute("apps.sarit.lucene-query")
                             else ''
                 else ''
-    let $log := util:log("INFO", "$lucene-query")
-    let $log := util:log("INFO", $lucene-query)
     
             let $store := (
                 session:set-attribute("apps.sarit.hits", $hits),
@@ -794,6 +795,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                 session:set-attribute("apps.sarit.scope", $query-scope),
                 session:set-attribute("apps.sarit.bool", $bool)
                 )
+            
             return
                 (: The hits are not returned directly, but processed by the nested templates :)
                 map {

@@ -377,7 +377,7 @@ declare function app:preprocess-query-string($query-string as xs:string?) {
         then "/" || $queries || "/"
         else $queries
     let $queries :=
-        if (contains($query-string, "*"))
+        if (contains($query-string, "*") or contains($query-string, "?"))
         then
             let $transcoded-query-string := sarit-slp1:transcode($query-string)
             let $processed-query-string := translate($transcoded-query-string, "[*]", "*")
@@ -385,8 +385,6 @@ declare function app:preprocess-query-string($query-string as xs:string?) {
             
             return <query><wildcard>{$processed-query-string}</wildcard></query>
         else $query-string
-        
-(:        translate(sarit-slp1:transcode("?atra"), "[?]", "?"):)
     return $queries
 };
 

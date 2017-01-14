@@ -8,7 +8,6 @@ let $search-string := "*tra"
 let $search-xml := app:preprocess-query-string($search-string)
 let $expected-hits-number := 2
 
-let $search-xml := <query><wildcard>{$search-string}</wildcard></query>
 let $hits := doc("../resources/search/resources-for-testing-of-searching.xml")//tei:p[ft:query(., $search-xml)]
 let $actual-hits-number := count($hits)
 

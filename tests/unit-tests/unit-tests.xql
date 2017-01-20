@@ -45,6 +45,12 @@ function sarit:setup() {
 	<p>yo viruddhadharmādhyāsavān nāsāvekaḥ । yathā ghaṭādirarthaḥ ।</p>
 	<p>अन्यथा सति</p>
 	<p>anyathā sati</p>
+	<p>सा</p>
+	<p>sā</p>
+	<p>सः</p>
+	<p>saḥ</p>
+	<p>अष्टकः</p>
+	<p>aṣṭakaḥ</p>
 	</div>
     return (
         xmldb:store($confCol, "collection.xconf", $sarit:SARIT),
@@ -105,15 +111,28 @@ function sarit:wildcard-queries-no-diacrictics($querystring as xs:string) {
 (: wildcard queries with diacritics :)
 
 declare
-%test:args("ghaṭā*")
+%test:args("GawA*")
 %test:assertEquals("<p>यो विरुद्धधर्माध्यासवान् नासावेकः । यथा घटादिरर्थः ।</p>",
 	"<p>yo viruddhadharmādhyāsavān nāsāvekaḥ । yathā ghaṭādirarthaḥ ।</p>")
-%test:args("घटा*")
+%test:args("GawA*")
 %test:assertEquals("<p>यो विरुद्धधर्माध्यासवान् नासावेकः । यथा घटादिरर्थः ।</p>",
 	"<p>yo viruddhadharmādhyāsavān nāsāvekaḥ । yathā ghaṭādirarthaḥ ।</p>")
-%test:args("viruddha*")
+%test:args("virudDa*")
 %test:assertEquals("<p>यो विरुद्धधर्माध्यासवान् नासावेकः । यथा घटादिरर्थः ।</p>",
 	"<p>yo viruddhadharmādhyāsavān nāsāvekaḥ । yathā ghaṭādirarthaḥ ।</p>")
 function sarit:wildcard-queries-with-diacrictics($querystring as xs:string) {
+	doc("/db/sarittests/test.xml")//p[ft:query(., $querystring)]
+};
+
+
+(: confusing things :)
+
+declare
+
+%test:args("sA*")
+%test:assertEquals("<p>सा</p>", "<p>sā</p>")
+%test:args("azwa*")
+%test:assertEquals("<p>अष्टकः</p>", "<p>aṣṭakaḥ</p>")
+function sarit:case-confusions($querystring as xs:string) {
 	doc("/db/sarittests/test.xml")//p[ft:query(., $querystring)]
 };

@@ -23,6 +23,9 @@ xquery version "3.1";
         <a href="intermediate-asterisk-search.xql" target="_blank">intermediate asterisk</a>
         <a href="trailing-asterisk-search.xql" target="_blank">trailing asterisk</a>
         
+        <h2>Multiple term searches</h2>
+        <a href="and-operator-non-wildcard-search.xql" target="_blank">two simple terms and AND operator</a>
+        
         <h2>Other searches</h2>
         {
             for $resource-name in xmldb:get-child-resources("/apps/sarit-pm/tests/unit-tests")[not(. = ('index.xql', 'intermediate-question-mark-search.xql', 'leading-question-mark-search.xql', 'trailing-question-mark-search.xql', 'leading-asterisk-search.xql', 'intermediate-asterisk-search.xql', 'trailing-asterisk-search.xql'))]

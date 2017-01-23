@@ -5,7 +5,7 @@ import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-tran
 
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
-let $search-expression := "tatrā AND iva"
+let $search-expression := "anyathā AND sati"
 let $processed-search-expression := app:preprocess-query-string($search-expression)
 let $expected-hits-number := 1
     

@@ -58,12 +58,12 @@ function sarit:setup() {
     )
 };
 
-(: declare :)
-(:    %test:tearDown :)
-(: function sarit:tearDown() { :)
-(:    xmldb:remove("/db/sarittests"), :)
-(:    xmldb:remove("/db/system/config/db/sarittests") :)
-(: }; :)
+declare
+   %test:tearDown
+function sarit:tearDown() {
+   xmldb:remove("/db/sarittests"),
+   xmldb:remove("/db/system/config/db/sarittests")
+};
 
 
 
@@ -134,5 +134,19 @@ declare
 %test:args("azwa*")
 %test:assertEquals("<p>अष्टकः</p>", "<p>aṣṭakaḥ</p>")
 function sarit:case-confusions($querystring as xs:string) {
+	doc("/db/sarittests/test.xml")//p[ft:query(., $querystring)]
+};
+
+
+(: combination queries :)
+
+declare
+%test:args("anyathā AND sati")
+%test:assertEquals("<p>अन्यथा सति</p>","<p>anyathā sati</p>")
+%test:args("अन्यथा AND सति")
+%test:assertEquals("<p>अन्यथा सति</p>","<p>anyathā sati</p>")
+%test:args("anyaTA AND sati")
+%test:assertEquals("<p>अन्यथा सति</p>","<p>anyathā sati</p>")
+function sarit:query-lucene-and($querystring as xs:string) {
 	doc("/db/sarittests/test.xml")//p[ft:query(., $querystring)]
 };

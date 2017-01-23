@@ -25,6 +25,7 @@ xquery version "3.1";
         
         <h2>Multiple term searches</h2>
         <a href="and-operator-non-wildcard-search.xql" target="_blank">two simple terms and AND operator</a>
+        <a href="or-operator-non-wildcard-search.xql" target="_blank">two simple terms and OR operator</a>
         
         <h2>Other searches</h2>
         {

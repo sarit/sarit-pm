@@ -1,7 +1,6 @@
 xquery version "3.0";
 
 import module namespace app = "http://www.tei-c.org/tei-simple/templates" at "../../modules/app.xql";
-import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-transliteration";
 
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 

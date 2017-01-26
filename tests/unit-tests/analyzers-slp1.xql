@@ -205,3 +205,18 @@ declare
 function analyze:slp1-boolean-and-wildcard-query($querystring as xs:string) {
 	collection("/db/sarit-slp1-tests/test3")//tei:p[ft:query(., $querystring)]/@xml:id/string()
 };
+
+
+declare 
+    %test:args("du*")
+    %test:assertEquals("adeva", "aiast")
+    %test:args("dū*")
+    %test:assertEquals("bdeva", "biast")
+    %test:args("दु*")
+    %test:assertEquals("adeva", "aiast")
+    %test:args("दू*")
+    %test:assertEquals("bdeva", "biast")
+
+function analyze:slp1-wildcard-case-query($querystring as xs:string) {
+	collection("/db/sarit-slp1-tests/test3")//tei:p[ft:query(., $querystring)]/@xml:id/string()
+};

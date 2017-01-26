@@ -11,7 +11,65 @@ declare namespace templates="http://exist-db.org/xquery/templates";
 declare namespace repo="http://exist-db.org/xquery/repo";
 declare namespace expath="http://expath.org/ns/pkg";
 
+import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pages.xql";
+
+declare variable $config:address-by-id := false();
+
+(:
+ : The default to use for determining the amount of content to be shown
+ : on a single page. Possible values: 'div' for showing entire divs (see
+ : the parameters below for further configuration), or 'page' to browse
+ : a document by actual pages determined by TEI pb elements.
+ :)
+
 declare variable $config:default-view := "div";
+
+(:
+ : The element to search by default, either 'tei:div' or 'tei:body'.
+ :)
+declare variable $config:search-default := "tei:div";
+
+(:
+ : Defines which nested divs will be displayed as single units on one
+ : page (using pagination by div). Divs which are nested
+ : deeper than $pagination-depth will always appear in their parent div.
+ : So if you have, for example, 4 levels of divs, but the divs on level 4 are
+ : just small sub-subsections with one paragraph each, you may want to limit
+ : $pagination-depth to 3 to not show the sub-subsections as separate pages.
+ : Setting $pagination-depth to 1 would show entire top-level divs on one page.
+ :)
+declare variable $config:pagination-depth := 10;
+
+(:
+ : If a div starts with less than $pagination-fill elements before the
+ : first nested div child, the pagination-by-div algorithm tries to fill
+ : up the page by pulling following divs in. When set to 0, it will never
+ : attempt to fill up the page.
+ :)
+declare variable $config:pagination-fill := 5;
+
+(:
+ : The function to be called to determine the next content chunk to display.
+ : It takes two parameters:
+ :
+ : * $elem as element(): the current element displayed
+ : * $view as xs:string: the view, either 'div', 'page' or 'body'
+ :)
+declare variable $config:next-page := pages:get-next#2;
+
+(:
+ : The function to be called to determine the previous content chunk to display.
+ : It takes two parameters:
+ :
+ : * $elem as element(): the current element displayed
+ : * $view as xs:string: the view, either 'div', 'page' or 'body'
+ :)
+declare variable $config:previous-page := pages:get-previous#2;
+
+(:
+ : The CSS class to declare on the main text content div.
+ :)
+declare variable $config:css-content-class := "content";
 
 (:
     Determine the application root collection from the current module load path.
@@ -48,6 +106,28 @@ declare variable $config:module-config := doc($config:odd-root || "/configuratio
 declare variable $config:repo-descriptor := doc(concat($config:app-root, "/repo.xml"))/repo:meta;
 
 declare variable $config:expath-descriptor := doc(concat($config:app-root, "/expath-pkg.xml"))/expath:package;
+
+(:~
+ : Return an ID which may be used to look up a document. Change this if the xml:id
+ : which uniquely identifies a document is *not* attached to the root element.
+ :)
+declare function config:get-id($node as node()) {
+    root($node)/*/@xml:id
+};
+
+(:~
+ : Returns a path relative to $config:data-root used to locate a document in the database.
+ :)
+declare function config:get-relpath($node as node()) {
+    substring-after(document-uri(root($node)), $config:data-root || "/")
+};
+
+declare function config:get-identifier($node as node()) {
+    if ($config:address-by-id) then
+        config:get-id($node)
+    else
+        config:get-relpath($node)
+};
 
 (:~
  : Resolve the given path using the current application context.

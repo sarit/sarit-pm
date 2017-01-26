@@ -369,23 +369,15 @@ declare function app:work-authors($node as node(), $model as map(*)) {
 };
 
 declare function app:preprocess-query-string($query-string as xs:string?) {
-    (:remove any ZERO WIDTH NON-JOINER from the query string:)
-    let $queries := lower-case(translate(normalize-space($query-string), "&#8204;", ""))
-    
-    let $queries :=
-        if (contains($queries, '[') and not(starts-with($queries, "/") and ends-with($queries, "/")))
-        then "/" || $queries || "/"
-        else $queries
-    let $queries :=
-        if (contains($query-string, "*") or contains($query-string, "?"))
-        then
-            let $transcoded-query-string := sarit-slp1:transcode($query-string)
-            let $processed-query-string := translate($transcoded-query-string, "[*]", "*")
-            let $processed-query-string := translate($transcoded-query-string, "[?]", "?")
-            
-            return <query><wildcard>{$processed-query-string}</wildcard></query>
-        else $query-string
-    return $queries
+	let $results := string-join(
+		for $w in tokenize($query-string, "\s")
+		return
+		if (matches($w, "^AND|NOT|OR$")) then
+		$w
+		else
+		sarit-slp1:transcode($w),
+		" ")
+	return $results
 };
 
 (:~

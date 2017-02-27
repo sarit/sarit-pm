@@ -6,3 +6,4 @@ at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 test:suite(
 	inspect:module-functions(xs:anyURI("unit-tests.xql"))
 )
+

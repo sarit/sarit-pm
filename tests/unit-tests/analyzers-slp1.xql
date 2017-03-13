@@ -59,6 +59,7 @@ declare variable $analyze:XCONF-SLP1:=
         <index xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
             <lucene>
                 <analyzer class="de.unihd.hra.libs.java.luceneTranscodingAnalyzer.TranscodingAnalyzer" />
+                <parser class="org.apache.lucene.queryparser.analyzing.AnalyzingQueryParser" />
                 <text qname="tei:p"/>
             </lucene>
         </index>

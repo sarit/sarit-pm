@@ -368,18 +368,6 @@ declare function app:work-authors($node as node(), $model as map(*)) {
         templates:form-control($control, $model)
 };
 
-declare function app:preprocess-query-string($query-string as xs:string?) {
-	let $results := string-join(
-		for $w in tokenize($query-string, "\s")
-		return
-		if (matches($w, "^AND|NOT|OR$")) then
-		$w
-		else
-		sarit-slp1:transcode($w),
-		" ")
-	return $results
-};
-
 (:~
 : Execute the query. The search results are not output immediately. Instead they
 : are passed to nested templates through the $model parameter.
@@ -422,7 +410,15 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                 }
         else
             (:Otherwise, perform the query.:)
-            let $queries := app:preprocess-query-string($query)            
+            let $queries := $query
+            let $options :=
+                <options>
+                    <default-operator>and</default-operator>
+                    <leading-wildcard>yes</leading-wildcard>
+                    <filter-rewrite>yes</filter-rewrite>
+                    <lowercase-expanded-terms>no</lowercase-expanded-terms>
+                </options>   
+            
             (:First, which documents to query against has to be found out. Users can either make no selections in the list of documents, passing the value "all", or they can select individual document, passing a sequence of their xml:ids in $target-texts. Users can also select documents based on their authors. If no specific authors are selected, the value "all" is passed in $work-authors, but if selections have been made, a sequence of their xml:ids is passed. :)
             (:$target-texts will either have the value 'all' or contain a sequence of document xml:ids.:)
             let $target-texts :=
@@ -486,50 +482,50 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             if (count($tei-target) eq 2)
                             then
                                 (
-                                $context//tei:p[ft:query(., $queries)],
-                                $context//tei:head[ft:query(., $queries)],
-                                $context//tei:lg[ft:query(., $queries)],
-                                $context//tei:trailer[ft:query(., $queries)],
-                                $context//tei:note[ft:query(., $queries)],
-                                $context//tei:list[ft:query(., $queries)],
-                                $context//tei:l[not(local-name(./..) eq 'lg')][ft:query(., $queries)],
-                                $context//tei:quote[ft:query(., $queries)],
-                                $context//tei:table[ft:query(., $queries)],
-                                $context//tei:listApp[ft:query(., $queries)],
-                                $context//tei:listBibl[ft:query(., $queries)],
-                                $context//tei:cit[ft:query(., $queries)],
-                                $context//tei:label[ft:query(., $queries)],
-                                $context//tei:encodingDesc[ft:query(., $queries)],
-                                $context//tei:fileDesc[ft:query(., $queries)],
-                                $context//tei:profileDesc[ft:query(., $queries)],
-                                $context//tei:revisionDesc[ft:query(., $queries)]
+                                $context//tei:p[ft:query(., $queries, $options)],
+                                $context//tei:head[ft:query(., $queries, $options)],
+                                $context//tei:lg[ft:query(., $queries, $options)],
+                                $context//tei:trailer[ft:query(., $queries, $options)],
+                                $context//tei:note[ft:query(., $queries, $options)],
+                                $context//tei:list[ft:query(., $queries, $options)],
+                                $context//tei:l[not(local-name(./..) eq 'lg')][ft:query(., $queries, $options)],
+                                $context//tei:quote[ft:query(., $queries, $options)],
+                                $context//tei:table[ft:query(., $queries, $options)],
+                                $context//tei:listApp[ft:query(., $queries, $options)],
+                                $context//tei:listBibl[ft:query(., $queries, $options)],
+                                $context//tei:cit[ft:query(., $queries, $options)],
+                                $context//tei:label[ft:query(., $queries, $options)],
+                                $context//tei:encodingDesc[ft:query(., $queries, $options)],
+                                $context//tei:fileDesc[ft:query(., $queries, $options)],
+                                $context//tei:profileDesc[ft:query(., $queries, $options)],
+                                $context//tei:revisionDesc[ft:query(., $queries, $options)]
                                 )
                             else
                                 if ($tei-target = 'tei-text')
                                 then
                                     (
-                                    $context//tei:p[ft:query(., $queries)],
-                                    $context//tei:head[ft:query(., $queries)],
-                                    $context//tei:lg[ft:query(., $queries)],
-                                    $context//tei:trailer[ft:query(., $queries)],
-                                    $context//tei:note[ft:query(., $queries)],
-                                    $context//tei:list[ft:query(., $queries)],
-                                    $context//tei:l[not(local-name(./..) eq 'lg')][ft:query(., $queries)],
-                                    $context//tei:quote[ft:query(., $queries)],
-                                    $context//tei:table[ft:query(., $queries)],
-                                    $context//tei:listApp[ft:query(., $queries)],
-                                    $context//tei:listBibl[ft:query(., $queries)],
-                                    $context//tei:cit[ft:query(., $queries)],
-                                    $context//tei:label[ft:query(., $queries)]
+                                    $context//tei:p[ft:query(., $queries, $options)],
+                                    $context//tei:head[ft:query(., $queries, $options)],
+                                    $context//tei:lg[ft:query(., $queries, $options)],
+                                    $context//tei:trailer[ft:query(., $queries, $options)],
+                                    $context//tei:note[ft:query(., $queries, $options)],
+                                    $context//tei:list[ft:query(., $queries, $options)],
+                                    $context//tei:l[not(local-name(./..) eq 'lg')][ft:query(., $queries, $options)],
+                                    $context//tei:quote[ft:query(., $queries, $options)],
+                                    $context//tei:table[ft:query(., $queries, $options)],
+                                    $context//tei:listApp[ft:query(., $queries, $options)],
+                                    $context//tei:listBibl[ft:query(., $queries, $options)],
+                                    $context//tei:cit[ft:query(., $queries, $options)],
+                                    $context//tei:label[ft:query(., $queries, $options)]
                                     )
                                 else
                                     if ($tei-target = 'tei-header')
                                     then
                                         (
-                                        $context//tei:encodingDesc[ft:query(., $queries)],
-                                        $context//tei:fileDesc[ft:query(., $queries)],
-                                        $context//tei:profileDesc[ft:query(., $queries)],
-                                        $context//tei:revisionDesc[ft:query(., $queries)]
+                                        $context//tei:encodingDesc[ft:query(., $queries, $options)],
+                                        $context//tei:fileDesc[ft:query(., $queries, $options)],
+                                        $context//tei:profileDesc[ft:query(., $queries, $options)],
+                                        $context//tei:revisionDesc[ft:query(., $queries, $options)]
                                         )
                                     else ()
                         order by ft:score($hit) descending
@@ -540,19 +536,19 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                             if (count($tei-target) eq 2)
                             then
                                 (
-                                $context//tei:div[not(tei:div)][ft:query(., $queries)],
-                                $context/descendant-or-self::tei:teiHeader[ft:query(., $queries)](:NB: Can divs occur in the header? If so, they have to be removed here5:)
+                                $context//tei:div[not(tei:div)][ft:query(., $queries, $options)],
+                                $context/descendant-or-self::tei:teiHeader[ft:query(., $queries, $options)](:NB: Can divs occur in the header? If so, they have to be removed here5:)
                                 )
                             else
                                 if ($tei-target = 'tei-text')
                                 then
                                     (
-                                    $context//tei:div[not(tei:div)][ft:query(., $queries)]
+                                    $context//tei:div[not(tei:div)][ft:query(., $queries, $options)]
                                     )
                                 else
                                     if ($tei-target = 'tei-header')
                                     then
-                                        $context/descendant-or-self::tei:teiHeader[ft:query(., $queries)]
+                                        $context/descendant-or-self::tei:teiHeader[ft:query(., $queries, $options)]
                                     else ()
                         order by ft:score($hit) descending
                         return $hit

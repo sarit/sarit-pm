@@ -416,7 +416,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $in
                     <default-operator>and</default-operator>
                     <leading-wildcard>yes</leading-wildcard>
                     <filter-rewrite>yes</filter-rewrite>
-                    <set-lowercase-expanded-terms>no</set-lowercase-expanded-terms>
+                    <lowercase-expanded-terms>no</lowercase-expanded-terms>
                 </options>   
             
             (:First, which documents to query against has to be found out. Users can either make no selections in the list of documents, passing the value "all", or they can select individual document, passing a sequence of their xml:ids in $target-texts. Users can also select documents based on their authors. If no specific authors are selected, the value "all" is passed in $work-authors, but if selections have been made, a sequence of their xml:ids is passed. :)

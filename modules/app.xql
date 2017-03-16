@@ -8,7 +8,6 @@ import module namespace pm-config="http://www.tei-c.org/tei-simple/pm-config" at
 import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
 import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "pages.xql";
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
-import module namespace sarit="http://exist-db.org/xquery/sarit";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
 
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
@@ -16,9 +15,6 @@ import module namespace console="http://exist-db.org/xquery/console" at "java:or
 declare namespace expath="http://expath.org/ns/pkg";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-declare variable $app:devnag2roman := doc($config:app-root || "/modules/transliteration-rules.xml")//*[@id = "devnag2roman"];
-declare variable $app:roman2devnag := doc($config:app-root || "/modules/transliteration-rules.xml")//*[@id = "roman2devnag"];
-declare variable $app:roman2devnag-search := doc($config:app-root || "/modules/transliteration-rules.xml")//*[@id = "roman2devnag-search"];
 declare variable $app:expand := doc($config:app-root || "/modules/transliteration-rules.xml")//*[@id = "expand"];
 declare variable $app:iast-char-repertoire-negation := '[^aābcdḍeĕghḥiïījklḷḹmṁṃnñṅṇoŏprṛṝsśṣtṭuüūvy0-9\s]';
 declare variable $app:query-options :=
@@ -386,7 +382,6 @@ declare function app:work-authors($node as node(), $model as map(*)) {
 : @param $query The query string.
 : @param $tei-target A sequence of one or more targets within a TEI document, the tei:teiHeader or tei:text.
 : @param $work-authors A sequence of the string "all" or of the xml:ids of the documents associated with the selected authors.
-: @param $query-scripts A sequence of the string "all" or of the values "sa-Latn" or "sa-Deva", indicating whether or not the user wishes to transliterate the query string.
 : @param $target-texts A sequence of the string "all" or of the xml:ids of the documents selected.
 
 : @return The function returns a map containing the $hits, the $query, and the $query-scope. The search results are output through the nested templates, app:hit-count, app:paginate, and app:show-hits.
@@ -396,10 +391,9 @@ declare
     %templates:default("tei-target", "tei-text")
     %templates:default("query-scope", "narrow")
     %templates:default("work-authors", "all")
-    %templates:default("query-scripts", "all")
     %templates:default("target-texts", "all")
     %templates:default("bool", "new")
-function app:query($node as node()*, $model as map(*), $query as xs:string?, $tei-target as xs:string+, $query-scope as xs:string, $work-authors as xs:string+, $query-scripts as xs:string, $target-texts as xs:string+, $bool as xs:string) as map(*) {
+function app:query($node as node()*, $model as map(*), $query as xs:string?, $tei-target as xs:string+, $query-scope as xs:string, $work-authors as xs:string+, $target-texts as xs:string+, $bool as xs:string) as map(*) {
         (:If there is no query string, fill up the map with existing values:)
         if (empty($query))
         then
@@ -585,62 +579,7 @@ function app:query($node as node()*, $model as map(*), $query as xs:string?, $te
                 }
 };
 
-(:~
-    app:expand-query transliterates the query string from Devanagari to IAST transcription and/or from IAST transcription to Devanagari,
-    if the user has indicated that this is wanted in $query-scripts.
-:)
-declare %private function app:expand-query($query as xs:string*, $query-scripts as xs:string?) as xs:string* {
-    if ($query)
-    then (
-        sarit:create("devnag2roman", $app:devnag2roman/string()),
-        sarit:create("roman2devnag", $app:roman2devnag-search/string()),
-        sarit:create("expand", $app:expand/string()),
-        (:if there is input exclusively in IAST romanization:)
-        if (not(matches($query, $app:iast-char-repertoire-negation)))
-        then
-            (:if the user wants to search in Devanagri, then transliterate and discard the original query:)
-            if ($query-scripts eq "sa-Deva")
-            then
-                sarit:transliterate("expand",translate(sarit:transliterate("roman2devnag", $query), "&#8204;", ""))
-            else
-                (:if the user wants to search in both IAST and Devanagri, then transliterate the original query and keep it:)
-                if ($query-scripts eq "all")
-                then
-                    ($query, sarit:transliterate("expand",translate(sarit:transliterate("roman2devnag", $query), "&#8204;", "")))
-                else
-                    (:if the user wants to search in romanization, then do not transliterate but keep original query:)
-                    if ($query-scripts eq "sa-Latn")
-                    then
-                        $query
-                    (:this exhausts all options for IAST input strings:)
-                    else ''
-        else
-            (:if there is input exclusively in Devanagari:)
-            if (empty(string-to-codepoints($query)[not(. = (9-13, 32, 133, 160, 2304 to 2431, 43232 to 43259, 7376 to 7412))]))
-            then
-                (:if the user wants to search in IAST, then transliterate the original query but delete it:)
-                if ($query-scripts eq "sa-Latn")
-                then
-                    sarit:transliterate("devnag2roman", $query)
-                else
-                    (:if the user wants to search in both Devanagri and IAST, then transliterate the original query and keep it:)
-                    if ($query-scripts eq "all")
-                    then
-                        (sarit:transliterate("expand",$query), sarit:transliterate("devnag2roman", $query))
-                    else
-                        (:if the user wants to search in Devanagri, then do not transliterate original query but keep it:)
-                        if ($query-scripts eq "sa-Deva")
-                        then
-                            sarit:transliterate("expand", $query)
-                        else ''
-            (:there should only be two options: IAST and Devanagari input. If the query is not pure IAST and is not pure Devanagari, then do not (try to) transliterate the original query but keep it as it is.:)
-            else
-                $query
-    )
-    else ()
-};
-
-declare function app:expand-hits($divs as element()*, $index as xs:string) {
+declare function app:expand-hits($divs as element()*) {
     let $queries := session:get-attribute("apps.sarit.lucene-query")
                 
     for $div in $divs

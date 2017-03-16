@@ -187,8 +187,7 @@ declare function pages:xml-link($node as node(), $model as map(*), $source as xs
 
 declare
     %templates:default("action", "browse")
-    %templates:default("index", "ngram")
-function pages:view($node as node(), $model as map(*), $view as xs:string?, $action as xs:string, $index as xs:string) {
+function pages:view($node as node(), $model as map(*), $view as xs:string?, $action as xs:string) {
     let $view := if ($view) then $view else $config:default-view
     let $data :=
         if ($action = "search") then
@@ -207,7 +206,7 @@ function pages:view($node as node(), $model as map(*), $view as xs:string?, $act
                             ($model?data/ancestor::tei:div, $model?data/ancestor::tei:body)[1]
                 else
                     $model?data
-            let $expanded := app:expand-hits($div, $index)
+            let $expanded := app:expand-hits($div)
             return
                 if ($model?data instance of element(tei:pb)) then
                     $expanded//tei:pb[@exist:id = util:node-id($model?data)]

@@ -3,13 +3,10 @@
     <index xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
         <fulltext default="none" attributes="false"/>
         <lucene>
-	  <analyzer class="de.unihd.hra.libs.java.luceneTranscodingAnalyzer.TranscodingAnalyzer">
-	  </analyzer>
-          <text qname="tei:div"/>
-          <text qname="tei:head"/>
-	  <text qname="tei:p"/>
-          <text match="//tei:sourceDesc/tei:biblFull/tei:titleStmt/tei:title"/>
-          <text match="//tei:fileDesc/tei:titleStmt/tei:title"/>
+            <text qname="tei:div"/>
+            <text qname="tei:head"/>
+            <text match="//tei:sourceDesc/tei:biblFull/tei:titleStmt/tei:title"/>
+            <text match="//tei:fileDesc/tei:titleStmt/tei:title"/>
         </lucene>
     </index><!--triggers>
                 <trigger event="update" class="org.exist.collections.triggers.XQueryTrigger">

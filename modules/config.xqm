@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (:~
  : A set of helper functions to access the application context from
@@ -6,12 +6,16 @@ xquery version "3.0";
  :)
 module namespace config="http://www.tei-c.org/tei-simple/config";
 
+import module namespace http="http://expath.org/ns/http-client" at "java:org.exist.xquery.modules.httpclient.HTTPClientModule";
+import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";
+import module namespace tpu="http://www.tei-c.org/tei-publisher/util" at "lib/util.xql";
+
 declare namespace templates="http://exist-db.org/xquery/templates";
 
 declare namespace repo="http://exist-db.org/xquery/repo";
 declare namespace expath="http://expath.org/ns/pkg";
-
-import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pages.xql";
+declare namespace jmx="http://exist-db.org/jmx";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 declare variable $config:address-by-id := false();
 
@@ -52,10 +56,31 @@ declare variable $config:pagination-fill := 5;
  : The function to be called to determine the next content chunk to display.
  : It takes two parameters:
  :
+ : * $config as map(*): configuration parameters
  : * $elem as element(): the current element displayed
  : * $view as xs:string: the view, either 'div', 'page' or 'body'
  :)
-declare variable $config:next-page := pages:get-next#2;
+declare variable $config:next-page := nav:get-next#3;
+
+(:
+ : The function to be called to determine the previous content chunk to display.
+ : It takes two parameters:
+ :
+ : * $config as map(*): configuration parameters
+ : * $elem as element(): the current element displayed
+ : * $view as xs:string: the view, either 'div', 'page' or 'body'
+ :)
+declare variable $config:previous-page := nav:get-previous#3;
+
+
+(:
+ : The function to be called to determine the next content chunk to display.
+ : It takes two parameters:
+ :
+ : * $elem as element(): the current element displayed
+ : * $view as xs:string: the view, either 'div', 'page' or 'body'
+ :)
+(:declare variable $config:next-page := pages:get-next#2;:)
 
 (:
  : The function to be called to determine the previous content chunk to display.
@@ -64,12 +89,19 @@ declare variable $config:next-page := pages:get-next#2;
  : * $elem as element(): the current element displayed
  : * $view as xs:string: the view, either 'div', 'page' or 'body'
  :)
-declare variable $config:previous-page := pages:get-previous#2;
+(:declare variable $config:previous-page := pages:get-previous#2;:)
 
 (:
  : The CSS class to declare on the main text content div.
  :)
 declare variable $config:css-content-class := "content";
+
+(:
+ : The domain to use for logged in users. Applications within the same
+ : domain will share their users, so a user logged into application A
+ : will be able to access application B.
+ :)
+declare variable $config:login-domain := "org.exist.tei-simple";
 
 (:
     Determine the application root collection from the current module load path.

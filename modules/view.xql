@@ -12,9 +12,10 @@ import module namespace templates="http://exist-db.org/xquery/templates";
  : templating.
  :)
 import module namespace config="http://www.tei-c.org/tei-simple/config" at "config.xqm";
-import module namespace app="http://www.tei-c.org/tei-simple/templates" at "lib/app.xql";
+import module namespace app="http://www.tei-c.org/tei-simple/templates" at "app.xql";
 import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pages.xql";
 import module namespace toc = "http://sarit.indology.info/app/toc" at "toc.xql";
+import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";
 
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 

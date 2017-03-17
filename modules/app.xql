@@ -10,6 +10,7 @@ import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pa
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
 import module namespace sarit="http://exist-db.org/xquery/sarit";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
+(:import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";:)
 
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
 
@@ -890,7 +891,7 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     let $parent := $hit/ancestor-or-self::tei:div[1]
     let $parent := if ($parent) then $parent else $hit/ancestor-or-self::tei:teiHeader
     let $parent := if ($parent) then $parent else root($hit)
-    let $div := app:get-current($parent)
+    (:let $div := app:get-current($parent):)
     let $parent-id := util:document-name($parent) || "?root=" || util:node-id($parent)
     let $div-id := util:document-name($div) || "?root=" || util:node-id($div)
     (:if the nearest div does not have an xml:id, find the nearest element with an xml:id and use it:)
@@ -951,6 +952,7 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     )
 };
 
+(:
 declare %private function app:get-current($div as element()?) {
     if (empty($div)) then
         ()
@@ -959,11 +961,18 @@ declare %private function app:get-current($div as element()?) {
         $div
         else
             if (
-                empty($div/preceding-sibling::tei:div)  (: first div in section :)
-                and count($div/preceding-sibling::*) < 5 (: less than 5 elements before div :)
-                and $div/.. instance of element(tei:div) (: parent is a div :)
+                empty($div/preceding-sibling::tei:div)  :)
+(: first div in section :)(:
+
+                and count($div/preceding-sibling::*) < 5 :)
+(: less than 5 elements before div :)(:
+
+                and $div/.. instance of element(tei:div) :)
+(: parent is a div :)(:
+
             ) then
                 pages:get-previous($div/..)
             else
                 $div
 };
+:)

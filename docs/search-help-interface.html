@@ -71,72 +71,14 @@
                             select which script to search with.</p>
                     </div>
                     <div>
-                        <h3>Use Which Index?</h3>
-                        <p>This is where it gets a little technical ….</p>
-                        <p>All searches in SARIT go via a database index. A database index is
-                            basically like the index of a book, only it contains references for each
-                            and every word or string of characters in the text.</p>
-                        <p>In SARIT, you can search using two different indexes, an NGram Index and
-                            a Lucene Full-Text Index.</p>
-                        <p>The NGram Index analyses the text in terms of strings, regardless of any
-                            word divisions. The index consists of overlapping chunks of text three
-                            characters long (tri-grams).</p>
-                        <p>The Lucene Full-Text Index analyses the text in terms of words, that is
-                            strings as separated by spaces, etc. The index consists of each and
-                            every word in the text.</p>
-                        <p>When you search with the NGram Index, you will find all occurrences of
-                            your search term, regardless of whether it occurs as a whole word (that
-                            is, space-separated string) or as only part of a word.</p>
-                        <p>When you search with the Lucene Full-Text Index, you will only find
-                            occurrences of your search term that are identical with whole words
-                            (that is, strings separated by spaces, etc.). You will not find occurrences that
-                            are only part of a word, unless you use Regular Expressions.</p>
-                        <p>The Lucene Full-Text Index is thus useful for texts segmented into words,
-                            that is, texts divided into chunks that resemble words in European
-                            languages.</p>
-                        <p>Word division is a matter of degree. Among the SARIT texts, only the
-                            Arthaśāstra can be said to be divided into words in a way which makes
-                            use of the Lucene Full-Text index immediately suitable. For information
-                            about the remaining texts, see <a href="search-help-word-division.html">Word Division</a>.
-                            With these texts, you should as a rule use the
-                            NGram Index.</p>
-                        <p>Note that this does not mean that the NGram Index cannot be used with
-                            texts that are divided into words – the two indexes make possible
-                            different searches, one for words (the Lucene Full-Text Index) and one
-                            for strings of characters (the NGram Index). You will almost always get
-                            more hits with the NGram Index, but the Lucene Full-Text Index gives you
-                            more search options (and is slower).</p>
-                        <p>There are further explanations in the <a href="search-help-index.html">Indexes and Searching
-                            Help</a>.</p>
-                    </div>
-                    <div>
                         <h3>Search Which Document Part?</h3>
                         <p>Each SARIT text consists of </p>
                         <ul>
                             <li>a header which provides information about the text edition and</li>
-                            <li>the text proper</li>
+                            <li>the text proper.</li>
                         </ul>
-                        . <p>In this dropdown menu you can select to search in one or both of
+			<p>In this dropdown menu you can select to search in one or both of
                         these document parts.</p>
-                    </div>
-                    <div>
-                        <h3>Search Narrowly Or Broadly?</h3>
-                        <p>SARIT marks up texts according to the TEI Guidelines. According to the
-                            TEI Guidelines, a text forms a hierarchy. A book thus may consist of a
-                            number of chapters, which contain a number of sections, which contain a
-                            number of paragraphs – which then contain the text itself. A narrow
-                            search is one which searches in the uppermost text-containing levels of
-                            the text (in the example, the paragraphs), whereas a broad search is one
-                            which searches in the levels of the text immediately above these (that
-                            is, in the example, the sections).</p>
-                        <p>This is primarily of use if you wish to search for the co-occurrence of
-                            several words, for whereas they may co-occur in a single section, it is
-                            not necessarily the case that they co-occur in a single paragraph. </p>
-                        <p>In this explanation, sections and paragraphs have been used to illustrate
-                            this concept, but SARIT texts are more complicated than this. For a
-                            fuller explanation, see the <a href="search-help-index.html">Indexes and
-                                Searching Help</a>
-                        </p>
                     </div>
                     <div>
                         <h3>Search In Texts By Which Authors?</h3>
@@ -150,25 +92,6 @@
                         <p>Note that if you do not make any choice, you will search in all available
                             texts – there is no need to click all checkboxes in order to perform a
                             search throughout all texts.</p>
-                    </div>
-                    <div>
-                        <h3>Perform New Search or Continue Last Search? </h3>
-                        <p>This gives you the option to refine your previous search, by restricting
-                            or broadening the search result. </p>
-                        <p>The default value is to perform a new search. If you perform a new search, your search will
-                            not relate to your
-                            previous search.</p>
-                        <p>If you choose "AND Last Search", your search will restrict your last
-                            search by requiring that the search criteria for both the last and the
-                            present search are satisfied. You typically use this to search for the
-                            co-occurence of two words. </p>
-                        <p>If you choose "OR Last Search", your search will broaden your last
-                            search by including both the results from the last and the present
-                            search in the search results. You typically use this to search for
-                            alternative forms of a word. </p>
-                        <p>If you choose "NOT Last Search", your search will restrict your last
-                            search by excluding the results from the present search. You use this to
-                            remove specific hits from the search results. </p>
                     </div>
                 </section>
                 <section>

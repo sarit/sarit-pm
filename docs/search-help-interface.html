@@ -39,66 +39,31 @@
                         <p>The start page of the SARIT web platform displays a list of the texts in
                             the SARIT corpus and the search interface. </p>
                         <img width="100%" src="resources/img/search-interface.png"/>
-                        <p>The list of texts gives the text's title, notes its putative author(s) or
-                            commentator(s) and whether the text uses Devanagari script or
-                            romanisation. Most texts exist in both Devanagari script or
-                            romanisation, one converted from the other.</p>
-                        <p>There are also links for downloading the texts in various formats: epub,
-                            pdf and xml (zipped).</p>
-                        <p> The last link gives the possibility of opening the XML containing the
-                            text in an application called eXide. eXide is an application in the <a
-                                    href="http:exist-db.org/">eXist-db database</a> that has been used
-                            to develop the SARIT application. eXide also allows you to perform
-                            searches, using XPath and XQuery, the main programming languages used in
-                            the SARIT application, but that is another (rather long) story ….</p>
-                        <p>The search interface, located on the right of the list of works, offers a
-                            number of options, among these to search based on the information
-                            displayed in the list.</p>
-                        <p>These options will be described in the following. The names of the
-                            dropdown menus are displayed when hovering over them.</p>
-                    </div>
-                    <div>
-                        <h3>Search For What?</h3>
-                        <p>The search term is of course where you will be actively searching for
-                            occurrences of the words and phrases you are interested in. All the
-                            other choices you make in the search interface restrict or modify the
-                            search term(s) you input here. </p>
-                    </div>
-                    <div>
-                        <h3>Search With Which Scripts?</h3>
-                        <p>Your search term is automatically converted to make your search proceed
-                            in both IAST romanisation and in Devanagari. If you wish to limit this,
-                            select which script to search with.</p>
-                    </div>
-                    <div>
-                        <h3>Search Which Document Part?</h3>
-                        <p>Each SARIT text consists of </p>
-                        <ul>
-                            <li>a header which provides information about the text edition and</li>
-                            <li>the text proper.</li>
-                        </ul>
-			<p>In this dropdown menu you can select to search in one or both of
-                        these document parts.</p>
-                    </div>
-                    <div>
-                        <h3>Search In Texts By Which Authors?</h3>
-                        <p>You can choose <em>which texts</em> to target in your search in two
-                            different ways.</p>
-                        <p>If you wish to make selections among the texts based on their author, you
-                            can use this dropdown menu. Note that you can select several
-                            authors.</p>
-                        <p>In order to select individual texts to search in, you can click the
-                            checkboxes to the left of their titles in the list of works.</p>
-                        <p>Note that if you do not make any choice, you will search in all available
-                            texts – there is no need to click all checkboxes in order to perform a
-                            search throughout all texts.</p>
+                        <p>The list of texts gives the text's title,
+                        notes its putative author(s) or
+                        commentator(s), and whether the text uses
+                        Devanagari script or romanisation.</p>
+                        <p>There are also links for downloading the
+                        texts in various formats, currently as epub or
+                        raw XML.</p>
+
+                        <p>The search interface, located on the right
+                        of the list of works, allows you to search
+                        through the texts in various ways.  The
+                        options are described in <a
+                        href="search-help-brief.html#search-help-interface">the
+                        brief search help</a>.  If you tick one of the
+                        boxes to the left of the title in the list of
+                        works, the search will apply only to the
+                        selected text or texts, regardless of the
+                        author selection.</p>
                     </div>
                 </section>
-                <section>
+                <section id="search-help-tei-header-toc">
                     <h2>The TEI Header and Table of Contents</h2>
                     <div>
                         <p>Clicking a title in the list of works will display the TEI header of the
-                            text and its table of contents.</p>
+                            text and its table of contents, for example:</p>
                         <img width="75%" src="resources/img/header.png"/>
                         <p>The TEI header describes the text and the editorial processes that have
                             resulted in the SARIT edition. Since the header can be quite long, by
@@ -106,9 +71,11 @@
                             lists the persons and institutions that have contributed to the SARIT
                             version is shown. If you wish to access the whole TEI header, click the
                             Toggle Full Header button.</p>
-                        <p>At the bottom of this page is shown the table of contents of the SARIT
-                            text. This may divide into three parts, front matter, the text itself,
-                            and back matter.</p>
+                        <p>At the bottom of the page you will find the
+                        table of contents of the SARIT text. You can
+                        expand the contents by clicking on the
+                        <code>+</code>, or go to a section by clicking
+                        the link.</p>
                         <p>The table of contents can be expanded by clicking on the plus signs and
                             collapsed again by clicking on minus signs. The table of contents
                             descends three levels, i.e. divisions below the third level are not
@@ -118,31 +85,33 @@
                     </div>
                 </section>
                 <section>
-                    <h2>The Hitlist</h2>
+                    <h2>The search results</h2>
                     <div>
-                        <p>After performing a search for e.g. "lakṣaṇa", you will be presented with
-                            a hitlist.</p>
+                        <p>After performing a search for, e.g.,
+                        <code>*lakṣaṇ* AND *pratyakṣ*</code> limited
+                        to the Tattvasaṅgraha, you will be presented
+                        with a list of hits somewhat like this:</p>
                         <img src="resources/img/hitlist.png"/>
                         <p>The results of your search are presented in the form of a
                             keywords-in-context (KWIC) display, centring the strings that were found
-                            matching to your search term, with the context the matches occur in on
-                            the left and right. Clicking the center string (here, "lakṣaṇa") will
-                            display the text in which the hit occurs, with all matches
+                            matching your search term, with the context the matches occur in on
+                            the left and right. Clicking the highlighted string in the center will
+                            display the passage of text in which the hit occurs, with all matches
                             highlighted.</p>
-                        <p>The order in which the hits occur differs according to the index used for
-                            search. With an NGram Index, the hits are simply ordered according to
-                            the title of the texts in which they occur. With a Lucene Full-Text
-                            Index, the hits are ordered according to their score. The score is a
+                            <p>The hits are ordered according to their score. The score is a
                             measure of the relevancy of the hits in relation to the search. What
                             this means is a little technical, but, generally speaking, the more
                             often more of your search terms occur in a hit and the rarer the search
                             terms are within the texts searched, the higher the score will be.</p>
-                        <p>The search term matches are grouped in hits, i.e. according to the levels
-                            of the document targeted by your search, with clickable references to
-                            the text as a whole (showing the header information and table of
-                            contents) and the part of the text in which the hit occurred (displaying
-                            the text itself). One hit (such as the second here) may contain several
-                            matches.</p>
+                        <p>The matches are grouped according to
+                        meaningful divisions of the texts (e.g.,
+                        sections).  The head of a group links to the
+                        text as a whole (showing the header
+                        information and table of contents) and the
+                        part of the text in which the hit occurred
+                        (displaying the text itself).  One such group (such
+                        as the first one here) may contain several
+                        high-ranking matches.</p>
                         <p>The hits are shown twenty at a time on each page. At the top, you have
                             the total number of hits and a means of navigating from hit group to hit
                             group.</p>

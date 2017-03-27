@@ -17,8 +17,6 @@
             <div class="col-md-12">
                 <section>
                     <h2>Search 101</h2>
-                    <p>Some brief hints are given here — for fuller explanations, please consult the
-                    other search instructions (<a href="search-help-lucene.html">Lucene search help</a>).</p>
 
 		    <p>SARIT supports a useful subset of
 		    the <a href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description">Lucene
@@ -33,7 +31,7 @@
 		    independently of the script (currently SARIT has
 		    documents in both Devanāgarī and IAST).</p>
 
-		    <p>Some <b>examples</b> will best explain this:
+		    <p>Some examples will best explain this:
 		    
                     <ul>
                       <li>Simple term searches:
@@ -66,14 +64,22 @@
 			</li>
                     </ul>
                     </p>
+
+		    <p>These are only  brief hints on the basic usage. For fuller explanations, please consult the
+                    help for the <a href="">SARIT interface</a>.</p>
 		</section>
-                <section>
+		<section id="search-help-interface">
                   <h2>The search interface</h2>
 
+		  <p>If you hover over the fields in SARIT's search
+		  panel, you will see some short hints on how to use
+		  them.</p>
+
+		  <p>An example search might look like this:</p>
+		  
 		  <img src="resources/img/search-panel.png"/>
 		  
-                    <p>If you hover over the dropdowns in the Search panel, you will see their
-                        titles.</p>
+                  
                     <ol type="A">
                       <li>Search For What? <ul>
                         <li>Enter your search term here.  SARIT
@@ -84,14 +90,14 @@
                         href="http://list.indology.info/pipermail/indology_list.indology.info/2008-August/031971.html">Harvard-Kyoto</a>).</li>
                             </ul>
                         </li>
-                        <li> Where to search?
+                        <li>Where to search?
 			<ul>
-                        <li>You can choose to search the TEI Header
-                        (metadata) or the TEI Text.</li>
+                        <li>You can choose to search the text content of a
+                        TEI document's <a href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-text.html">text</a>, or its header (<a href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-teiHeader.html">teiHeader</a>).</li>
                             </ul>
                         </li>
                         <li> Limit search to certain authors? <ul>
-                                <li>You can choose Search In Texts By Any Author to search
+                                <li>You can choose <i>Search In Texts By Any Author</i> to search
                                     throughout the corpus or you can select one or more authors to
                                     search in the texts attributed to them.</li>
                                 <li>Note that you can also select individual texts to search by

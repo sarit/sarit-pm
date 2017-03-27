@@ -610,8 +610,8 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
 (:        if ($div-id) :)
 (:        then $div-id :)
 (:        else ($hit/ancestor-or-self::*[@xml:id]/@xml:id)[1]/string():)
-    (:if it is not a div, it will not have a head:)
-    let $div-head := $parent/tei:head/text()
+    (:if it is not a div, it will not have a head --> at least mention this :)
+    let $div-head := if ($parent/tei:head) then $parent/tei:head//text() else "[[Untitled section]]"
     (:TODO: what if the hit is in the header?:)
     let $work := $hit/ancestor::tei:TEI
     let $work-title := app:work-title($work)

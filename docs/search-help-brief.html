@@ -18,37 +18,46 @@
                 <section>
                     <h2>Search 101</h2>
                     <p>Some brief hints are given here — for fuller explanations, please consult the
-                    other search instructions (<a href="search-help-lucene">Lucene search help</a>).</p>
+                    other search instructions (<a href="search-help-lucene.html">Lucene search help</a>).</p>
 
-		    <p>SARIT supports a useful subset of the <a
-		    href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description">Lucene
-		    Query Parser Syntax</a>, specifically <a
-		    href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Wildcard_Searches">wildcard
+		    <p>SARIT supports a useful subset of
+		    the <a href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description">Lucene
+		    Query Parser Syntax</a>,
+		    specifically <a href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Wildcard_Searches">wildcard
 		    searches</a> (including wildcards as the first
-		    character of a search), <a
-		    href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Boolean_operators">boolean
-		    operators</a>, and <a
-		    href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Grouping">grouping</a>.
-		    It is also agnostic about the script of the
-		    underlying xml document (currently SARIT has
+		    character of a
+		    search), <a href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Boolean_operators">boolean
+		    operators</a>,
+		    and <a href="http://lucene.apache.org/core/6_4_2/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Grouping">grouping</a>.
+		    SARIT also allows you to search its texts
+		    independently of the script (currently SARIT has
 		    documents in both Devanāgarī and IAST).</p>
 
 		    <p>Some <b>examples</b> will best explain this:
 		    
                     <ul>
-                        <li>Simple term search: <i>hetuḥ</i> will match the individual words <i>hetuḥ</i> and <i>हेतुः</i>. (Note: `Word' in this context also refers to compounds.)</li>
-                        <li>Wildcard search: <i>*hetuḥ</i> will match any word ending in either <i>hetuḥ</i> or <i>हेतुः</i>, e.g., <i>sva<b>bhāva</b>hetuḥ</i>. (Note: The <code>*</code> wildcard matches zero or more characters.)</li>
-                        <li>Wildcard search (2): <i>*bhāva*</i> will match any word containing <i>bhāva</i> or <i>भाव</i>, e.g., <i>sva<b>bhāva</b>hetuḥ</i> or <i>अन्याभावः</i>.</li>
-			<li>Wildcard search (2): <i>*bhāva*</i> will match any word containing <i>bhāva</i> or <i>भाव</i>, e.g., <i>sva<b>bhāva</b>hetuḥ</i> or <i>अन्याभावः</i>.</li>
-			<li>Wildcard search (3): <i>?araṇam</i> will match  the words <i>maraṇam</i> and <i>karaṇam</i>, but not <i>udāharaṇam</i>. (Note: The <code>?</code> wildcard matches one character.)</li>
-			<li>Boolean operators: this allows you to combine these search terms, with either "AND" or "OR":
-			<ul>
-			  <li><i>maraṇam OR karaṇam</i>: passages where either of these two words occur.</li>
-			  <li><i>maraṇam AND karaṇam</i>: passages where both of these  words occur.</li>
-			  <li><i>*maraṇam OR *karaṇam</i>: all compounds ending in either of the two.</li>
-			  <li><i>*maraṇam AND *karaṇam</i>: passages with compounds ending in both of these two strings (or also <i>smaraṇam</i>, etc.).</li>
-			  <li>You can combine them<i>*maraṇam AND *karaṇam NOT smaraṇam</i>: passages with compounds ending in both of these two strings (but not in <i>smaraṇam</i>).</li>
-			</ul>
+                      <li>Simple term searches:
+		      <ul>
+			<li><code>hetuḥ</code> will match the individual words <i>hetuḥ</i> and <i>हेतुः</i>. (Note: `Word' in this context also refers to compounds.  It will not match <i>svabhāvahetuḥ</i>, because there <i>hetuḥ</i> is part of a longer word.)</li>
+			<li><code>"tathā nāsti"</code> will match the phrase <i>tathā nāsti</i>, but not (for example) <i>yadi nāsti sāmānyaṃ tathā</i> or <i>nāsti tathā</i>. The quotes tell the search engine that you are looking for a single term.</li>
+		      </ul></li>
+                      <li>Wildcard searches: use  a <code>*</code> to match any number of letters, or a <code>?</code> to match one letter. 
+			  <ul>
+			    <li><code>*hetuḥ</code> will match any word ending in either <i>hetuḥ</i> or <i>हेतुः</i>, e.g., <i>svabhāva<b>hetuḥ</b></i>. (Note: The <code>*</code> wildcard matches zero or more characters.)</li>
+                            <li><code>*bhāva*</code> will match any word containing <i>bhāva</i> or <i>भाव</i>, e.g., <i>sva<b>bhāva</b>hetuḥ</i> or <i>अन्या<b>भावः</b></i>.</li>
+			    <li> <code>*bhāva*</code> will match any word containing <i>bhāva</i> or <i>भाव</i>, e.g., <i>sva<b>bhāva</b>hetuḥ</i> or <i>अन्या<b>भावः</b></i>.</li>
+			    <li><code>?araṇam</code> will match the individual words <i>maraṇam</i> and <i>karaṇam</i>, but not <i>udāharaṇam</i>. (Note: The <code>?</code> wildcard matches one character.)</li>
+			  </ul></li>
+			  <li>Boolean operators: these allow you to combine search expressions, with either <code>AND</code>, <code>OR</code>, or <code>NOT</code>:
+			  <ul>
+			  <li><code>maraṇam OR karaṇam</code>: passages where either of these two words occur.</li>
+			  <li><code>maraṇam AND karaṇam</code>: passages where both of these  words occur.</li>
+			  <li><code>*maraṇam OR *karaṇam</code>: all compounds ending in either of the two.</li>
+			  <li><code>*maraṇam AND *karaṇam</code>: passages with compounds ending in both of these two strings (or also <i>smaraṇam</i>, etc.).</li>
+			  <li>You can combine them, <code>*maraṇam AND *karaṇam NOT smaraṇam</code>: passages with compounds ending in both of these two strings (but not in <i>smaraṇam</i>).</li>
+			  <li>There are also two other boolean operators: <code>-</code>, to exclude results containing a term, and <code>+</code> to include only results that contain the term.</li>
+			  <li>For SARIT, the <code>AND</code> operator is the default: if you search for <code>tathā nāsti</code>, the results should be identical to <code>tathā AND nāsti</code> or <code>nāsti AND tathā</code>.</li>
+			  </ul>
 			</li>
                         <li>Grouping allows you to efficiently combine more complex queries:
 			<ul> 
@@ -59,21 +68,29 @@
                     </p>
 		</section>
                 <section>
-                    <h2>What Does It Mean?</h2>
+                  <h2>The search interface</h2>
+
+		  <img src="resources/img/search-panel.png"/>
+		  
                     <p>If you hover over the dropdowns in the Search panel, you will see their
                         titles.</p>
-                    <ul>
-                        <li>Search For What? <ul>
-                                <li>You can either enter the precise term to search for or use
-                                    Regular Expressions.</li>
+                    <ol type="A">
+                      <li>Search For What? <ul>
+                        <li>Enter your search term here.  SARIT
+                        supports devanāgarī and IAST searches.  If
+                        Javascript is enabled in your browser, you can
+                        also enter your search term in Kyoto-Harvard
+                        convention (or <a
+                        href="http://list.indology.info/pipermail/indology_list.indology.info/2008-August/031971.html">Harvard-Kyoto</a>).</li>
                             </ul>
                         </li>
-                        <li>Search Which Document Part? <ul>
-                                <li>You can choose to search the TEI Header (metadata) or the TEI Text or
-                                    both.</li>
+                        <li> Where to search?
+			<ul>
+                        <li>You can choose to search the TEI Header
+                        (metadata) or the TEI Text.</li>
                             </ul>
                         </li>
-                        <li>Search In Texts By Which Authors? <ul>
+                        <li> Limit search to certain authors? <ul>
                                 <li>You can choose Search In Texts By Any Author to search
                                     throughout the corpus or you can select one or more authors to
                                     search in the texts attributed to them.</li>
@@ -81,7 +98,7 @@
                                     clicking on the check-boxes to the left of the titles.</li>
                             </ul>
                         </li>
-                    </ul>
+                    </ol>
                 </section>
             </div>
         </div>

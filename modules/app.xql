@@ -598,7 +598,7 @@ declare
 function app:show-hits($node as node()*, $model as map(*), $start as xs:integer, $per-page as xs:integer, $view as xs:string?) {
     let $view := if ($view) then $view else $config:default-view
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
-    let $parent := $hit/ancestor-or-self::tei:div[1]
+    let $parent := $hit/ancestor-or-self::tei:div[child::tei:head][1]
     let $parent := if ($parent) then $parent else $hit/ancestor-or-self::tei:teiHeader
     let $parent := if ($parent) then $parent else root($hit)
     let $div := app:get-current($parent)
@@ -610,8 +610,8 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
 (:        if ($div-id) :)
 (:        then $div-id :)
 (:        else ($hit/ancestor-or-self::*[@xml:id]/@xml:id)[1]/string():)
-    (:if it is not a div, it will not have a head:)
-    let $div-head := $parent/tei:head/text()
+    (:if it is not a div, it will not have a head --> at least mention this :)
+    let $div-head := if ($parent/tei:head) then $parent/tei:head//text() else "[[Untitled section]]"
     (:TODO: what if the hit is in the header?:)
     let $work := $hit/ancestor::tei:TEI
     let $work-title := app:work-title($work)

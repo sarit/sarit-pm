@@ -598,7 +598,7 @@ declare
 function app:show-hits($node as node()*, $model as map(*), $start as xs:integer, $per-page as xs:integer, $view as xs:string?) {
     let $view := if ($view) then $view else $config:default-view
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
-    let $parent := $hit/ancestor-or-self::tei:div[1]
+    let $parent := $hit/ancestor-or-self::tei:div[child::tei:head][1]
     let $parent := if ($parent) then $parent else $hit/ancestor-or-self::tei:teiHeader
     let $parent := if ($parent) then $parent else root($hit)
     let $div := app:get-current($parent)

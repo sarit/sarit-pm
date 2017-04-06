@@ -402,13 +402,11 @@ declare function pages:get-content($div as element()) {
                     return
                         element { node-name($div) } {
                             $div/@*,
-                            attribute exist:id { util:node-id($div) },
                             util:expand(($child/preceding-sibling::*, $child), "add-exist-id=all")
                         }
                 else
                     element { node-name($div) } {
                         $div/@*,
-                        attribute exist:id { util:node-id($div) },
                         util:expand($div/tei:div[1]/preceding-sibling::*, "add-exist-id=all")
                     }
             else

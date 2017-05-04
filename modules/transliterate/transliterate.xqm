@@ -2,6 +2,8 @@ xquery version "3.0";
 
 module namespace transliterate = "http://sarit.indology.info/ns/transliterate";
 
+import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-transliteration";
+
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 declare function transliterate:get-content($div as element()) {
@@ -39,3 +41,20 @@ declare function transliterate:get-content($div as element()) {
         default return
             $div
 };
+
+declare function transliterate:transliterate-node($node) {
+    element {QName("http://www.tei-c.org/ns/1.0", $node/local-name())} {
+        $node/@*
+        ,    
+        for $child-node in $node/node()
+        
+        return
+            if ($child-node instance of element())
+            then transliterate:transliterate-node($child-node)
+            else 
+                if ($child-node instance of comment())
+                then comment {$child-node}
+                else sarit-slp1:transliterate($child-node, "deva", "roman")
+     }
+};
+

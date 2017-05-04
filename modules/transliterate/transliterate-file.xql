@@ -1,24 +1,8 @@
 xquery version "3.1";
 
-import module namespace sarit-slp1 = "http://hra.uni-heidelberg.de/ns/sarit-transliteration";
+import module namespace transliterate = "http://sarit.indology.info/ns/transliterate" at "transliterate.xqm";
 
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
-
-declare function local:transcode-node($node) {
-    element {QName("http://www.tei-c.org/ns/1.0", $node/local-name())} {
-        $node/@*
-        ,    
-        for $child-node in $node/node()
-        
-        return
-            if ($child-node instance of element())
-            then local:transcode-node($child-node)
-            else 
-                if ($child-node instance of comment())
-                then comment {$child-node}
-                else sarit-slp1:transliterate($child-node, "deva", "roman")
-     }
-};
 
 let $data-collection-path := "/apps/sarit-data/data/"
 let $document-name := "mahabharata-devanagari"
@@ -29,17 +13,16 @@ let $result-document-path := $data-collection-path || "temp/" || $document-name 
 let $result-document := doc($result-document-path)
 
 return
-    for $node in $result-document//tei:text/tei:body/tei:div[12]/tei:div[position() = (242 to 243)]
-    let $processed-node := local:transcode-node($node)
+    for $node in $result-document//tei:text/tei:body/tei:div[13]/tei:div[position() = (35 to 35)]
+    let $processed-node := transliterate:transliterate-node($node)
     
     return update replace $node with $processed-node
 
  (:
-12 - 375
-13 - 274
-14 - 118
-15 - 9
-16 - 41
+13 - 274 anuzAsana-13-
+14 - 118 Azvamedhika-14
+15 - 9 mausala-15
+16 - 41 AzramavAsika-16-
 17 - 3
 18 - 6
  tei:div[position() = (1 to 5)]

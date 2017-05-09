@@ -1,15 +1,20 @@
 xquery version "3.1";
 
 import module namespace transliterate = "http://sarit.indology.info/ns/transliterate" at "transliterate.xqm";
-import module namespace pages = "http://www.tei-c.org/tei-simple/pages" at "/apps/sarit-pm/modules/pages.xql";
-import module namespace config = "http://www.tei-c.org/tei-simple/pages" at "/apps/sarit-pm/modules/config.xqm";
+import module namespace pages = "http://www.tei-c.org/tei-simple/pages" at "../pages.xql";
+import module namespace config = "http://www.tei-c.org/tei-simple/config" at "../config.xqm";
+import module namespace pm-config="http://www.tei-c.org/tei-simple/pm-config" at "../pm-config.xql";
 
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 
-let $doc := "kautalyarthasastra.xml"
-let $root := "1.5.6.3"
-let $id := ""
-let $view := "div"
+declare option output:method "json";
+declare option output:media-type "application/json";
+
+let $doc := request:get-parameter("doc", ())
+let $root := request:get-parameter("root", ())
+let $id := request:get-parameter("id", ())
+let $view := request:get-parameter("view", $config:default-view)
 
 let $xml :=
     if ($id)
@@ -25,4 +30,18 @@ let $xml :=
         pages:load-xml($view, $root, $doc)
 let $xml := transliterate:get-content($xml)
 
-return $xml
+return
+    if ($xml)
+    then
+        let $transliterated-xml := transliterate:transliterate-node2($xml)
+        let $html := $pm-config:web-transform($transliterated-xml, map { "root": doc($config:app-root || "/" || $doc) })
+        
+        return
+            map {
+                "content": serialize($html,
+                    <output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
+                      <output:indent>no</output:indent>
+                    </output:serialization-parameters>)
+            }
+    else
+        map { "error": "Not found" }    

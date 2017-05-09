@@ -33,7 +33,12 @@ declare function transliterate:get-content($div as element()) {
                 
                 return
                         element { node-name($div) } {
-                            $div/@*,
+                            $div/@*
+                            ,
+                            if (not($div/@xml:lang))
+                            then attribute xml:lang {$div/ancestor::*/@xml:lang[last()]/data(.)}
+                            else ()
+                            ,
                             ($child/preceding-sibling::*, $child)
                         }
             else
@@ -58,3 +63,24 @@ declare function transliterate:transliterate-node($node) {
      }
 };
 
+declare function transliterate:transliterate-node2($node) {
+    element {QName("http://www.tei-c.org/ns/1.0", $node/local-name())} {
+        $node/@*
+        ,    
+        for $child-node in $node/node()
+        
+        return
+            if ($child-node instance of element())
+            then transliterate:transliterate-node2($child-node)
+            else 
+                if ($child-node instance of comment())
+                then comment {$child-node}
+                else
+                    let $lang := $child-node/ancestor-or-self::*/@xml:lang[last()]/data(.)
+                    
+                    return
+                        if ($lang = 'sa-Latn')
+                        then sarit-slp1:transliterate($child-node, "roman", "deva")
+                        else sarit-slp1:transliterate($child-node, "deva", "roman")
+     }
+};

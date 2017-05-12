@@ -70,17 +70,19 @@ declare function transliterate:transliterate-node2($node) {
         for $child-node in $node/node()
         
         return
-            if ($child-node instance of element())
-            then transliterate:transliterate-node2($child-node)
-            else 
-                if ($child-node instance of comment())
-                then comment {$child-node}
-                else
-                    let $lang := $child-node/ancestor-or-self::*/@xml:lang[last()]/data(.)
+            typeswitch($child-node)
+                case comment() return $child-node
+                case element() return transliterate:transliterate-node2($child-node)
+                case text() return
+                    let $lang := $child-node/ancestor-or-self::*/@xml:lang
+                    let $lang := $lang[last()]
                     
                     return
-                        if ($lang = 'sa-Latn')
-                        then sarit-slp1:transliterate($child-node, "roman", "deva")
-                        else sarit-slp1:transliterate($child-node, "deva", "roman")
+                        switch($lang) 
+                            case 'sa-Latn' return sarit-slp1:transliterate($child-node, "roman", "deva")
+                            case 'en' return $child-node
+                            default return ()
+                default return ()
      }
 };
+

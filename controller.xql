@@ -77,7 +77,7 @@ else if (ends-with($exist:resource, ".xql")) then (
         else if (ends-with($exist:resource, ".tex")) then
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
                 <forward url="{$exist:controller}/modules/lib/latex.xql">
-                    <add-parameter name="id" value="{$id}"/>
+                    <add-parameter name="id" value="{$id}.xml"/>
                 </forward>
                 <error-handler>
                     <forward url="{$exist:controller}/error-page.html" method="get"/>

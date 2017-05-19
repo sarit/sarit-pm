@@ -140,6 +140,14 @@ declare variable $config:repo-descriptor := doc(concat($config:app-root, "/repo.
 declare variable $config:expath-descriptor := doc(concat($config:app-root, "/expath-pkg.xml"))/expath:package;
 
 (:~
+ : The command to run when generating PDF via LaTeX. Should be a sequence of
+ : arguments.
+ :)
+declare variable $config:tex-command := function($file) {
+    ( "/usr/local/bin/pdflatex", "-interaction=nonstopmode", $file )
+};
+
+(:~
  : Return an ID which may be used to look up a document. Change this if the xml:id
  : which uniquely identifies a document is *not* attached to the root element.
  :)
@@ -223,4 +231,35 @@ declare function config:app-info($node as node(), $model as map(*)) {
                 <td>{ request:get-attribute("$exist:controller") }</td>
             </tr>
         </table>
+};
+
+declare function config:get-repo-dir() {
+    let $dataDir := config:get-data-dir()
+    let $pkgRoot := $config:expath-descriptor/@abbrev || "-" || $config:expath-descriptor/@version
+    return
+        if ($dataDir) then
+            $dataDir || "/expathrepo/" || $pkgRoot
+        else
+            ()
+};
+
+(: Try to dynamically determine data directory by calling JMX. :)
+declare function config:get-data-dir() as xs:string? {
+    try {
+        let $request := <http:request method="GET" href="http://localhost:{request:get-server-port()}/{request:get-context-path()}/status?c=disk"/>
+        let $response := http:send-request($request)
+        return
+            if ($response[1]/@status = "200") then
+                let $dir := $response[2]//jmx:DataDirectory/string()
+                return
+                    if (matches($dir, "^\w:")) then
+                        (: windows path? :)
+                        "/" || translate($dir, "\", "/")
+                    else
+                        $dir
+            else
+                ()
+    } catch * {
+        ()
+    }
 };

@@ -34,6 +34,7 @@ import module namespace search="http://www.tei-c.org/tei-simple/search" at "sear
 import module namespace odd="http://www.tei-c.org/tei-simple/odd2odd";
 import module namespace pmu="http://www.tei-c.org/tei-simple/xquery/util";
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
+import module namespace app="http://www.tei-c.org/tei-simple/templates" at "../app.xql";
 
 declare variable $pages:app-root := request:get-context-path() || substring-after($config:app-root, "/db");
 
@@ -198,11 +199,10 @@ declare function pages:xml-link($node as node(), $model as map(*), $source as xs
 
 declare
     %templates:default("action", "browse")
-function pages:view($node as node(), $model as map(*), $action as xs:string) {
+function pages:view($node as node(), $model as map(*), $action as xs:string, $index as xs:string?) {
     let $view := pages:determine-view($model?config?view, $model?data)
     let $data :=
-        if ($action = "search" and exists(session:get-attribute("apps.simple.query"))) then
-            let $query := session:get-attribute("apps.simple.query")
+        if ($action = "search" and exists(session:get-attribute("apps.sarit.ngram-query"))) then
             let $div :=
                 if ($model?data instance of element(tei:pb)) then
                     let $nextPage := $model?data/following::tei:pb[1]
@@ -214,12 +214,7 @@ function pages:view($node as node(), $model as map(*), $action as xs:string) {
                 else
                     $model?data
             let $expanded :=
-                util:expand(
-                    (
-                        search:query-default-view($div, $query),
-                        $div[.//tei:head[ft:query(., $query)]]
-                    ), "add-exist-id=all"
-                )
+                app:expand-hits($div, $index)
             return
                 if ($model?data instance of element(tei:pb)) then
                     $expanded//tei:pb[@exist:id = util:node-id($model?data)]

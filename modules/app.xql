@@ -10,7 +10,8 @@ import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pa
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
 import module namespace sarit="http://exist-db.org/xquery/sarit";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
-(:import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";:)
+import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";
+import module namespace tpu="http://www.tei-c.org/tei-publisher/util" at "lib/util.xql";
 
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
 
@@ -888,11 +889,13 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     $index as xs:string) {
     let $view := if ($view) then $view else $config:default-view
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
+    let $work := $hit/ancestor::tei:TEI
     let $parent := $hit/ancestor-or-self::tei:div[1]
-    let $parent := if ($parent) then $parent else $hit/ancestor-or-self::tei:teiHeader
-    let $parent := if ($parent) then $parent else root($hit)
-    (:let $div := app:get-current($parent):)
+    let $parent := ($hit/self::tei:body, $hit/ancestor-or-self::tei:div[1])[1]
+    let $parent := ($parent, $hit/ancestor-or-self::tei:teiHeader, $hit)[1]
     let $parent-id := util:document-name($parent) || "?root=" || util:node-id($parent)
+    let $config := tpu:parse-pi(root($work), $view)
+    let $div := app:get-current($config, $parent)
     let $div-id := util:document-name($div) || "?root=" || util:node-id($div)
     (:if the nearest div does not have an xml:id, find the nearest element with an xml:id and use it:)
     (:is this necessary - can't we just use the nearest ancestor?:)
@@ -903,7 +906,6 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     (:if it is not a div, it will not have a head:)
     let $div-head := $parent/tei:head/text()
     (:TODO: what if the hit is in the header?:)
-    let $work := $hit/ancestor::tei:TEI
     let $work-title := app:work-title($work)
     (:the work always has xml:id.:)
     let $work-id := $work/@xml:id/string()
@@ -950,6 +952,23 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
                 $kwic
         return $output
     )
+};
+
+declare %private function app:get-current($config as map(*), $div as element()?) {
+    if (empty($div)) then
+        ()
+    else
+        if ($div instance of element(tei:teiHeader)) then
+        $div
+        else
+            if (
+                empty($div/preceding-sibling::tei:div)  (: first div in section :)
+                and count($div/preceding-sibling::*) < 5 (: less than 5 elements before div :)
+                and $div/.. instance of element(tei:div) (: parent is a div :)
+            ) then
+                nav:get-previous-div($config, $div/..)
+            else
+                $div
 };
 
 (:

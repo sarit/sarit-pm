@@ -31,7 +31,6 @@ return (
     else
         (),
     if ($id) then
-        let $id := replace($id, "^(.*)\..*", "$1")
         let $xml := pages:get-document($id)/tei:TEI
         let $config := tpu:parse-pi(root($xml), ())
         let $tex := string-join($pm-config:latex-transform($xml, map { "image-dir": config:get-repo-dir() || "/" || $config:data-root[1] || "/" }, $config?odd))

@@ -204,18 +204,10 @@ declare function pages:xml-link($node as node(), $model as map(*), $source as xs
     let $rest-link := '/exist/rest' || $doc-path
     return
         element { node-name($node) } {
-            $node/@* except ($node/@href, $node/@class),
-            if ($pages:EXIDE)
-            then (
-                attribute href { $eXide-link },
-                attribute data-exide-open { $doc-path },
-                attribute class { "eXide-open " || $node/@class },
-                attribute target { "eXide" }
-            ) else (
-                attribute href { $rest-link },
-                attribute target { "_blank" }
-            ),
-            $node/node()
+			        $node/@* except ($node/@href, $node/@class),
+			        attribute href { $rest-link },
+			        attribute target { "_blank" },
+	            $node/node()
         }
 };
 

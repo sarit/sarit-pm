@@ -27,6 +27,17 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $.material.init();
+                
+                $(document).keydown(function(ev) {
+                    switch (ev.which) {
+                        case 37:
+                            $(".nav-prev").first().click();
+                            break;
+                        case 39:
+                            $(".nav-next").first().click();
+                            break;
+                    }
+                });
             });
         </script>
         <script type="text/javascript" src="resources/scripts/app.js"/>

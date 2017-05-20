@@ -34,7 +34,6 @@ import module namespace search="http://www.tei-c.org/tei-simple/search" at "sear
 import module namespace odd="http://www.tei-c.org/tei-simple/odd2odd";
 import module namespace pmu="http://www.tei-c.org/tei-simple/xquery/util";
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
-import module namespace app="http://www.tei-c.org/tei-simple/templates" at "../app.xql";
 
 declare variable $pages:app-root := request:get-context-path() || substring-after($config:app-root, "/db");
 
@@ -125,14 +124,37 @@ declare function pages:load-xml($view as xs:string?, $root as xs:string?, $doc a
                                             $data/tei:TEI//tei:body
                     case "page" return
                         if ($root) then
-                            util:node-by-id($data, $root)
-                        else
-                            let $div := ($data//tei:pb)[1]
+                            let $node := util:node-by-id(doc($config:data-root || "/" || $doc), $root)
+                            let $edition := config:edition($node)
                             return
-                                if ($div) then
-                                    $div
+                                if ($node instance of element(tei:pb)) then
+                                    $node
+                                else if ($edition and $node/*[1][self::tei:pb][@ed = $edition]) then
+                                    ($node/tei:pb[@ed = $edition])[1]
+                                else if (empty($edition) and $node/*[1][self::tei:pb]) then
+                                    ($node/tei:pb)[1]
                                 else
-                                    $data/tei:TEI//tei:body
+                                    let $before :=
+                                        if ($edition) then
+                                            $node/preceding::tei:pb[@ed = $edition][1]
+                                        else
+                                            $node/preceding::tei:pb[1]
+                                    return
+                                        if ($before) then
+                                            $before[1]
+                                        else if ($edition) then
+                                            ($node//tei:pb[@ed = $edition])[1]
+                                        else
+                                            ($node//tei:pb)[1]
+                        else
+                        let $doc := doc($config:data-root || "/" || $doc)
+                        let $edition := config:edition($doc)
+                        let $div := if ($edition) then ($doc//tei:pb[@ed = $edition])[1] else ($doc//tei:pb)[1]
+                        return
+                            if ($div) then
+                                $div
+                            else
+                                doc($config:data-root || "/" || $doc)/tei:TEI//tei:body
                     default return
                         if ($root) then
                             util:node-by-id($data, $root)
@@ -205,7 +227,8 @@ function pages:view($node as node(), $model as map(*), $action as xs:string, $in
         if ($action = "search" and exists(session:get-attribute("apps.sarit.ngram-query"))) then
             let $div :=
                 if ($model?data instance of element(tei:pb)) then
-                    let $nextPage := $model?data/following::tei:pb[1]
+                    let $edition := config:edition($model?data)
+                    let $nextPage := $model?data/following::tei:pb[@ed = $edition][1]
                     return
                         if ($nextPage) then
                             ($model?data/ancestor::* intersect $nextPage/ancestor::*)[last()]
@@ -214,7 +237,7 @@ function pages:view($node as node(), $model as map(*), $action as xs:string, $in
                 else
                     $model?data
             let $expanded :=
-                app:expand-hits($div, $index)
+                pages:expand-hits($div, $index)
             return
                 if ($model?data instance of element(tei:pb)) then
                     $expanded//tei:pb[@exist:id = util:node-id($model?data)]
@@ -304,7 +327,12 @@ declare %private function pages:toc-div($node, $view as xs:string?, $current as 
                     $div/tei:head/text()
             let $root := (
                 if ($view = "page") then
-                    ($div/*[1][self::tei:pb], $div/preceding::tei:pb[1])[1]
+                    let $edition := config:edition($div)
+                    return
+                        if ($edition) then
+                            ($div/*[1][self::tei:pb][@ed = $edition], $div/preceding::tei:pb[@ed = $edition][1])[1]
+                        else
+                            ($div/*[1][self::tei:pb], $div/preceding::tei:pb[1])[1]
                 else
                     (),
                 $div
@@ -370,7 +398,12 @@ declare function pages:get-content($config as map(*), $div as element()) {
         case element(tei:teiHeader) return
             $div
         case element(tei:pb) return (
-            let $nextPage := $div/following::tei:pb[1]
+            let $edition := config:edition($div)
+            let $nextPage :=
+                if ($edition) then
+                    $div/following::tei:pb[@ed = $edition][1]
+                else
+                    $div/following::tei:pb[1]
             let $chunk :=
                 pages:milestone-chunk($div, $nextPage,
                     if ($nextPage) then
@@ -515,15 +548,39 @@ declare function pages:switch-view($node as node(), $model as map(*), $root as x
 };
 
 declare function pages:has-pages($data as element()+) {
-    exists((root($data)//(tei:div|tei:body))[1]//tei:pb)
+    exists(root($data)//tei:body//tei:pb)
 };
 
 declare function pages:switch-view-id($data as element()+, $view as xs:string) {
     let $root :=
         if ($view = "div") then
-            ($data/*[1][self::tei:pb], $data/preceding::tei:pb[1])[1]
+            let $edition := config:edition($data)
+            return
+                if ($edition) then
+                    ($data/*[1][self::tei:pb][@ed = $edition], $data/preceding::tei:pb[@ed = $edition][1])[1]
+                else
+                    ($data/*[1][self::tei:pb], $data/preceding::tei:pb[1])[1]
         else
             $data/ancestor::tei:div[1]
     return
         $root
+};
+
+declare function pages:expand-hits($divs as element()*, $index as xs:string) {
+    let $queries :=
+        switch($index)
+            case "ngram" return
+                session:get-attribute("apps.sarit.ngram-query")
+            default return
+                session:get-attribute("apps.sarit.lucene-query")
+    for $div in $divs
+    for $query in distinct-values($queries)
+    let $result := 
+        switch ($index)
+            case "ngram" return
+                $div[ngram:wildcard-contains(., $query)]
+            default return
+                $div[ft:query(., $query)]
+    return
+        util:expand($result, "add-exist-id=all")
 };

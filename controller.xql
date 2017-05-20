@@ -41,7 +41,7 @@ else if (contains($exist:path, "/components")) then
 else if (ends-with($exist:resource, ".xql")) then (
     login:set-user("org.exist.tei-simple", (), false()),
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <forward url="{$exist:controller}/modules/{$exist:resource}"/>
+        <forward url="{$exist:controller}/modules/{substring-after($exist:path, '/modules/')}"/>
         <cache-control cache="no"/>
     </dispatch>
 

@@ -21,10 +21,17 @@ module namespace nav="http://www.tei-c.org/tei-simple/navigation";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+import module namespace config="http://www.tei-c.org/tei-simple/config" at "config.xqm";
+
 declare function nav:get-next($config as map(*), $div as element(), $view as xs:string) {
     switch ($view)
         case "page" return
-            $div/following::tei:pb[1]
+            let $edition := config:edition($div)
+            return
+                if ($edition) then
+                    $div/following::tei:pb[@ed = $edition][1]
+                else
+                    $div/following::tei:pb[1]
         case "body" return
             ($div/following-sibling::*, $div/../following-sibling::*)[1]
         default return
@@ -45,7 +52,12 @@ declare function nav:get-next($config as map(*), $div as element()) {
 declare function nav:get-previous($config as map(*), $div as element(), $view as xs:string) {
     switch ($view)
         case "page" return
-            $div/preceding::tei:pb[1]
+            let $edition := config:edition($div)
+            return
+                if ($edition) then
+                    $div/preceding::tei:pb[@ed = $edition][1]
+                else
+                    $div/preceding::tei:pb[1]
         case "body" return
             ($div/preceding-sibling::*, $div/../preceding-sibling::*)[1]
         default return

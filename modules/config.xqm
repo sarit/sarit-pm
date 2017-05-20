@@ -147,6 +147,11 @@ declare variable $config:tex-command := function($file) {
     ( "/usr/local/bin/pdflatex", "-interaction=nonstopmode", $file )
 };
 
+declare function config:edition($node as node()) {
+     let $edition := (root($node)//tei:pb)[1]/@ed/string()
+     return
+         $edition
+};
 (:~
  : Return an ID which may be used to look up a document. Change this if the xml:id
  : which uniquely identifies a document is *not* attached to the root element.

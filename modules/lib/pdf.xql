@@ -1,5 +1,12 @@
 xquery version "3.0";
 
+import module namespace config="http://www.tei-c.org/tei-simple/config" at "../config.xqm";
+import module namespace pm-config="http://www.tei-c.org/tei-simple/pm-config" at "../pm-config.xql";
+import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
+import module namespace process="http://exist-db.org/xquery/process" at "java:org.exist.xquery.modules.process.ProcessModule";
+import module namespace xslfo="http://exist-db.org/xquery/xslfo" at "java:org.exist.xquery.modules.xslfo.XSLFOModule";
+import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "pages.xql";
+import module namespace tpu="http://www.tei-c.org/tei-publisher/util" at "util.xql";
 
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace fo="http://www.w3.org/1999/XSL/Format";
@@ -8,14 +15,6 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare option output:method "xml";
 declare option output:media-type "application/xml";
 declare option output:omit-xml-declaration "no";
-
-import module namespace config="http://www.tei-c.org/tei-simple/config" at "config.xqm";
-import module namespace pm-config="http://www.tei-c.org/tei-simple/pm-config" at "pm-config.xql";
-import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
-import module namespace process="http://exist-db.org/xquery/process" at "java:org.exist.xquery.modules.process.ProcessModule";
-import module namespace pmu="http://www.tei-c.org/tei-simple/xquery/util" at "/db/apps/tei-publisher-lib/content/util.xql";
-import module namespace odd="http://www.tei-c.org/tei-simple/odd2odd" at "/db/apps/tei-publisher-lib/content/odd2odd.xql";
-import module namespace xslfo="http://exist-db.org/xquery/xslfo" at "java:org.exist.xquery.modules.xslfo.XSLFOModule";
 
 declare variable $local:WORKING_DIR := system:get-exist-home() || "/webapp";
 (:  Set to 'ah' for AntennaHouse, 'fop' for Apache fop :)
@@ -32,52 +31,10 @@ declare function local:prepare-cache-collection() {
         (xmldb:create-collection($config:app-root, "cache"))[2]
 };
 
-declare function local:fop($id as xs:string, $fo as element()) {
-    let $appName := config:expath-descriptor()/@abbrev
-    let $config :=
-    <fop version="1.0">
-        <!-- Strict user configuration -->
-        <strict-configuration>true</strict-configuration>
-
-        <!-- Strict FO validation -->
-        <strict-validation>no</strict-validation>
-
-        <!-- Base URL for resolving relative URLs -->
-        <base>./</base>
-        
-        <!-- Font Base URL for resolving relative font URLs -->
-        <font-base>{substring-before(request:get-url(), "/" || $appName)}/{$appName/string()}/resources/fonts/</font-base>
-        <renderers>
-            <renderer mime="application/pdf">
-                <fonts>
-                    <font kerning="yes"
-                        embed-url="siddhanta.ttf"
-                        encoding-mode="single-byte">
-                        <font-triplet name="Siddhanta" style="normal" weight="normal"/>
-                    </font>
-                    <font kerning="yes"
-                        embed-url="siddhanta.ttf"
-                        encoding-mode="single-byte">
-                        <font-triplet name="Siddhanta" style="normal" weight="700"/>
-                    </font>
-                    <font kerning="yes"
-                        embed-url="siddhanta.ttf"
-                        encoding-mode="single-byte">
-                        <font-triplet name="Siddhanta" style="italic" weight="normal"/>
-                    </font>
-                    <font kerning="yes"
-                        embed-url="siddhanta.ttf"
-                        encoding-mode="single-byte">
-                        <font-triplet name="Siddhanta" style="italic" weight="700"/>
-                    </font>
-                </fonts>
-            </renderer>
-        </renderers>
-    </fop>
-let $log := console:log("Calling fop ...")
-let $pdf := xslfo:render($fo, "application/pdf", (), $config)
-return
-    $pdf
+declare function local:fop($id as xs:string, $fontsDir as xs:string?, $fo as element()) {
+    let $log := console:log("Calling fop ...")
+    return
+        xslfo:render($fo, "application/pdf", (), $config:fop-config)
 };
 
 declare function local:antenna-house($id as xs:string, $fo as element()) {
@@ -135,9 +92,10 @@ let $path := request:get-parameter("doc", ())
 let $token := request:get-parameter("token", "none")
 let $source := request:get-parameter("source", ())
 let $useCache := request:get-parameter("cache", "yes")
-let $doc := doc($config:data-root || "/" || $path)/tei:TEI
 let $id := replace($path, "^(.*)\..*", "$1")
-let $log := console:log("Generating PDF for " || $config:data-root || "/" || $path)
+let $doc := pages:get-document($id)/tei:TEI
+let $config := tpu:parse-pi(root($doc), ())
+let $log := console:log("Generating PDF for " || $path)
 let $name := util:document-name($doc)
 return
     if ($doc) then
@@ -149,7 +107,7 @@ return
                 response:stream-binary($cached, "media-type=application/pdf", $id || ".pdf")
             ) else
                 let $start := util:system-time()
-                let $fo := $pm-config:print-transform($doc, ())
+                let $fo := $pm-config:print-transform($doc, map { "root": $doc }, $config?odd)
                 return (
                     console:log("Generated fo for " || $name || " in " || util:system-time() - $start),
                     if ($source) then
@@ -160,7 +118,7 @@ return
                                 case "ah" return
                                     local:antenna-house($name, $fo)
                                 default return
-                                    local:fop($name, $fo)
+                                    local:fop($name, config:get-fonts-dir(), $fo)
                         return
                             typeswitch($output)
                                 case xs:base64Binary return (

@@ -67,7 +67,7 @@ else if (contains($exist:path, "/modules/")) then (
         if (ends-with($exist:resource, ".epub")) then
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
                 <forward url="{$exist:controller}/modules/lib/get-epub.xql">
-                    <add-parameter name="id" value="{$id}"/>
+                    <add-parameter name="id" value="{$id}.xml"/>
                 </forward>
                 <error-handler>
                     <forward url="{$exist:controller}/error-page.html" method="get"/>

@@ -22,7 +22,7 @@ declare function local:work2epub($id as xs:string, $work as element(), $lang as 
         epub:generate-epub($config, $root, $css, $id)
 };
 
-let $id := replace(request:get-parameter("id", ""), "^(.*)\..*", "$1")
+let $id := request:get-parameter("id", "")
 let $token := request:get-parameter("token", ())
 let $lang := request:get-parameter("lang", ())
 let $work := pages:get-document($id)/tei:TEI

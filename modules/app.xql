@@ -598,7 +598,6 @@ declare
     %templates:default("start", 1)
     %templates:default("per-page", 10)
 function app:show-hits($node as node()*, $model as map(*), $start as xs:integer, $per-page as xs:integer, $view as xs:string?) {
-    let $view := if ($view) then $view else $config:default-view
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
     let $work := $hit/ancestor::tei:TEI
     let $parent := $hit/ancestor-or-self::tei:div[1]
@@ -637,14 +636,15 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
         for $match in subsequence($expanded//exist:match, 1, 5)
         let $matchId := $match/../@exist:id
         let $docLink :=
-            if ($view = "page") then
+            if ($config?view = "page") then
+                let $edition := config:edition($div)
                 let $contextNode := util:node-by-id($div, $matchId)
-                let $page := $contextNode/preceding::tei:pb[1]
+                let $page := $contextNode/preceding::tei:pb[@ed = $edition][1]
                 return
                     util:document-name($work) || "?root=" || util:node-id($page)
             else
                 $div-id
-        let $link := $docLink || "&amp;action=search&amp;view=" || $view || "&amp;" || "#" || $matchId
+        let $link := $docLink || "&amp;action=search&amp;view=" || $config?view || "&amp;" || "#" || $matchId
         let $config := <config width="60" table="yes" link="{$link}"/>
 
         return kwic:get-summary($expanded, $match, $config)

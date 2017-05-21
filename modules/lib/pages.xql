@@ -404,7 +404,14 @@ declare function pages:get-content($config as map(*), $div as element()) {
                         ($div/ancestor::tei:div, $div/ancestor::tei:body)[1]
                 )
             return
-                $chunk
+                element { node-name($chunk) } {
+                    $chunk/@*,
+                    if ($chunk/@xml:lang) then
+                        $chunk/@xml:lang
+                    else
+                        $div/ancestor::*/@xml:lang[last()],
+                    $chunk/node()
+                }
         )
         case element(tei:div) return
             if ($div/tei:div and count($div/ancestor::tei:div) < $config?depth - 1) then
@@ -415,12 +422,20 @@ declare function pages:get-content($config as map(*), $div as element()) {
                         element { node-name($div) } {
                             $div/@* except $div/@exist:id,
                             attribute exist:id { util:node-id($div) },
+                            if ($div/@xml:lang) then
+                                $div/@xml:lang
+                            else
+                                $div/ancestor::*/@xml:lang[last()],
                             util:expand(($child/preceding-sibling::*, $child), "add-exist-id=all")
                         }
                 else
                     element { node-name($div) } {
                         $div/@* except $div/@exist:id,
                         attribute exist:id { util:node-id($div) },
+                        if ($div/@xml:lang) then
+                            $div/@xml:lang
+                        else
+                            $div/ancestor::*/@xml:lang[last()],
                         console:log("showing preceding siblings of next div child"),
                         util:expand($div/tei:div[1]/preceding-sibling::*, "add-exist-id=all")
                     }

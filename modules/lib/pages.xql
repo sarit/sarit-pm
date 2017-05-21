@@ -204,7 +204,7 @@ declare function pages:xml-link($node as node(), $model as map(*), $source as xs
     let $rest-link := '/exist/rest' || $doc-path
     return
         element { node-name($node) } {
-			        $node/@* except ($node/@href, $node/@class),
+			        $node/@* except ($node/@href),
 			        attribute href { $rest-link },
 			        attribute target { "_blank" },
 	            $node/node()

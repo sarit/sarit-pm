@@ -204,18 +204,10 @@ declare function pages:xml-link($node as node(), $model as map(*), $source as xs
     let $rest-link := '/exist/rest' || $doc-path
     return
         element { node-name($node) } {
-            $node/@* except ($node/@href, $node/@class),
-            if ($pages:EXIDE)
-            then (
-                attribute href { $eXide-link },
-                attribute data-exide-open { $doc-path },
-                attribute class { "eXide-open " || $node/@class },
-                attribute target { "eXide" }
-            ) else (
-                attribute href { $rest-link },
-                attribute target { "_blank" }
-            ),
-            $node/node()
+			        $node/@* except ($node/@href, $node/@class),
+			        attribute href { $rest-link },
+			        attribute target { "_blank" },
+	            $node/node()
         }
 };
 
@@ -412,7 +404,14 @@ declare function pages:get-content($config as map(*), $div as element()) {
                         ($div/ancestor::tei:div, $div/ancestor::tei:body)[1]
                 )
             return
-                $chunk
+                element { node-name($chunk) } {
+                    $chunk/@*,
+                    if ($chunk/@xml:lang) then
+                        $chunk/@xml:lang
+                    else
+                        $div/ancestor::*/@xml:lang[last()],
+                    $chunk/node()
+                }
         )
         case element(tei:div) return
             if ($div/tei:div and count($div/ancestor::tei:div) < $config?depth - 1) then
@@ -423,12 +422,20 @@ declare function pages:get-content($config as map(*), $div as element()) {
                         element { node-name($div) } {
                             $div/@* except $div/@exist:id,
                             attribute exist:id { util:node-id($div) },
+                            if ($div/@xml:lang) then
+                                $div/@xml:lang
+                            else
+                                $div/ancestor::*/@xml:lang[last()],
                             util:expand(($child/preceding-sibling::*, $child), "add-exist-id=all")
                         }
                 else
                     element { node-name($div) } {
                         $div/@* except $div/@exist:id,
                         attribute exist:id { util:node-id($div) },
+                        if ($div/@xml:lang) then
+                            $div/@xml:lang
+                        else
+                            $div/ancestor::*/@xml:lang[last()],
                         console:log("showing preceding siblings of next div child"),
                         util:expand($div/tei:div[1]/preceding-sibling::*, "add-exist-id=all")
                     }

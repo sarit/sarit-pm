@@ -9,7 +9,7 @@
         <fo:flow flow-name="xsl-region-body">
             <fo:block-container padding-after="10pt">
                 <fo:block font-size="14pt" font-family="serif">OTHER FONTS</fo:block>
-            </fo:block-container>            
+            </fo:block-container>  
             <fo:block-container padding-after="10pt">
                 <fo:block font-size="14pt" font-family="serif">Nakula</fo:block>
                 <fo:block font-size="14pt" font-family="Nakula" script="deva">कारणत्त्वङ्गवाश्वादीनमपीति चेत् युक्तम्</fo:block>

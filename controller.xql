@@ -38,7 +38,7 @@ else if (contains($exist:path, "/components")) then
         <forward url="{$exist:controller}/components/{substring-after($exist:path, '/components/')}"/>
     </dispatch>
 
-else if (ends-with($exist:resource, ".xql")) then (
+else if (contains($exist:path, "/modules/")) then (
     login:set-user("org.exist.tei-simple", (), false()),
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="{$exist:controller}/modules/{substring-after($exist:path, '/modules/')}"/>

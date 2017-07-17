@@ -6,9 +6,11 @@ import module namespace templates="http://exist-db.org/xquery/templates";
 import module namespace config="http://www.tei-c.org/tei-simple/config" at "config.xqm";
 import module namespace pm-config="http://www.tei-c.org/tei-simple/pm-config" at "pm-config.xql";
 import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
-import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "pages.xql";
+import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pages.xql";
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
+import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";
+import module namespace tpu="http://www.tei-c.org/tei-publisher/util" at "lib/util.xql";
 
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
 
@@ -233,8 +235,23 @@ function app:checkbox($node as node(), $model as map(*), $target-texts as xs:str
     )
 };
 
-declare function app:statistics($node as node(), $model as map(*)) {
-        "SARIT currently contains "|| $metadata:metadata/metadata:number-of-xml-works ||" text files (TEI-XML) of " || $metadata:metadata/metadata:size-of-xml-works || " XML (" || $metadata:metadata/metadata:number-of-pdf-pages || " pages in PDF format)."
+
+declare function app:statistics($node as node(), $model as map(*))
+as xs:string {
+    let $numworks := 
+    if ($metadata:metadata/metadata:number-of-xml-works)
+    then
+        metadata:count-relevant-xml-works()
+    else $metadata:metadata/metadata:number-of-xml-works
+
+    let $size := 
+    if ($metadata:metadata/metadata:size-of-xml-works)
+    then
+        metadata:get-size-of-relevant-xml-works()
+    else $metadata:metadata/metadata:size-of-xml-works
+    
+    return "SARIT currently contains " || $numworks || " TEI documents in " || $size || " of XML"
+    
 };
 
 declare function app:work-author($node as node(), $model as map(*)) {
@@ -596,13 +613,14 @@ declare
     %templates:default("start", 1)
     %templates:default("per-page", 10)
 function app:show-hits($node as node()*, $model as map(*), $start as xs:integer, $per-page as xs:integer, $view as xs:string?) {
-    let $view := if ($view) then $view else $config:default-view
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
+    let $work := $hit/ancestor::tei:TEI
     let $parent := $hit/ancestor-or-self::tei:div[1]
-    let $parent := if ($parent) then $parent else $hit/ancestor-or-self::tei:teiHeader
-    let $parent := if ($parent) then $parent else root($hit)
-    let $div := app:get-current($parent)
+    let $parent := ($hit/self::tei:body, $hit/ancestor-or-self::tei:div[1])[1]
+    let $parent := ($parent, $hit/ancestor-or-self::tei:teiHeader, $hit)[1]
     let $parent-id := util:document-name($parent) || "?root=" || util:node-id($parent)
+    let $config := tpu:parse-pi(root($work), $view)
+    let $div := app:get-current($config, $parent)
     let $div-id := util:document-name($div) || "?root=" || util:node-id($div)
     (:if the nearest div does not have an xml:id, find the nearest element with an xml:id and use it:)
     (:is this necessary - can't we just use the nearest ancestor?:)
@@ -610,10 +628,9 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
 (:        if ($div-id) :)
 (:        then $div-id :)
 (:        else ($hit/ancestor-or-self::*[@xml:id]/@xml:id)[1]/string():)
-    (:if it is not a div, it will not have a head:)
-    let $div-head := $parent/tei:head/text()
+    (:if it is not a div, it will not have a head --> at least mention this :)
+    let $div-head := if ($parent/tei:head) then $parent/tei:head//text() else "[[Untitled section]]"
     (:TODO: what if the hit is in the header?:)
-    let $work := $hit/ancestor::tei:TEI
     let $work-title := app:work-title($work)
     (:the work always has xml:id.:)
     let $work-id := $work/@xml:id/string()
@@ -634,21 +651,22 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
         for $match in subsequence($expanded//exist:match, 1, 5)
         let $matchId := $match/../@exist:id
         let $docLink :=
-            if ($view = "page") then
+            if ($config?view = "page") then
+                let $edition := config:edition($div)
                 let $contextNode := util:node-by-id($div, $matchId)
-                let $page := $contextNode/preceding::tei:pb[1]
+                let $page := $contextNode/preceding::tei:pb[@ed = $edition][1]
                 return
                     util:document-name($work) || "?root=" || util:node-id($page)
             else
                 $div-id
-        let $link := $docLink || "&amp;action=search&amp;view=" || $view || "&amp;" || "#" || $matchId
+        let $link := $docLink || "&amp;action=search&amp;view=" || $config?view || "&amp;" || "#" || $matchId
         let $config := <config width="60" table="yes" link="{$link}"/>
 
         return kwic:get-summary($expanded, $match, $config)
     )
 };
 
-declare %private function app:get-current($div as element()?) {
+declare %private function app:get-current($config as map(*), $div as element()?) {
     if (empty($div)) then
         ()
     else
@@ -660,7 +678,32 @@ declare %private function app:get-current($div as element()?) {
                 and count($div/preceding-sibling::*) < 5 (: less than 5 elements before div :)
                 and $div/.. instance of element(tei:div) (: parent is a div :)
             ) then
+                nav:get-previous-div($config, $div/..)
+            else
+                $div
+};
+
+(:
+declare %private function app:get-current($div as element()?) {
+    if (empty($div)) then
+        ()
+    else
+        if ($div instance of element(tei:teiHeader)) then
+        $div
+        else
+            if (
+                empty($div/preceding-sibling::tei:div)  :)
+(: first div in section :)(:
+
+                and count($div/preceding-sibling::*) < 5 :)
+(: less than 5 elements before div :)(:
+
+                and $div/.. instance of element(tei:div) :)
+(: parent is a div :)(:
+
+            ) then
                 pages:get-previous($div/..)
             else
                 $div
 };
+:)

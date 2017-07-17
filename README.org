@@ -53,3 +53,17 @@ The only tricky thing is to exclude the Lucene keywords.
 
   app:query(<node/>, map {}, "*lakṣaṇa* AND *pratyakṣ*", "tei-text", "narrow", "all", "all", "new")
 #+END_SRC
+
+
+** LaTeX rendering
+
+- since commit #86c8f16c5c3d0d9b67
+  (https://github.com/sarit/sarit-pm/commit/86c8f16c5c3d0d9b6781066ff0e94d277787bc93),
+  this application is using the [[http://gitlab.exist-db.org/tei-publisher/tei-publisher-lib/tree/master][tei-publisher-lib]]
+- the main things in sarit-pm that have to be configured are these:
+  - config of the latex processor: [[file:modules/config.xqm::(%20"/usr/local/bin/pdflatex",%20"-interaction=nonstopmode",%20$file%20)]]
+    
+  - [[file:modules/ext-latex.xql]]: extension (or override) functions of
+    the standard functions specified in
+    http://gitlab.exist-db.org/tei-publisher/tei-publisher-lib/blob/master/content/latex-functions.xql
+  

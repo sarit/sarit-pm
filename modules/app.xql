@@ -235,8 +235,23 @@ function app:checkbox($node as node(), $model as map(*), $target-texts as xs:str
     )
 };
 
-declare function app:statistics($node as node(), $model as map(*)) {
-        "SARIT currently contains "|| $metadata:metadata/metadata:number-of-xml-works ||" text files (TEI-XML) of " || $metadata:metadata/metadata:size-of-xml-works || " XML (" || $metadata:metadata/metadata:number-of-pdf-pages || " pages in PDF format)."
+
+declare function app:statistics($node as node(), $model as map(*))
+as xs:string {
+    let $numworks := 
+    if ($metadata:metadata/metadata:number-of-xml-works)
+    then
+        metadata:count-relevant-xml-works()
+    else $metadata:metadata/metadata:number-of-xml-works
+
+    let $size := 
+    if ($metadata:metadata/metadata:size-of-xml-works)
+    then
+        metadata:get-size-of-relevant-xml-works()
+    else $metadata:metadata/metadata:size-of-xml-works
+    
+    return "SARIT currently contains " || $numworks || " TEI documents in " || $size || " of XML"
+    
 };
 
 declare function app:work-author($node as node(), $model as map(*)) {

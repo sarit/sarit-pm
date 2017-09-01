@@ -151,9 +151,25 @@ declare
     %templates:default("per-page", 10)
     %templates:default("min-hits", 0)
     %templates:default("max-pages", 10)
-function app:paginate($node as node(), $model as map(*), $key as xs:string, $start as xs:int, $per-page as xs:int, $min-hits as xs:int,
-    $max-pages as xs:int) {
-    if ($min-hits < 0 or count($model($key)) >= $min-hits) then
+    %templates:default("query", "")
+	  %templates:default("field", "text")
+	  %templates:default("tei-target", "tei-text")
+	  %templates:default("work-authors", "all")
+function app:paginate(
+	$node as node(),
+	$model as map(*),
+	$key as xs:string,
+	$start as xs:int,
+	$per-page as xs:int,
+	$min-hits as xs:int,
+	$max-pages as xs:int,
+	$query as xs:string,
+	$field as xs:string,
+	$tei-target as xs:string,
+	$work-authors as xs:string)
+	{
+	let $current-params := "query=" || $query || "&amp;" || "field=" || $field || "&amp;" || "tei-target=" || $tei-target || "&amp;" || "work-authors=" || $work-authors
+   return if ($min-hits < 0 or count($model($key)) >= $min-hits) then
         element { node-name($node) } {
             $node/@*,
             let $count := xs:integer(ceiling(count($model($key))) div $per-page) + 1
@@ -168,10 +184,10 @@ function app:paginate($node as node(), $model as map(*), $key as xs:string, $sta
                     </li>
                 ) else (
                     <li>
-                        <a href="?start=1"><i class="glyphicon glyphicon-fast-backward"/></a>
+                        <a href="?start=1&amp;{$current-params}"><i class="glyphicon glyphicon-fast-backward"/></a>
                     </li>,
                     <li>
-                        <a href="?start={max( ($start - $per-page, 1 ) ) }"><i class="glyphicon glyphicon-backward"/></a>
+                        <a href="?start={max( ($start - $per-page, 1 ) ) }&amp;{$current-params}"><i class="glyphicon glyphicon-backward"/></a>
                     </li>
                 ),
                 let $startPage := xs:integer(ceiling($start div $per-page))
@@ -181,15 +197,15 @@ function app:paginate($node as node(), $model as map(*), $key as xs:string, $sta
                 for $i in $lowerBound to $upperBound
                 return
                     if ($i = ceiling($start div $per-page)) then
-                        <li class="active"><a href="?start={max( (($i - 1) * $per-page + 1, 1) )}">{$i}</a></li>
+                        <li class="active"><a href="?start={max( (($i - 1) * $per-page + 1, 1) )}&amp;{$current-params}">{$i}</a></li>
                     else
-                        <li><a href="?start={max( (($i - 1) * $per-page + 1, 1)) }">{$i}</a></li>,
+                        <li><a href="?start={max( (($i - 1) * $per-page + 1, 1)) }&amp;{$current-params}">{$i}</a></li>,
                 if ($start + $per-page < count($model($key))) then (
                     <li>
-                        <a href="?start={$start + $per-page}"><i class="glyphicon glyphicon-forward"/></a>
+                        <a href="?start={$start + $per-page}&amp;{$current-params}"><i class="glyphicon glyphicon-forward"/></a>
                     </li>,
                     <li>
-                        <a href="?start={max( (($count - 1) * $per-page + 1, 1))}"><i class="glyphicon glyphicon-fast-forward"/></a>
+                        <a href="?start={max( (($count - 1) * $per-page + 1, 1))}&amp;{$current-params}"><i class="glyphicon glyphicon-fast-forward"/></a>
                     </li>
                 ) else (
                     <li class="disabled">
@@ -410,7 +426,16 @@ declare
     %templates:default("work-authors", "all")
     %templates:default("target-texts", "all")
     %templates:default("bool", "new")
-function app:query($node as node()*, $model as map(*), $query as xs:string?, $tei-target as xs:string+, $query-scope as xs:string, $work-authors as xs:string+, $target-texts as xs:string+, $bool as xs:string) as map(*) {
+function app:query(
+	$node as node()*,
+	$model as map(*),
+	$query as xs:string?,
+	$tei-target as xs:string+,
+	$query-scope as xs:string,
+	$work-authors as xs:string+,
+	$target-texts as xs:string+,
+	$bool as xs:string) as map(*)
+	{
         (:If there is no query string, fill up the map with existing values:)
         if (empty($query))
         then
@@ -616,11 +641,12 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     for $hit at $p in subsequence($model("hits"), $start, $per-page)
     let $work := $hit/ancestor::tei:TEI
     let $parent := $hit/ancestor-or-self::tei:div[1]
-    let $parent := ($hit/self::tei:body, $hit/ancestor-or-self::tei:div[1])[1]
-    let $parent := ($parent, $hit/ancestor-or-self::tei:teiHeader, $hit)[1]
+    let $parent := if (empty($parent)) then ($hit/self::tei:body, $hit/ancestor-or-self::tei:div[1])[1] else $parent
+    let $parent := if (empty($parent)) then ($parent, $hit/ancestor-or-self::tei:teiHeader, $hit)[1] else $parent
     let $parent-id := util:document-name($parent) || "?root=" || util:node-id($parent)
     let $config := tpu:parse-pi(root($work), $view)
     let $div := app:get-current($config, $parent)
+		let $div := if (empty($div)) then if (empty($parent)) then $work else $parent else $div
     let $div-id := util:document-name($div) || "?root=" || util:node-id($div)
     (:if the nearest div does not have an xml:id, find the nearest element with an xml:id and use it:)
     (:is this necessary - can't we just use the nearest ancestor?:)

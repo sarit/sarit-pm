@@ -23,7 +23,7 @@ declare function tei-to-html:dispatch($nodes as node()*, $options) as item()* {
     for $node in $nodes
     return
         typeswitch($node)
-            case text() return $node
+            case text() return if (normalize-space($node) = '' and $options/delete-white-space) then () else $node
             
             case element(tei:TEI) return tei-to-html:recurse($node, $options)
             
@@ -1026,7 +1026,7 @@ declare function tei-to-html:titleStmt($node as element(tei:titleStmt), $options
                     {if (count($principals) gt 1) then 's' else ''}
                     {': '}
                     {tei-to-html:serialize-list(
-                        for $principal in $principals/*[element() or (text() and normalize-space(.) != '')] return tei-to-html:recurse($principal, $options))}
+                        for $principal in $principals return tei-to-html:recurse($principal, $options))}
                 </li>
             else ()
         
@@ -1087,7 +1087,9 @@ declare function tei-to-html:editionStmt($node as element(tei:editionStmt), $opt
 declare function tei-to-html:serialize-list($sequence as item()*) as xs:string {       
     let $sequence-count := count($sequence)
     return
-    if ($sequence-count eq 1)
+		if ($sequence-count eq 0)
+		then ""
+    else if ($sequence-count eq 1)
         then $sequence
         else
             if ($sequence-count eq 2)

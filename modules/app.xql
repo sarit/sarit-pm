@@ -122,7 +122,7 @@ function app:browse($node as node(), $model as map(*), $start as xs:int, $per-pa
 
 (:template function in view-work.html:)
 declare function app:header($node as node(), $model as map(*)) {
-    tei-to-html:render(root($model("data"))//tei:teiHeader)
+    tei-to-html:render(root($model("data"))//tei:teiHeader, <parameters><delete-white-space/></parameters>)
 };
 
 declare

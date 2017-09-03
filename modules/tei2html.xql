@@ -1112,8 +1112,13 @@ declare %private function tei-to-html:get-id($node as element()) {
     ($node/@xml:id, $node/@exist:id)[1]
 };
 
+(: TODO: naively assumes that multi-valued links (1-∞ occurrences of
+teidata.pointer separated by whitespace) will only be one. Quickfixed
+to just use first URL :)
+
 declare function tei-to-html:resolve-xml-id($node as attribute(), $options) {
-    let $absoluteURI := resolve-uri($node, base-uri($node))
+	  let $firstURI := tokenize($node/string(), '\s')[1]
+    let $absoluteURI := resolve-uri($firstURI, base-uri($node))
     let $node := replace($node, '^#?(.*)$', '$1')
     return
         doc($absoluteURI)/id($node)/text()

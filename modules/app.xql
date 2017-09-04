@@ -254,11 +254,7 @@ function app:checkbox($node as node(), $model as map(*), $target-texts as xs:str
 
 declare function app:statistics($node as node(), $model as map(*))
 as xs:string {
-    let $numworks := 
-    if ($metadata:metadata/metadata:number-of-xml-works)
-    then
-        metadata:count-relevant-xml-works()
-    else $metadata:metadata/metadata:number-of-xml-works
+    let $numworks := metadata:count-relevant-xml-works()
 
     let $size := 
     if ($metadata:metadata/metadata:size-of-xml-works)

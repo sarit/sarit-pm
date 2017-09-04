@@ -1025,8 +1025,13 @@ declare function tei-to-html:titleStmt($node as element(tei:titleStmt), $options
                     {'Principal'}
                     {if (count($principals) gt 1) then 's' else ''}
                     {': '}
-                    {tei-to-html:serialize-list(
-                        for $principal in $principals return tei-to-html:recurse($principal, $options))}
+                    {if (string-join($principals/text(), "") = '')
+                    then 
+                        tei-to-html:serialize-list(
+                            for $principal in $principals return tei-to-html:recurse($principal, $options))
+                    else
+                        normalize-space(string-join($principals//text()))
+                    }
                 </li>
             else ()
         

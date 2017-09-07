@@ -27,26 +27,7 @@ declare function metadata:count-pdf-pages() {
 };
 
 declare function metadata:get-relevant-xml-works() {
-    let $works := collection($config:data-root)/tei:TEI
-    let $work-identifiers :=
-        for $work in $works
-        return
-            app:work-title($work) || app:work-author($work)
-    let $relevant-works :=
-        for $work in $works
-        let $work-identifier := app:work-title($work) || app:work-author($work)
-        let $work-script := $work//tei:text/@xml:lang
-        let $work-script := if ($work-script eq 'sa-Latn') then 'IAST' else 'Devanagari'
-        return
-            if (count(index-of($work-identifiers, $work-identifier)) > 1)
-            then
-                if ($work-script = 'Devanagari')
-                then $work
-                else ()
-            else $work
-
-    
-    return $relevant-works
+    collection($config:data-root)/tei:TEI
 };
 
 declare function metadata:count-relevant-xml-works() {

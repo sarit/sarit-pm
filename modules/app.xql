@@ -7,6 +7,7 @@ import module namespace config="http://www.tei-c.org/tei-simple/config" at "conf
 import module namespace pm-config="http://www.tei-c.org/tei-simple/pm-config" at "pm-config.xql";
 import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
 import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pages.xql";
+(: TODO: we should try to get rid of this module in the long term, it does not use the tei processing module :)
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
 import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";
@@ -254,11 +255,7 @@ function app:checkbox($node as node(), $model as map(*), $target-texts as xs:str
 
 declare function app:statistics($node as node(), $model as map(*))
 as xs:string {
-    let $numworks := 
-    if ($metadata:metadata/metadata:number-of-xml-works)
-    then
-        metadata:count-relevant-xml-works()
-    else $metadata:metadata/metadata:number-of-xml-works
+    let $numworks := metadata:count-relevant-xml-works()
 
     let $size := 
     if ($metadata:metadata/metadata:size-of-xml-works)

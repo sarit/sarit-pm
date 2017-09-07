@@ -662,7 +662,7 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     let $work-id := $work/@xml:id/string()
     let $work-id := util:document-name($work)
 
-    let $loc :=
+		return (
         <tr class="reference">
             <td colspan="3">
                 <span class="number">{$start + $p - 1}</span>
@@ -670,26 +670,12 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
                     <a href="{$work-id}">{$work-title}</a>{if ($div-head) then ' / ' else ''}<a href="{$parent-id}&amp;action=search">{$div-head}</a>
                 </span>
             </td>
-        </tr>
-    let $expanded := util:expand($hit, "add-exist-id=all")
-    return (
-        $loc,
-        for $match in subsequence($expanded//exist:match, 1, 5)
-        let $matchId := $match/../@exist:id
-        let $docLink :=
-            if ($config?view = "page") then
-                let $edition := config:edition($div)
-                let $contextNode := util:node-by-id($div, $matchId)
-                let $page := $contextNode/preceding::tei:pb[@ed = $edition][1]
-                return
-                    util:document-name($work) || "?root=" || util:node-id($page)
-            else
-                $div-id
-        let $link := $docLink || "&amp;action=search&amp;view=" || $config?view || "&amp;" || "#" || $matchId
-        let $config := <config width="60" table="yes" link="{$link}"/>
-
-        return kwic:get-summary($expanded, $match, $config)
-    )
+        </tr>,
+				<tr class="result">
+				<td colspan="3">
+				{tei-to-html:render(util:expand($hit, "add-exist-id=all"))}
+				</td>
+				</tr>)
 };
 
 declare %private function app:get-current($config as map(*), $div as element()?) {

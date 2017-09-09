@@ -9,6 +9,7 @@ import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/
 import module namespace pages="http://www.tei-c.org/tei-simple/pages" at "lib/pages.xql";
 (: TODO: we should try to get rid of this module in the long term, it does not use the tei processing module :)
 import module namespace tei-to-html="http://exist-db.org/xquery/app/tei2html" at "tei2html.xql";
+import module namespace tei-to-html4search="http://sarit.indology.info/xquery/app/tei2html4search" at "tei2html4search.xql";
 import module namespace metadata = "http://exist-db.org/ns/sarit/metadata/" at "metadata.xqm";
 import module namespace nav="http://www.tei-c.org/tei-simple/navigation" at "navigation.xql";
 import module namespace tpu="http://www.tei-c.org/tei-publisher/util" at "lib/util.xql";
@@ -670,7 +671,7 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
         </tr>,
 				<tr class="result">
 				<td colspan="3">
-				{tei-to-html:render(util:expand($hit, "add-exist-id=all"))}
+				{tei-to-html4search:render(util:expand($hit, "add-exist-id=all"))}
 				</td>
 				</tr>)
 };

@@ -659,6 +659,7 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
     (:the work always has xml:id.:)
     let $work-id := $work/@xml:id/string()
     let $work-id := util:document-name($work)
+	  let $display :=	request:get-parameter("display", "kwic")
 
 		return (
         <tr class="reference">
@@ -671,7 +672,11 @@ function app:show-hits($node as node()*, $model as map(*), $start as xs:integer,
         </tr>,
 				<tr class="result">
 				<td colspan="3">
-				{tei-to-html4search:render(util:expand($hit, "add-exist-id=all"))}
+				{if ($display != "kwic")
+				then
+					tei-to-html4search:render(util:expand($hit, "add-exist-id=all"))
+	      else
+					tei-to-html:render(util:expand($hit, "add-exist-id=all"))}
 				</td>
 				</tr>)
 };

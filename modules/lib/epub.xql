@@ -213,12 +213,16 @@ declare function epub:title-xhtml-body($fileDesc as element(tei:fileDesc)?) {
         </h1>
         <ul>
         {
-            for $resp in $fileDesc/tei:titleStmt/tei:respStmt
+            for $item in $fileDesc/tei:titleStmt/*
+						let $item-name := $item/name()
+						let $item-content := $item//text()
             return
-                <li class="resp"><span class="respRole">{$resp/tei:resp/text()}</span>: {$resp/tei:name/text()}</li>
+                <li class="{$item-name}"><span class="$item-name">{
+									concat(upper-case(substring($item-name,1,1)),
+					             substring($item-name,2))
+								}</span>: {$item-content}</li>
         }
         </ul>
-
     </div>
 };
 

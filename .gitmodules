@@ -1,0 +1,3 @@
+[submodule "SARIT-corpus"]
+	path = SARIT-corpus
+	url = https://github.com/sarit/SARIT-corpus.git

@@ -8,10 +8,10 @@ import module "http://expath.org/ns/pdf";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-declare variable $metadata:metadata := doc($config:remote-root || "/metadata.xml")/*;
+declare variable $metadata:metadata := doc($config:app-root || "/metadata.xml")/*;
 
 declare function metadata:count-pdf-pages() {
-    let $pdf-files-collection := $config:remote-root || "/download/pdf/"
+    let $pdf-files-collection := $config:app-root || "/download/pdf/"
     let $pdf-work-pages :=
         for $pdf-file-name in xmldb:get-child-resources($pdf-files-collection)
         let $pdf-file-path := $pdf-files-collection || $pdf-file-name

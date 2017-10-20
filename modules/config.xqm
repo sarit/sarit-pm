@@ -121,8 +121,7 @@ declare variable $config:app-root :=
         substring-before($modulePath, "/modules")
 ;
 
-declare variable $config:remote-root := "/db/apps/sarit-data";
-declare variable $config:data-root := $config:remote-root || "/data/";
+declare variable $config:data-root := $config:app-root || "/sarit-data";
 
 declare variable $config:odd := "sarit.odd";
 

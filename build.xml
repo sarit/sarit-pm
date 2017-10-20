@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="xar" name="sarit-pm">
+<project default="xar" name="sarit-pm"
+	 xmlns:ac="antlib:net.sf.antcontrib">
     <property file="build.properties"/>
     <xmlproperty file="expath-pkg.xml"/>
     <property name="project.version" value="${package(version)}"/>
     <property name="project.app" value="sarit-pm"/>
     <property name="build.dir" value="build"/>
-    <target name="xar">
+    <property name="epub.dir" value="resources/epubs"/>
+    <property name="pdf.dir" value="resources/pdfs"/>
+    <property name="SARIT-corpus.dir" value="SARIT-corpus"/>
+    <property name="current-corpus.dir" value="sarit-data"/>
+    <!-- see https://ant.apache.org/manual/Tasks/xmlproperty.html for this -->
+    <xmlproperty file="${SARIT-corpus.dir}/saritcorpus.xml" semanticAttributes="true"/>
+    
+    <target name="xar" depends="make-corpus">
         <mkdir dir="${build.dir}"/>
         <echo message="Calling npm start..."/>
         <exec executable="${npm}" outputproperty="npm.output">
@@ -13,6 +21,31 @@
         </exec>
         <echo message="${npm.output}"/>
         <echo message="Creating xar package..."/>
-        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/* node_modules/** package.json gruntfile.js .*"/>
+        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/* node_modules/** package.json gruntfile.js .* ${SARIT-corpus.dir}"/>
     </target>
+
+    <target name="clean">
+      <delete dir="${build.dir}" />
+      <delete dir="${current-corpus.dir}" />
+    </target>
+
+    <target name="make-corpus">
+      <mkdir dir="${current-corpus.dir}" />
+      <echo message="Copying documents from ${SARIT-corpus.dir} ..."/>
+      <echo>Found these xml docs: ${teiCorpus.xi:include.href}</echo>
+      <ac:for list="${teiCorpus.xi:include.href}" param="doc">
+	<sequential>
+	  <echo>Including ${SARIT-corpus.dir}/@{doc}</echo>
+	  <copy todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/@{doc}"/>
+	</sequential>
+      </ac:for>
+      <echo>Including ${SARIT-corpus.dir}/saritcorpus.xml</echo>
+      <copy todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/saritcorpus.xml"/>
+    </target>
+    
+    <target name="epub">
+      <mkdir dir="${epub.dir}"/>
+      <echo message="Generating epubs ..."/>
+    </target>
+    
 </project>

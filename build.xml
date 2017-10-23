@@ -36,7 +36,8 @@
     </exec>
     <echo message="${npm.output}"/>
     <echo message="Creating xar package..."/>
-    <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/* node_modules/** package.json gruntfile.js .* ${SARIT-corpus.dir}"/>
+    <zip basedir="."
+	 destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/* node_modules/** package.json gruntfile.js .* ${SARIT-corpus.dir}/**"/>
   </target>
 
   <target name="clean">
@@ -58,48 +59,44 @@
     <copy todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/saritcorpus.xml"/>
   </target>
 
-  <target name="tear-down-temp">
-    <xdb:remove xmlns:xdb="http://exist-db.org/ant"
-		user="${admin}"
-		password="${password}"
-		uri="xmldb:exist://localhost:8080/exist/xmlrpc/db/apps"
-		collection="temp-sarit"/>
-  </target>
-
-  <target name="store-resource">
-    <property name="file.rel" value="${file}" relative="yes" />
-    <dirname property="file.dir" file="${file.rel}" />
-    <property name="file.reldir" value="${file.dir}" relative="yes"/>
-    <echo>Storing ${file.rel}</echo>
-    <xdb:store xmlns:xdb="http://exist-db.org/ant"
-	       uri="xmldb:exist://localhost:8080/exist/xmlrpc/db/apps/temp-sarit/${file.reldir}"
-	       user="${admin}"
-	       password="${password}"
-	       srcfile="${file}"
-	       createcollection="true"/>
+  <target name="uninstall">
+    <echo>Uninstalling ${project.app}</echo>
+    <xdb:xquery  xmlns:xdb="http://exist-db.org/ant"
+		 uri="xmldb:exist://localhost:8080/exist/xmlrpc/db"
+		 user="${admin}"
+		 password="${password}">
+      declare namespace repo="http://exist-db.org/xquery/repo";
+      repo:undeploy("http://sarit.indology.info/pm"),
+      repo:remove("http://sarit.indology.info/pm")
+    </xdb:xquery>
+    <echo>Uninstalled ${project.app}</echo>
   </target>
   
   <!-- install docs and xquery scripts temporarily -->
-  <target name="build-temp" depends="make-corpus,tear-down-temp">
-    <xdb:create xmlns:xdb="http://exist-db.org/ant"
+  <!-- add this: depends="xar" -->
+  <target name="install">
+    <!-- upload xar to database -->
+    <xdb:store xmlns:xdb="http://exist-db.org/ant"
+	       uri="xmldb:exist://localhost:8080/exist/xmlrpc/db"
 	       user="${admin}"
 	       password="${password}"
-	       uri="xmldb:exist://localhost:8080/exist/xmlrpc/db/apps"
-	       collection="temp-sarit"
+	       srcfile="${build.dir}/${project.app}-${project.version}.xar"
 	       />
-    <ac:foreach target="store-resource" param="file">
-      <fileset dir="./"> 
-        <include name="**/*.xml"/>
-        <include name="**/*.xsl"/>
-	<include name="**/*.xql"/>
-	<include name="**/*.xqm"/>
-	<exclude name="**/*test*"/>
-	<exclude name="node_modules/**/*"/>
-	<exclude name="${build.dir}/**/*"/>
-	<exclude name="${SARIT-corpus.dir}/**/*"/>
-	<exclude name="build.xml"/>
-      </fileset>
-    </ac:foreach>
+    <echo>Installing ${project.app}-${project.version}.xar</echo>
+    <xdb:xquery  xmlns:xdb="http://exist-db.org/ant"
+		 uri="xmldb:exist://localhost:8080/exist/xmlrpc/db"
+		 user="${admin}"
+		 password="${password}">
+      <variable name="xar" value="${project.app}-${project.version}.xar" />
+      declare namespace repo="http://exist-db.org/xquery/repo";
+      repo:install-and-deploy-from-db($xar)
+    </xdb:xquery>
+    <!-- and remove xar again -->
+    <xdb:remove xmlns:xdb="http://exist-db.org/ant"
+		user="${admin}"
+		password="${password}"
+		uri="xmldb:exist://localhost:8080/exist/xmlrpc/db"
+		collection="${project.app}-${project.version}.xar"/>
   </target>
 
   <target name="test-epub">
@@ -119,7 +116,7 @@
 	 />
   </target>
   
-  <target name="make-epubs" depends="build-temp">
+  <target name="make-epubs" depends="install">
     <mkdir dir="${epub.dir}"/>
     <echo message="Generating epubs ..."/>
     <ac:for list="${teiCorpus.xi:include.href}" param="doc">

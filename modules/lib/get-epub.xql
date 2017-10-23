@@ -29,7 +29,6 @@ let $work := pages:get-document($id)/tei:TEI
 let $entries := local:work2epub($id, $work, $lang)
 return
     (
-        response:set-cookie("simple.token", $token),
         response:set-header("Content-Disposition", concat("attachment; filename=", concat($id, '.epub'))),
         response:stream-binary(
             compression:zip( $entries, true() ),

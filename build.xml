@@ -71,10 +71,9 @@
     </xdb:xquery>
     <echo>Uninstalled ${project.app}</echo>
   </target>
-  
+
   <!-- install docs and xquery scripts temporarily -->
-  <!-- add this: depends="xar" -->
-  <target name="install">
+  <target name="install" depends="xar">
     <!-- upload xar to database -->
     <xdb:store xmlns:xdb="http://exist-db.org/ant"
 	       uri="xmldb:exist://localhost:8080/exist/xmlrpc/db"
@@ -99,14 +98,6 @@
 		collection="${project.app}-${project.version}.xar"/>
   </target>
 
-  <target name="test-epub">
-    <basename property="epub" file="jitari-isvaravadimatapariksa.xml" suffix=".xml"/>
-    <echo>Getting epub for ${SARIT-corpus.dir}/${epub}</echo>
-    <get dest="${epub.dir}/${epub}.epub"
-	 src="${develserver}/temp-sarit/${epub}.epub"
-	 />
-  </target>
-  
   <!-- get a single epub -->
   <target name="epub">
     <basename property="epub" file="${doc}" suffix=".xml"/>
@@ -116,7 +107,7 @@
 	 />
   </target>
   
-  <target name="make-epubs" depends="install">
+  <target name="make-epubs">
     <mkdir dir="${epub.dir}"/>
     <echo message="Generating epubs ..."/>
     <ac:for list="${teiCorpus.xi:include.href}" param="doc">
@@ -126,6 +117,22 @@
 	</antcall>
       </sequential>
     </ac:for>
+  </target>
+
+  <!-- rebuild xar archive after downloading static stuff -->
+  <target name="xar-all-inclusive">
+    <echo>Generating preliminary xar</echo>
+    <antcall target="xar"/>
+    <echo>Done generating preliminary xar</echo>
+    <echo>Installing preliminary xar</echo>
+    <antcall target="install"/>
+    <echo>Done installing preliminary xar</echo>
+    <echo>Caching epubs</echo>
+    <antcall target="make-epubs"/>
+    <echo>Done caching epubs</echo>
+    <echo>Generating final xar</echo>
+    <antcall target="xar"/>
+    <echo>Done generating final xar</echo>
   </target>
   
 </project>

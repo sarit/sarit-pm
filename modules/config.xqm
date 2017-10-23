@@ -143,7 +143,7 @@ declare variable $config:expath-descriptor := doc(concat($config:app-root, "/exp
  : arguments.
  :)
 declare variable $config:tex-command := function($file) {
-    ( "/usr/local/bin/pdflatex", "-interaction=nonstopmode", $file )
+    ( "pdflatex", "-interaction=nonstopmode", $file )
 };
 
 declare function config:edition($node as node()) {

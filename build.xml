@@ -9,6 +9,7 @@
   <property name="build.dir" value="build"/>
   <property name="epub.dir" value="resources/epubs"/>
   <property name="pdf.dir" value="resources/pdfs"/>
+  <property name="tex.dir" value="resources/texs"/>
   <property name="SARIT-corpus.dir" value="SARIT-corpus"/>
   <property name="current-corpus.dir" value="sarit-data"/>
   <!-- see https://ant.apache.org/manual/Tasks/xmlproperty.html for
@@ -73,7 +74,7 @@
   </target>
 
   <!-- install docs and xquery scripts temporarily -->
-  <target name="install" depends="xar">
+  <target name="install">
     <!-- upload xar to database -->
     <xdb:store xmlns:xdb="http://exist-db.org/ant"
 	       uri="xmldb:exist://localhost:8080/exist/xmlrpc/db"
@@ -118,6 +119,50 @@
       </sequential>
     </ac:for>
   </target>
+
+  <!-- get a single tex file -->
+  <target name="tex">
+    <basename property="tex" file="${doc}" suffix=".xml"/>
+    <echo>Getting tex for ${SARIT-corpus.dir}/${epub}</echo>
+    <get dest="${tex.dir}/${tex}.tex"
+	 src="${develserver}/sarit-pm/works/${tex}.tex?source=yes"
+	 />
+  </target>
+  
+  <target name="make-texs">
+    <mkdir dir="${tex.dir}"/>
+    <echo message="Generating tex files ..."/>
+    <ac:for list="${teiCorpus.xi:include.href}" param="doc">
+      <sequential>
+	<antcall target="tex">
+	  <param name="doc" value="@{doc}"/>
+	</antcall>
+      </sequential>
+    </ac:for>
+  </target>
+
+  <!-- PDF generation is currently somewhat broken in sarit-pm.  We just -->
+  <!-- include the pdf files found in sarit-pm/resources/pdf/. -->
+  
+  <!-- get a single pdf file -->
+  <!-- <target name="pdf"> -->
+  <!--   <basename property="pdf" file="${doc}" suffix=".xml"/> -->
+  <!--   <echo>Getting pdf for ${SARIT-corpus.dir}/${epub}</echo> -->
+  <!--   <exec -->
+  <!-- 	/> -->
+  <!-- </target> -->
+  
+  <!-- <target name="make-pdfs"> -->
+  <!--   <mkdir dir="${pdf.dir}"/> -->
+  <!--   <echo message="Generating pdf files ..."/> -->
+  <!--   <ac:for list="${teiCorpus.xi:include.href}" param="doc"> -->
+  <!--     <sequential> -->
+  <!-- 	<antcall target="pdf"> -->
+  <!-- 	  <param name="doc" value="@{doc}"/> -->
+  <!-- 	</antcall> -->
+  <!--     </sequential> -->
+  <!--   </ac:for> -->
+  <!-- </target> -->
 
   <!-- rebuild xar archive after downloading static stuff -->
   <target name="xar-all-inclusive">

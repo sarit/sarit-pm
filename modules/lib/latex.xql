@@ -22,25 +22,37 @@ declare option output:media-type "text/text";
 
 declare variable $local:WORKING_DIR := system:get-exist-home() || "/webapp";
 
+declare function local:pdf-is-cached($id as xs:string) {
+	util:log("info", "Checking cache for: " || $id),
+	util:binary-doc-available($config:app-root || "/resources/pdfs/" || $id)
+};
+
+declare function local:pdf-get-cached($id as xs:string) {
+	util:binary-doc($config:app-root || "/resources/pdfs/" || $id)
+};
+
 let $id := request:get-parameter("id", ())
-let $token := request:get-parameter("token", ())
+let $requested-pdf := replace($id, "xml$", "pdf")
 let $source := request:get-parameter("source", ())
+
 return (
-    if ($token) then
-        response:set-cookie("simple.token", $token)
-    else
-        (),
-    if ($id) then
+		if (local:pdf-is-cached($requested-pdf))
+		then
+			response:stream-binary(local:pdf-get-cached($requested-pdf), "media-type=application/pdf", $requested-pdf)
+    else if ($id) then
         let $xml := pages:get-document($id)/tei:TEI
         let $config := tpu:parse-pi(root($xml), ())
-        let $tex := string-join($pm-config:latex-transform($xml, map { "image-dir": config:get-repo-dir() || "/" || $config:data-root[1] || "/" }, $config?odd))
         let $file :=
-            replace($id, "^.*?([^/]+)$", "$1") || format-dateTime(current-dateTime(), "-[Y0000][M00][D00]-[H00][m00]")
+            replace($id, "^.*?([^/]+)$", "$1")
         return
             if ($source) then
-                $tex
-            else
-                let $serialized := file:serialize-binary(util:string-to-binary($tex), $local:WORKING_DIR || "/" || $file || ".tex")
+                string-join($pm-config:latex-transform($xml, map { "image-dir": config:get-repo-dir() || "/" || $config:data-root[1] || "/" }, $config?odd))
+						else
+                let $serialized := file:serialize-binary(
+									(: get tex file :)
+									util:string-to-binary(
+										string-join($pm-config:latex-transform($xml, map { "image-dir": config:get-repo-dir() || "/" || $config:data-root[1] || "/" }, $config?odd))),
+										$local:WORKING_DIR || "/" || $file || ".tex")
                 let $options :=
                     <option>
                         <workingDir>{$local:WORKING_DIR}</workingDir>

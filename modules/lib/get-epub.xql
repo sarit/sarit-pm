@@ -11,11 +11,11 @@ declare option exist:serialize "method=xml media-type=text/xml";
 
 declare function local:epub-is-cached($id as xs:string) {
 	util:log("info", "Checking cache for: " || $id),
-	util:binary-doc-available("/db/apps/sarit-pm/resources/epubs/" || $id)
+	util:binary-doc-available($config:app-root || "/resources/epubs/" || $id)
 };
 
 declare function local:epub-get-cached($id as xs:string) {
-	util:binary-doc("/db/apps/sarit-pm/resources/epubs/" || $id)
+	util:binary-doc($config:app-root || "/resources/epubs/" || $id)
 };
 
 declare function local:work2epub($id as xs:string, $work as element(), $lang as xs:string?) {

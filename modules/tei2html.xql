@@ -1125,10 +1125,14 @@ to just use first URL :)
 
 declare function tei-to-html:resolve-xml-id($node as attribute(), $options) {
 	  let $firstURI := tokenize($node/string(), '\s')[1]
-    let $absoluteURI := resolve-uri($firstURI, base-uri($node))
+    let $absoluteURI := if ($firstURI) then resolve-uri($firstURI, base-uri($node/parent::*)) else ()
     let $node := replace($node, '^#?(.*)$', '$1')
     return
-        doc($absoluteURI)/id($node)/text()
+		if ($absoluteURI and $node)
+		then
+	      doc($absoluteURI)/id($node)/text()
+		else
+				()
 };
 
 (:Below are a number of dummy functions, dividing into empty, block-level and inline elements:)

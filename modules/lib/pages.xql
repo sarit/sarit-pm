@@ -35,7 +35,7 @@ import module namespace odd="http://www.tei-c.org/tei-simple/odd2odd";
 import module namespace pmu="http://www.tei-c.org/tei-simple/xquery/util";
 import module namespace console="http://exist-db.org/xquery/console" at "java:org.exist.console.xquery.ConsoleModule";
 
-declare variable $pages:app-root := request:get-context-path() || substring-after($config:app-root, "/db");
+declare variable $pages:app-root := request:get-context-path() || substring-after($config:app-root, "/db/apps");
 
 declare variable $pages:EXIDE :=
     let $pkg := collection(repo:get-root())//expath:package[@name = "http://exist-db.org/apps/eXide"]
@@ -407,7 +407,7 @@ declare function pages:get-content($config as map(*), $div as element()) {
                 element { node-name($chunk) } {
                     $chunk/@*,
                     if ($chunk/@xml:lang) then
-                        $chunk/@xml:lang
+                        ()
                     else
                         $div/ancestor::*/@xml:lang[last()],
                     $chunk/node()
@@ -423,7 +423,7 @@ declare function pages:get-content($config as map(*), $div as element()) {
                             $div/@* except $div/@exist:id,
                             attribute exist:id { util:node-id($div) },
                             if ($div/@xml:lang) then
-                                $div/@xml:lang
+                                ()
                             else
                                 $div/ancestor::*/@xml:lang[last()],
                             util:expand(($child/preceding-sibling::*, $child), "add-exist-id=all")
@@ -433,7 +433,7 @@ declare function pages:get-content($config as map(*), $div as element()) {
                         $div/@* except $div/@exist:id,
                         attribute exist:id { util:node-id($div) },
                         if ($div/@xml:lang) then
-                            $div/@xml:lang
+                            ()
                         else
                             $div/ancestor::*/@xml:lang[last()],
                         console:log("showing preceding siblings of next div child"),

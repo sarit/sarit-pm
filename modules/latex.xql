@@ -27,10 +27,10 @@ declare variable $local:TeX_COMMAND := function($file) {
 };
 
 let $id := request:get-parameter("id", ())
-let $token := request:get-parameter("token", ())
+(: let $token := request:get-parameter("token", ()) :)
 let $source := request:get-parameter("source", ())
 return (
-    response:set-cookie("simple.token", $token),
+    (: response:set-cookie("simple.token", $token), :)
     if ($id) then
         let $xml := doc($config:data-root || "/" || $id || ".xml")/tei:TEI
         let $tex := string-join($pm-config:latex-transform($xml, ()))

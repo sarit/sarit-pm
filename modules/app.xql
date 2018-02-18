@@ -133,10 +133,12 @@ function app:short-header($node as node(), $model as map(*)) {
     let $work := $model("work")/ancestor-or-self::tei:TEI
     let $id := util:document-name($work)
     let $view :=
-        if (pages:has-pages($work)) then
+				if ($config:default-view) then
+						$config:default-view
+        else if (pages:has-pages($work)) then
             "page"
         else
-            $config:default-view
+            "div"
     return
         $pm-config:web-transform($work/tei:teiHeader, map {
             "header": "short",
@@ -312,10 +314,12 @@ declare function app:work-title($node as node(), $model as map(*), $type as xs:s
     let $work := $model("work")/ancestor-or-self::tei:TEI
     let $id := util:document-name($work)
     let $view :=
-        if (pages:has-pages($work)) then
+				if ($config:default-view) then
+						$config:default-view
+        else if (pages:has-pages($work)) then
             "page"
         else
-            $config:default-view
+            "div"
     return
         <a href="{$node/@href}{$id}{$suffix}?view={$view}">{ app:work-title($work) }</a>
 };
@@ -346,7 +350,7 @@ declare function app:download-link($node as node(), $model as map(*), $type as x
         element { node-name($node) } {
             $node/@*,
             attribute data-token { $uuid },
-            attribute href { $node/@href || $file || "." || $type || "?token=" || $uuid || "&amp;cache=no"
+            attribute href { $node/@href || $file || "." || $type
                 || (if ($source) then "&amp;source=yes" else ())
             },
             $node/node()

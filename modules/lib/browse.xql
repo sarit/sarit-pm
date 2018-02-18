@@ -244,8 +244,8 @@ declare function app:download-link($node as node(), $model as map(*), $type as x
     return
         element { node-name($node) } {
             $node/@*,
-            attribute data-token { $uuid },
-            attribute href { $node/@href || $file || "." || $type || "?token=" || $uuid || "&amp;cache=no"
+            (: attribute data-token { $uuid }, :)
+            attribute href { $node/@href || $file || "." || $type
                 || "&amp;odd=" || ($model?config?odd, $config:odd)[1]
                 || (if ($source) then "&amp;source=yes" else ()) || (if ($mode) then "&amp;mode=" || $mode else ())
             },

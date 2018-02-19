@@ -511,9 +511,16 @@ declare function pages:navigation-link($node as node(), $model as map(*), $direc
 declare
     %templates:wrap
 function pages:app-root($node as node(), $model as map(*)) {
-    element { node-name($node) } {
+	if (matches(request:get-url(), '/exist/apps/')) then
+		element { node-name($node) } {
         $node/@*,
         attribute data-app { request:get-context-path() || substring-after($config:app-root, "/db") },
+        templates:process($node/*, $model)
+				}
+	else
+    element { node-name($node) } {
+        $node/@*,
+        attribute data-app { request:get-context-path() || substring-after($config:app-root, "/db/apps") },
         templates:process($node/*, $model)
     }
 };

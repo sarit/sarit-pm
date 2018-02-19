@@ -371,16 +371,23 @@ declare function app:fix-links($nodes as node()*) {
                 (: skip links with @data-template attributes; otherwise we can run into duplicate @href errors :)
                 if ($node/@data-template) then
                     $node
+								(: if "/exist/apps" is in url, we're not running in standalone mode -> adjust accordingly  :)
                 else
-                    let $href :=
-                        replace(
-                            $node/@href,
-                            "\$app",
-                            (request:get-context-path() || substring-after($config:app-root, "/db"))
-                        )
-                    return
-                        element { node-name($node) } {
-                            attribute href {$href}, $node/@* except $node/@href, app:fix-links($node/node())
+									element { node-name($node) } {
+                            attribute href {
+															if (matches(request:get-url(), '/exist/apps/')) then
+																	replace(
+																	   $node/@href,
+				                            "\$app",
+								                    (request:get-context-path() || substring-after($config:app-root, "/db")))
+															else
+																	replace(
+																	   $node/@href,
+				                            "\$app",
+								                    (request:get-context-path() || substring-after($config:app-root, "/db/apps")))												
+																			
+															},
+															$node/@* except $node/@href, app:fix-links($node/node())
                         }
             case element() return
                 element { node-name($node) } {

@@ -432,8 +432,7 @@ declare function tei-to-html:sp($node as element(tei:sp), $options) as element()
         </div>
     else
         <div xmlns="http://www.w3.org/1999/xhtml" class="sp" title="tei:sp">
-            { for $speaker in $node/tei:speaker return tei-to-html:recurse($speaker, <options/>) }
-            <p class="p-ab">{ tei-to-html:recurse($node/tei:ab, <options/>) }</p>
+            <p>{ tei-to-html:recurse($node, <options/>) }</p>
         </div>
 };
 

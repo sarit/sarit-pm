@@ -53,11 +53,11 @@
     <ac:for list="${teiCorpus.xi:include.href}" param="doc">
       <sequential>
 	<echo>Including ${SARIT-corpus.dir}/@{doc}</echo>
-	<copy todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/@{doc}"/>
+	<copy overwrite="true" todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/@{doc}"/>
       </sequential>
     </ac:for>
     <echo>Including ${SARIT-corpus.dir}/saritcorpus.xml</echo>
-    <copy todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/saritcorpus.xml"/>
+    <copy overwrite="true" todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/saritcorpus.xml"/>
   </target>
 
   <target name="uninstall">

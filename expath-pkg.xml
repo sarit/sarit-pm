@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://expath.org/ns/pkg" name="http://sarit.indology.info/pm" abbrev="sarit-pm" version="0.3" spec="1.0">
     <title>SARIT: Search and Retrieval of Indic Texts (New)</title>
-    <dependency processor="http://exist-db.org" semver-min="2.1.0" semver-max="3.3.0"/>
+    <dependency processor="http://exist-db.org" semver-min="3.3.0" semver-max="4.1.0"/>
     <dependency package="http://exist-db.org/apps/shared"/>
     <dependency package="http://expath.org/ns/pdf"/>
     <dependency package="http://existsolutions.com/apps/tei-publisher-lib"/>

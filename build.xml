@@ -12,6 +12,9 @@
   <property name="tex.dir" value="resources/texs"/>
   <property name="SARIT-corpus.dir" value="SARIT-corpus"/>
   <property name="current-corpus.dir" value="sarit-data"/>
+  <!-- for the encoding guidelines: these go in their own directory,
+       independent of the web app -->
+  <property name="sarit-docs.dir" value="sarit-docs"/>
   <!-- see https://ant.apache.org/manual/Tasks/xmlproperty.html for
        this -->
   <xmlproperty file="${SARIT-corpus.dir}/saritcorpus.xml" semanticAttributes="true"/>
@@ -58,6 +61,13 @@
     </ac:for>
     <echo>Including ${SARIT-corpus.dir}/saritcorpus.xml</echo>
     <copy overwrite="true" todir="${current-corpus.dir}" file="${SARIT-corpus.dir}/saritcorpus.xml"/>
+  </target>
+
+  <target name="make-docs">
+    <mkdir dir="${sarit-docs.dir}" />
+    <echo message="Copying docs from ./${SARIT-corpus.dir} to ./${sarit-docs.dir}"/>
+    <copy overwrite="true" todir="${sarit-docs.dir}" file="${SARIT-corpus.dir}/schemas/odd/sarit-guidelines-full.xml"/>
+    <copy overwrite="true" todir="${sarit-docs.dir}" file="${SARIT-corpus.dir}/schemas/odd/sarit-guidelines.xml"/>
   </target>
 
   <target name="uninstall">
@@ -175,6 +185,9 @@
     <echo>Caching epubs</echo>
     <antcall target="make-epubs"/>
     <echo>Done caching epubs</echo>
+    <echo>Copying SARIT docs</echo>
+    <antcall target="make-docs"/>
+    <echo>Copied SARIT docs</echo>
     <echo>Generating final xar</echo>
     <antcall target="xar"/>
     <echo>Done generating final xar</echo>

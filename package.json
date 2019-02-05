@@ -9,8 +9,8 @@
     "data": "data"
   },
   "repository": {
-  "type": "git",
-  "url": "git+https://github.com/sarit/sarit-pm.git"
+    "type": "git",
+    "url": "git+https://github.com/sarit/sarit-pm.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

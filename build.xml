@@ -32,7 +32,7 @@
     <classpath refid="classpath.core"/>
   </typedef>
   
-  <target name="xar" depends="make-corpus">
+  <target name="xar" depends="make-corpus,make-docs">
     <mkdir dir="${build.dir}"/>
     <echo message="Calling npm start..."/>
     <exec executable="${npm}" outputproperty="npm.output">
